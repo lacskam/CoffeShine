@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>QMLFile/Delegates/MyItemForMenu.qml</file>
+        <file>QMLFile/Delegates/MyItemForTabs.qml</file>
+        <file>QMLFile/Delegates/MyItemForOrderList.qml</file>
+        <file>QMLFile/mainView.qml</file>
+        <file>QMLFile/Views/OptionView.qml</file>
+        <file>QMLFile/Views/UpperMenuView.qml</file>
+        <file>QMLFile/Views/ItemSelectionForOrderView.qml</file>
+        <file>QMLFile/Styles/UpperMenuButton.qml</file>
+        <file>QMLFile/Styles/OptionMenuButton.qml</file>
+        <file>QMLFile/Styles/TextForImage.qml</file>
+        <file>QMLFile/Styles/TextForButton.qml</file>
+        <file>QMLFile/Styles/GradientForButton.qml</file>
+        <file>QMLFile/Delegates/Highlighters/HighlightForTabs.qml</file>
+        <file>QMLFile/Delegates/MyItemForVolumeList.qml</file>
+        <file>QMLFile/Delegates/Highlighters/HighlightForListVolume.qml</file>
+        <file>QMLFile/Views/LoginView.qml</file>
+        <file>QMLFile/Delegates/MyItemForHostAndPortList.qml</file>
+        <file>QMLFile/Delegates/MyItemForVarietyOfPayList.qml</file>
+        <file>QMLFile/Delegates/Highlighters/HighlightForVarietyOfPayList.qml</file>
+        <file>QMLFile/Views/ReportView.qml</file>
+        <file>QMLFile/Delegates/MyItemForReceiptList.qml</file>
+        <file>QMLFile/Delegates/MyItemForSoldPositionList.qml</file>
+    </qresource>
+</RCC>

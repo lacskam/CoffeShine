@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/mainTabs/Database.png</file>
+        <file>icons/mainTabs/Settings.png</file>
+        <file>icons/mainTabs/Statistic.png</file>
+        <file>icons/other/Search.png</file>
+        <file>icons/other/Loading.gif</file>
+        <file>icons/mainTabs/Nn.png</file>
+    </qresource>
+</RCC>

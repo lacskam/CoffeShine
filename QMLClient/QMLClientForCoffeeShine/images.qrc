@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>coffee pictures/1.png</file>
+        <file>coffee pictures/10.png</file>
+        <file>coffee pictures/11.png</file>
+        <file>coffee pictures/12.png</file>
+        <file>coffee pictures/2.png</file>
+        <file>coffee pictures/3.png</file>
+        <file>coffee pictures/4.png</file>
+        <file>coffee pictures/5.png</file>
+        <file>coffee pictures/6.png</file>
+        <file>coffee pictures/7.png</file>
+        <file>coffee pictures/8.png</file>
+        <file>coffee pictures/9.png</file>
+        <file>Image/coffeeBASE.png</file>
+        <file>Image/Del_Icon.ico</file>
+        <file>Image/backgroundForLogin.jpg</file>
+        <file>Image/cross-for-del.png</file>
+        <file>Image/Options.png</file>
+        <file>Image/backgroundForOrderView.jpg</file>
+        <file>Image/backgroundForMenu.jpg</file>
+        <file>Image/backgroundForReport.jpg</file>
+    </qresource>
+</RCC>
