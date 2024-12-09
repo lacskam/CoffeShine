@@ -12,7 +12,7 @@ QCategoryItem::QCategoryItem(QCoffeeCategoryInfo info, QCoffeeClientPlugin *plug
 
     categoryName = new QLabel(categoryInfo.name);
     categoryName->setAlignment(Qt::AlignCenter);
-    categoryName->setFont(QFont("Sans",11));
+    categoryName->setFont(QFont("Sans",12));
 
     hblCategory->addWidget(categoryName);
 

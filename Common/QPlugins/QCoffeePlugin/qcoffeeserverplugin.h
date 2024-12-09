@@ -57,6 +57,7 @@ public:
     int getIdCategory(QCoffeeCategoryInfo &category); //Получить id категории
     bool editCategory(QCoffeeCategoryInfo &category); //Редактировать категорию
     int addCategory(QCoffeeCategoryInfo &category); //Добавить категорию
+    bool deleteCategoryInfo(QCoffeeCategoryInfo &categoryInfo);
 
 
     //QCoffeeUserInfo
@@ -99,6 +100,8 @@ public:
     bool deleteDrinkInfo(QCoffeeDrinkInfo &drinkInfo); // удалить напиток
     bool unlinkDrinkAndCategory(int idDrink); //Удалить все связи напитка и категорий
     bool linkDrinkAndCategory(int idDrink,int idCategory); //Связать напиток и категорию
+
+    bool unlinkCategoryAndDrink(int idCategory);
 
     //QCoffeePriceInfo
     QVector<QCoffeePriceInfo> getListPriceInfo(); //Получить список все похиций прайса

@@ -8,6 +8,7 @@ QDbTabWidget::QDbTabWidget(QCoffeeClientPlugin *plugin_, QWidget *parent) : QWid
     updateDrinkItems();
     updateCategoryItems();
     connect(currentPlugin,SIGNAL(signalNewDrink()),this,SLOT(updateDrinkItems()));
+    connect(currentPlugin,SIGNAL(signalNewCategory()),this,SLOT(updateCategoryItems()));
 }
 
 void QDbTabWidget::createForm()
@@ -52,7 +53,7 @@ void QDbTabWidget::createForm()
     categoryListWidget = new QListWidget();
     categoryListWidget->setFlow(QListView::TopToBottom);    //Lays out horizontally instead of vertically
     categoryListWidget->setResizeMode(QListView::Adjust);   //Dynamically adjust contents
-  //  categoryListWidget->setGridSize(QSize(180, 230));       //This is an arbitrary value, but it forces the layout into a grid
+    /*categoryListWidget->setGridSize(QSize(180, 230));  */     //This is an arbitrary value, but it forces the layout into a grid
     categoryListWidget->setSpacing(10);                     //As an alternative to using setGridSize(), set a fixed spacing in the layout:
     categoryListWidget->setViewMode(QListView::ListMode);   //And the most important part:
     categoryWidgetLayout->addWidget(categoryListWidget);
@@ -189,6 +190,8 @@ void QDbTabWidget::slotAddNewCategory() {
     info.id=-1;
     info.description = "";
     info.name = "";
+    info.idPointSale.push_back(1);
+    info.idPointSale.push_back(2);
     catrgoryEdit = new QCategoryWidget(currentPlugin,&info,this);
     scrollAreaForEdit->setWidget(catrgoryEdit);
 }

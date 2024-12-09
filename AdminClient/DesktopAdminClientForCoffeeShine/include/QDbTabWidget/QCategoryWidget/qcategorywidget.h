@@ -35,6 +35,7 @@ private:
      QLineEdit *nameCategoryEdit;
     QTextEdit *descriptionCategoryEdit;
      QPushButton *buttonAddNewDrinkToCategory;
+    QPushButton *buttonDelete;
 
 
      QString nameFirst;
@@ -56,6 +57,14 @@ private:
        QDrinkWidgetItem *drinkPickWidgetItemDio;
 
 
+       QDialog *delDio;
+     QDialogButtonBox *btnBox;
+     QVBoxLayout *vd;
+     QHBoxLayout *hd;
+     QPushButton *ac;
+     QPushButton *de;
+     qint32 id;
+
       bool checkChanges();
 signals:
 
@@ -64,7 +73,7 @@ private slots:
     void sendCategory();
     void createDrinkPickDialog();
     void drinkPickDialogAccepted();
-
+    void slotDeleteCategory();
 
 
 

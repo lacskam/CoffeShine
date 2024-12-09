@@ -1418,6 +1418,29 @@ bool QCoffeeServerPlugin::deleteDrinkInfo(QCoffeeDrinkInfo &drinkInfo) {
 
     return Output;
 }
+
+bool QCoffeeServerPlugin::deleteCategoryInfo(QCoffeeCategoryInfo &categoryInfo) {
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_drinkСategory where id_drinkСategory = '" + QString::number(categoryInfo.id) + "';";
+
+    unlinkCategoryAndDrink(categoryInfo.id);
+    unlinkCategoryAndPointSale(categoryInfo.id);
+
+    QSqlQuery *queryDeleteDrink = execQuery(textQuery,&Output);
+
+    if (Output) {
+
+    } else {
+        qDebug()<<"Error edit drink:"<<queryDeleteDrink->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete queryDeleteDrink;
+
+    return Output;
+}
+
 bool QCoffeeServerPlugin::unlinkDrinkAndCategory(int idDrink)
 {
     bool Output = false;
@@ -1452,6 +1475,25 @@ bool QCoffeeServerPlugin::linkDrinkAndCategory(int idDrink,int idCategory)
     }
 
     delete queryLinkDrinkAndCategory;
+
+    return Output;
+}
+
+bool QCoffeeServerPlugin::unlinkCategoryAndDrink(int idCategory)
+{
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_drink_foundation "
+                        "where tbl_foundation_id_foundation = '" + QString::number(idCategory) + "';";
+
+    QSqlQuery *queryUnlinkDrinkAndCategory = execQuery(textQuery,&Output);
+
+    if (!Output) {
+        qDebug()<<"Error unlink drink and category:"<<queryUnlinkDrinkAndCategory->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete queryUnlinkDrinkAndCategory;
 
     return Output;
 }
@@ -3184,25 +3226,37 @@ void QCoffeeServerPlugin::command19(QByteArray data, QUnClientHandler *client) {
 
     quint32 code;
     streamIn >> code;
-
+    QVector<qint32> newDrinks;
+    streamIn >> newDrinks;
     QCoffeeCategoryInfo currentCategory;
     currentCategory << streamIn;
+
+
+    if (code!=0x03) {
+        unlinkCategoryAndDrink(currentCategory.id);
+    }
 
     switch (code) {
     case 0x01: currentCategory.id = addCategory(currentCategory);
         break;
     case 0x02: editCategory(currentCategory);
         break;
-   // case 0x03: deleteDrinkInfo(currentDrink);
-   //     break;
+    case 0x03: deleteCategoryInfo(currentCategory);
+       break;
     }
 
+    if (code!=0x03) {
+        for (int i=0;i<newDrinks.size();i++) {
+            linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
+        }
+    }
     QByteArray Output;
     bool result = true;
     QDataStream streamOut (&Output,QIODevice::ReadWrite);
 
     streamOut << result;
     streamOut << code;
+    streamOut << newDrinks;
     currentCategory >> streamOut;
 
     sendExtData(0x19,Output,client);

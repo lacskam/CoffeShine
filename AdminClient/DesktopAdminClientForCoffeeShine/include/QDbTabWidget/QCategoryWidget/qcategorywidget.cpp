@@ -5,10 +5,10 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     currentPlugin = plugin_;
 
 
+    currentCategory = new QCoffeeCategoryInfo;
 
 
-
-    currentCategory = currentCat;
+    *currentCategory = *currentCat;
     mainLayout = new QVBoxLayout(this);
     cId = currentCategory->id;
 
@@ -41,11 +41,11 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 
     QLabel *drinkListLabel = new QLabel("Список напитков");
     mainLayout->addWidget(drinkListLabel);
-    mainLayout->addSpacing(10);
+
 
     buttonAddNewDrinkToCategory = new QPushButton("Добавить напиток");
     connect(buttonAddNewDrinkToCategory,SIGNAL(clicked()),this,SLOT(createDrinkPickDialog()));
-    mainLayout->addWidget(buttonAddNewDrinkToCategory);
+
     // кнопка добавить напиток при которое появляется всплывающее окно с выбором напитка
 
 
@@ -65,6 +65,8 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 
     drinkScrol->setLayout(hblDrink);
     mainLayout->addWidget(drinkScrol);
+
+    mainLayout->addWidget(buttonAddNewDrinkToCategory);
     drinkScrol->setMinimumHeight(500);
 
     mainLayout->addSpacing(10);
@@ -82,14 +84,22 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     hblButton->addWidget(btnSave);
     hblButton->addWidget(btnCancel);
 
+    QLabel *labelDelete = new QLabel("Удаление категории");
+    QPushButton *buttonDelete = new QPushButton("Удалить");
+    connect(buttonDelete,SIGNAL(clicked()),this,SLOT(slotDeleteCategory()));
+
+
+    if (currentCategory->id>0) {
+        mainLayout->addSpacing(10);
+        mainLayout->addWidget(labelDelete);
+
+        mainLayout->addWidget(buttonDelete);
+    }
+
+    mainLayout->addSpacing(20);
+
     mainLayout->addStretch();
     mainLayout->addLayout(hblButton);
-
-
-
-
-
-
 
 
 }
@@ -259,5 +269,45 @@ bool QCategoryWidget::checkChanges()
 }
 
 void QCategoryWidget::sendCategory() {
-    qDebug()<<checkChanges();
+    if (checkChanges()) {
+
+        currentCategory->name = nameCategoryEdit->text();
+        currentCategory->description = descriptionCategoryEdit->toPlainText();
+
+        QVector<qint32> cDrinksId;
+
+        for (int i=0;i<cDrinks.size();i++) {
+            cDrinksId.push_back(cDrinks.at(i).id);
+        }
+
+        if (currentCategory->id == -1) {
+
+            currentCategory->color.setBlue(1);
+            currentCategory->color.setRed(1);
+            currentCategory->color.setGreen(1);
+
+            currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x01);
+        } else {
+            currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x02);
+        }
+    }
+
+    emit btnCancel->clicked();
+
+}
+
+
+void QCategoryWidget::slotDeleteCategory() {
+
+
+        QVector<qint32> cDrinksId;
+
+        for (int i=0;i<cDrinks.size();i++) {
+            cDrinksId.push_back(cDrinks.at(i).id);
+        }
+        currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x03);
+        emit btnCancel->clicked();
+
+
+
 }

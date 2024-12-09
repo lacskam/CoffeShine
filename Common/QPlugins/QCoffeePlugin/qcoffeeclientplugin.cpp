@@ -1904,6 +1904,29 @@ bool QCoffeeClientPlugin::deleteDrinkInfo(QCoffeeDrinkInfo &drinkInfo) {
     return Output;
 }
 
+
+bool QCoffeeClientPlugin::deleteCategoryInfo(QCoffeeCategoryInfo &categoryInfo) {
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_drinkСategory where id_drinkСategory = '" + QString::number(categoryInfo.id) + "';";
+
+    unlinkCategoryAndDrink(categoryInfo.id);
+    unlinkCategoryAndPointSale(categoryInfo.id);
+
+    QSqlQuery *queryDeleteDrink = execQuery(textQuery,&Output);
+
+    if (Output) {
+
+    } else {
+        qDebug()<<"Error edit drink:"<<queryDeleteDrink->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete queryDeleteDrink;
+
+    return Output;
+}
+
 bool QCoffeeClientPlugin::unlinkDrinkAndCategory(int idDrink)
 {
     bool Output = false;
@@ -1941,6 +1964,27 @@ bool QCoffeeClientPlugin::linkDrinkAndCategory(int idDrink,int idCategory)
 
     return Output;
 }
+
+
+bool QCoffeeClientPlugin::unlinkCategoryAndDrink(int idCategory)
+{
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_drink_foundation "
+                        "where tbl_foundation_id_foundation = '" + QString::number(idCategory) + "';";
+
+    QSqlQuery *queryUnlinkDrinkAndCategory = execQuery(textQuery,&Output);
+
+    if (!Output) {
+        qDebug()<<"Error unlink drink and category:"<<queryUnlinkDrinkAndCategory->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete queryUnlinkDrinkAndCategory;
+
+    return Output;
+}
+
 
 //QCoffeePriceInfo
 
@@ -4230,7 +4274,7 @@ void QCoffeeClientPlugin::command18(QByteArray &data) {
 }
 
 
-void QCoffeeClientPlugin::crudCategoryInfo(QCoffeeCategoryInfo &categoryInfo,quint32 idOperation) {
+void QCoffeeClientPlugin::crudCategoryInfo(QCoffeeCategoryInfo &categoryInfo,QVector<qint32> newDrinks,quint32 idOperation) {
     signalMessageSplashScreen(tr("Отправка категории"));
     debugMessage("Sand sale");
 
@@ -4238,6 +4282,7 @@ void QCoffeeClientPlugin::crudCategoryInfo(QCoffeeCategoryInfo &categoryInfo,qui
     QDataStream stream(&Output,QIODevice::WriteOnly);
 
     stream << idOperation;
+    stream << newDrinks;
     categoryInfo >> stream;
     qDebug()<<categoryInfo.id;
     sendExtData(0x19,Output);
@@ -4249,26 +4294,38 @@ void QCoffeeClientPlugin::command19(QByteArray &data) {
     debugMessage("Received drink information");
     QDataStream streamIn (&data,QIODevice::ReadOnly);
     streamIn.device()->seek(0);
-
+    qDebug()<<"Получен информация о категории";
     bool result;
     streamIn >> result;
 
     quint32 code;
     streamIn >> code;
 
+    QVector<qint32> newDrinks;
+    streamIn >> newDrinks;
     QCoffeeCategoryInfo currentCategory;
     currentCategory << streamIn;
+
+
+    if (code!=0x03) unlinkCategoryAndDrink(currentCategory.id);
 
     switch (code) {
         case 0x01: addCategory(currentCategory);
             break;
         case 0x02: editCategory(currentCategory);
             break;
-      //  case 0x03: deleteCategory(currentDrink);
-       //     break;
+        case 0x03: deleteCategoryInfo(currentCategory);
+            break;
     }
 
-   // emit signalNewDrink();
+        if (code!=0x03) {
+            for (int i=0;i<newDrinks.size();i++) {
+                linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
+            }
+        }
+
+
+        emit signalNewCategory();
 }
 
 /*void QCoffeeClientPlugin::getNnPrediction(QNnPredictionInfo &predictionInfo)
