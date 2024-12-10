@@ -269,6 +269,30 @@ bool QCategoryWidget::checkChanges()
 }
 
 void QCategoryWidget::sendCategory() {
+
+    QRegExp validReg("^[a-zA-Zа-яА-Я0-9 \"-]*$");
+    int valid=0;
+
+    if (!validReg.exactMatch(descriptionCategoryEdit->toPlainText())) {
+
+        descriptionCategoryEdit->setStyleSheet("color: rgb(255, 0, 0)");
+        connect(descriptionCategoryEdit, &QTextEdit::textChanged, this, [=]() {descriptionCategoryEdit->setStyleSheet("color: rgb(255, 255, 255)");});
+        valid++;
+
+    }
+
+    if (!validReg.exactMatch(nameCategoryEdit->text())) {
+
+        nameCategoryEdit->setStyleSheet("color: rgb(255, 0, 0)");
+        connect(nameCategoryEdit, &QLineEdit::textChanged, this, [=]() {nameCategoryEdit->setStyleSheet("color: rgb(255, 255, 255)");});
+        valid++;
+
+
+    }
+    if (valid>0) {
+        return;
+    } else {
+
     if (checkChanges()) {
 
         currentCategory->name = nameCategoryEdit->text();
@@ -293,7 +317,7 @@ void QCategoryWidget::sendCategory() {
     }
 
     emit btnCancel->clicked();
-
+    }
 }
 
 

@@ -65,6 +65,8 @@ private:
      QPushButton *de;
      qint32 id;
 
+
+
       bool checkChanges();
 signals:
 

@@ -293,39 +293,63 @@ void QEditDrinkWidget::slotSaveChanges()
     qDebug()<<"Coхранение изменений";
     QCoffeeDrinkInfo Output;
 
-    Output.id = currentEditedDrink.id;
 
+    QRegExp validReg("^[a-zA-Zа-яА-Я0-9 \"-]*$");
+    int valid=0;
 
-    Output.name = drinkName->text();
-    Output.description = drinkDescription->toPlainText();
-    QColor newColor = colorWidget->getColor();
-    Output.color.setRed(newColor.red());
-    Output.color.setBlue(newColor.blue());
-    Output.color.setGreen(newColor.green());
-    Output.idPicture = pictureWidget->getInfoAboutNewPicture().id;
+    if (!validReg.exactMatch(drinkDescription->toPlainText())) {
 
-    QVector<WidgetToMarkItemInfo> listCategoryInfoFromWidget = categoryItemsWidget->getListInfoAboutWidgets();
-    for (int i=0;i<listCategoryInfoFromWidget.count();i++)
-    {
-        if (listCategoryInfoFromWidget.at(i).isItemMarked)
-        {
-            qDebug()<<listCategoryInfoFromWidget.at(i).itemId;
-            Output.idCategories.push_back(listCategoryInfoFromWidget.at(i).itemId);
-        }
+        drinkDescription->setStyleSheet("color: rgb(255, 0, 0)");
+        connect(drinkDescription, &QTextEdit::textChanged, this, [=]() {drinkDescription->setStyleSheet("color: rgb(255, 255, 255)");});
+        valid++;
+
     }
 
-    if ((int)Output.id > 0) {
-        currentPlugin->crudDrinkInfo(Output,0x02);
+    if (!validReg.exactMatch(drinkName->text())) {
+
+        drinkName->setStyleSheet("color: rgb(255, 0, 0)");
+        connect(drinkName, &QLineEdit::textChanged, this, [=]() {drinkName->setStyleSheet("color: rgb(255, 255, 255)");});
+        valid++;
+
+
+    }
+    if (valid>0) {
+        return;
     } else {
-        if (Output.idPicture<0)
+        Output.id = currentEditedDrink.id;
+
+
+        Output.name = drinkName->text();
+        Output.description = drinkDescription->toPlainText();
+        QColor newColor = colorWidget->getColor();
+        Output.color.setRed(newColor.red());
+        Output.color.setBlue(newColor.blue());
+        Output.color.setGreen(newColor.green());
+        Output.idPicture = pictureWidget->getInfoAboutNewPicture().id;
+
+        QVector<WidgetToMarkItemInfo> listCategoryInfoFromWidget = categoryItemsWidget->getListInfoAboutWidgets();
+        for (int i=0;i<listCategoryInfoFromWidget.count();i++)
         {
-            Output.idPicture = 0;
+            if (listCategoryInfoFromWidget.at(i).isItemMarked)
+            {
+                qDebug()<<listCategoryInfoFromWidget.at(i).itemId;
+                Output.idCategories.push_back(listCategoryInfoFromWidget.at(i).itemId);
+            }
         }
 
-        currentPlugin->crudDrinkInfo(Output,0x01);
+        if ((int)Output.id > 0) {
+            currentPlugin->crudDrinkInfo(Output,0x02);
+        } else {
+            if (Output.idPicture<0)
+            {
+                Output.idPicture = 0;
+            }
+
+            currentPlugin->crudDrinkInfo(Output,0x01);
+        }
+        emit updateListWidget();
+        emit signalCloseEditDrink();
     }
-    emit updateListWidget();
-    emit signalCloseEditDrink();
 }
 
 
