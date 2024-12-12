@@ -72,6 +72,18 @@ void QEditDrinkWidget::createForm()
     drinkCategoryComboBox = new QComboBox();
     mainLayout->addWidget(drinkCategoryComboBox);
     QPushButton *openPriceDialog = new QPushButton(tr("Изменить"));
+    connect(openPriceDialog,&QPushButton::clicked,this,[=]() {
+        QVBoxLayout *vblPrice = new QVBoxLayout;
+
+        QVector<VolumeForComboBoxInfo> volumesForCb = createListVolumeForPriceWidget();
+        QVector<PriceAndVolumeInfo> priceAndVolume = getPriceAndVolumeInfoForCurrentDrink();
+        QVector<CategoryForComboBoxInfo> categoryForCb = getCategoryInfoForCurrentDrink();
+        QPriceWidget *priceWg = new QPriceWidget(categoryForCb, priceAndVolume,volumesForCb);
+        QDialog *dio1 = new QDialog;
+        vblPrice->addWidget(priceWg);
+        dio1->setLayout(vblPrice);
+        dio1->show();
+    });
     mainLayout->addWidget(openPriceDialog);
     updateCategories();
 
@@ -147,7 +159,7 @@ QVector<WidgetToMarkItemInfo> QEditDrinkWidget::createCategoryInfoListForWidget(
 
     if (currentEditedDrink.id > 0)
     {
-        QVector<int> listIdCategoriesForDrink = currentPlugin->getIdCategoriesForDrink(currentEditedDrink.id);
+       listIdCategoriesForDrink = currentPlugin->getIdCategoriesForDrink(currentEditedDrink.id);
     }
     for (int i=0;i<list.count();i++)
     {
@@ -179,7 +191,7 @@ QVector<PriceAndVolumeInfo> QEditDrinkWidget::getPriceAndVolumeInfoForCurrentDri
     QVector<PriceAndVolumeInfo> Output;
 
     QVector<QCoffeeVolumeDrinkInfo> listVolume = currentPlugin->getListVolume(currentEditedDrink.id);
-
+       QVector<CategoryForComboBoxInfo> currentCategory = this->getCategoryInfoForCurrentDrink();
     for(int i=0;i<listVolume.count();i++)
     {
         PriceAndVolumeInfo info;
@@ -187,8 +199,11 @@ QVector<PriceAndVolumeInfo> QEditDrinkWidget::getPriceAndVolumeInfoForCurrentDri
         info.volumeId = listVolume.at(i).id;
         info.volume = listVolume.at(i).volume;
         info.units = listVolume.at(i).units;
+        info.price = currentPlugin->getPricceInfo(currentCategory.at(drinkCategoryComboBox->currentIndex()).idCategory, currentEditedDrink.id, info.volumeId).value;
+        if (info.price>0.1) {
+            Output.push_back(info);
+        }
 
-        Output.push_back(info);
     }
 
     return Output;

@@ -8,7 +8,7 @@ QPriceWidgetItem::QPriceWidgetItem(QWidget *parent) : QWidget(parent)
 QPriceWidgetItem::QPriceWidgetItem(PriceAndVolumeInfo info,QWidget *parent) : QWidget(parent)
 {
     createForm();
-    newVolume->setChecked(true);
+
 
     infoAboutWidget = info;
     fillingForm();
@@ -45,43 +45,50 @@ void QPriceWidgetItem::createForm()
     priceTitle->setText("Цена:");
     layForPrice->addWidget(priceTitle);
     priceLine = new QLineEdit();
+      layForPrice->addSpacing(10);
     layForPrice->addWidget(priceLine,1,Qt::AlignLeft);
     priceLine->setMaximumWidth(50);
+
+
 
     layForVolumeTitle = new QHBoxLayout();
     layForGroupBox->addLayout(layForVolumeTitle,0);
     volumeTitle = new QLabel();
     volumeTitle->setText("Объём:");
     layForVolumeTitle->addWidget(volumeTitle);
-    layForVolumeTitle->addSpacing(10);
-    volumeTitle = new QLabel();
-    volumeTitle->setText("создать:");
-    layForVolumeTitle->addWidget(volumeTitle);
-    newVolume = new QCheckBox();
-    layForVolumeTitle->addWidget(newVolume,1);
+    volemeLine = new QLineEdit();
+
+    volemeLine->setMaximumWidth(50);
+
+
+      layForVolumeTitle->addWidget(volemeLine,1,Qt::AlignLeft);
+
+
+
 
     layForVolume = new QVBoxLayout();
     layForGroupBox->addLayout(layForVolume);
-    volumeListComboBox = new QComboBox();
-    volumeListComboBox->setMinimumHeight(20);
-    layForVolume->addWidget(volumeListComboBox,1,Qt::AlignVCenter | Qt::AlignLeft);
-    connect(volumeListComboBox,SIGNAL(activated(int)),this,SLOT(slotChangeComboBox(int)));
-    volumeListComboBox->setMinimumWidth(120);
+    // volumeListComboBox = new QComboBox();
+    // volumeListComboBox->setMinimumHeight(20);
+    // layForVolume->addWidget(volumeListComboBox,1,Qt::AlignVCenter | Qt::AlignLeft);
+    // connect(volumeListComboBox,SIGNAL(activated(int)),this,SLOT(slotChangeComboBox(int)));
+    // volumeListComboBox->setMinimumWidth(120);
 
-    widgetForNewVolume = new QWidget();
-    layForNewVolume = new QHBoxLayout();
-    layForVolume->addWidget(widgetForNewVolume,1,Qt::AlignVCenter);
-    widgetForNewVolume->setLayout(layForNewVolume);
-    newVolumeValue = new QLineEdit();
-    layForNewVolume->addWidget(newVolumeValue,Qt::AlignLeft);
-    newVolumeValue->setMaximumWidth(50);
-    newVolumeValue->setToolTip("Значение");
+    // widgetForNewVolume = new QWidget();
+    // layForNewVolume = new QHBoxLayout();
+    // layForVolume->addWidget(widgetForNewVolume,1,Qt::AlignVCenter);
+    // widgetForNewVolume->setLayout(layForNewVolume);
 
-    newVolumeUnits = new QLineEdit();
-    layForNewVolume->addWidget(newVolumeUnits,1,Qt::AlignLeft);
-    newVolumeUnits->setMaximumWidth(50);
-    newVolumeUnits->setToolTip("Единицы измерения");
-    connect(newVolume,SIGNAL(toggled(bool)),this,SLOT(slotCheckBoxChanged()));
+    // newVolumeValue = new QLineEdit();
+    // layForNewVolume->addWidget(newVolumeValue,Qt::AlignLeft);
+    // newVolumeValue->setMaximumWidth(50);
+    // newVolumeValue->setToolTip("Значение");
+
+    // newVolumeUnits = new QLineEdit();
+    // layForNewVolume->addWidget(newVolumeUnits,1,Qt::AlignLeft);
+    // newVolumeUnits->setMaximumWidth(50);
+    // newVolumeUnits->setToolTip("Единицы измерения");
+
 }
 
 void QPriceWidgetItem::fillingForm()
@@ -89,15 +96,15 @@ void QPriceWidgetItem::fillingForm()
     priceLine->setText(QString::number(infoAboutWidget.price));
     if (infoAboutWidget.volumeId>0)
     {
-        newVolume->setChecked(false);
-        priceLine->setText(QString::number(infoAboutWidget.price));
 
-        // дописать выбор текущего объёма
+        priceLine->setText(QString::number(infoAboutWidget.price));
+        volemeLine->setText(QString::number(infoAboutWidget.volume));
+
     }
     else
     {
-        newVolumeValue->setText(QString::number(infoAboutWidget.volume));
-        newVolumeUnits->setText(infoAboutWidget.units);
+      //  newVolumeValue->setText(QString::number(infoAboutWidget.volume));
+       // newVolumeUnits->setText(infoAboutWidget.units);
     }
 }
 

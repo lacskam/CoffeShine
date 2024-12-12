@@ -20,6 +20,7 @@ void QMarkWidgetItem::createForm()
 {
     mainLayout = new QHBoxLayout(this);
     itemStatus = new QCheckBox();
+
     connect(itemStatus,SIGNAL(clicked()),this,SLOT(slotCheckBoxChanged()));
     mainLayout->addWidget(itemStatus);
     itemName = new QLabel();

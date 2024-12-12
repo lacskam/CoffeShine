@@ -16,9 +16,11 @@ class QPriceWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QPriceWidget(QWidget *parent = nullptr);
+    explicit QPriceWidget(const QVector<CategoryForComboBoxInfo>& categories,
+                          const QVector<PriceAndVolumeInfo>& prices,const QVector<VolumeForComboBoxInfo> &VolumesForCb,
+                          QWidget* parent = nullptr);
 
-    void createNewItems(QVector<CategoryForComboBoxInfo>, QVector<PriceAndVolumeInfo>);
+    void createNewItems(const QVector<CategoryForComboBoxInfo> &, const QVector<PriceAndVolumeInfo> &);
     void updateCategories(QVector<CategoryForComboBoxInfo>);
     void setListExistenVolumes(QVector<VolumeForComboBoxInfo>);
     QVector<PriceAndVolumeInfo> getListInfoAboutPriceAndVolume();

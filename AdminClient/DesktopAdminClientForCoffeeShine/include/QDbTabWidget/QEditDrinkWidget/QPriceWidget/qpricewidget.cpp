@@ -1,6 +1,6 @@
 #include "qpricewidget.h"
 
-QPriceWidget::QPriceWidget(QWidget *parent) : QWidget(parent)
+QPriceWidget::QPriceWidget(const QVector<CategoryForComboBoxInfo> &categories, const QVector<PriceAndVolumeInfo> &prices, const QVector<VolumeForComboBoxInfo> &VolumesForCb, QWidget *parent) : QWidget(parent)
 {
     this->setMinimumHeight(600);
 
@@ -18,13 +18,26 @@ QPriceWidget::QPriceWidget(QWidget *parent) : QWidget(parent)
     listWidgetWithPriceAndVolume = new QListWidget();
     listWidgetWithPriceAndVolume->setSelectionMode( QAbstractItemView::NoSelection );
     layForGroupBox->addWidget(listWidgetWithPriceAndVolume,1);
-
+    setListExistenVolumes(VolumesForCb);
     QPushButton *addNewVolumeButton = new QPushButton("Добавить новый объём", this);
+
+    QHBoxLayout *layForBtns = new QHBoxLayout();
+
+    QPushButton *saveChangesBtn = new QPushButton("Сохранить", this);
+    QPushButton *declineChangesBtn = new QPushButton("Удалить", this);
+
+    layForBtns->addWidget(saveChangesBtn);
+    layForBtns->addWidget(declineChangesBtn);
+
+    mainLayout->addLayout(layForBtns);
+
     layForGroupBox->addWidget(addNewVolumeButton);
     connect(addNewVolumeButton,SIGNAL(clicked()),this,SLOT(slotAddPriceAndVolumeItem()));
+
+    createNewItems(categories,prices);
 }
 
-void QPriceWidget::createNewItems(QVector<CategoryForComboBoxInfo> currentCategory, QVector<PriceAndVolumeInfo> currentItems)
+void QPriceWidget::createNewItems(const QVector<CategoryForComboBoxInfo> &currentCategory, const QVector<PriceAndVolumeInfo> &currentItems)
 {
 
 
@@ -35,7 +48,7 @@ void QPriceWidget::createNewItems(QVector<CategoryForComboBoxInfo> currentCatego
         listWidgetWithPriceAndVolume->addItem (listWidgetItem);
         priceWidgetItem = new QPriceWidgetItem(currentItems.at(i));
         connect(priceWidgetItem,SIGNAL(signalDeleteThisItem(QPriceWidgetItem*)),this,SLOT(slotDeleteItem(QPriceWidgetItem*)));
-        priceWidgetItem->setTitle(QString::number(i+1));
+
         slotFillingComboBoxInWidgetItem();
         //Making sure that the listWidgetItem has the same size as the TheWidgetItem
         listWidgetItem->setSizeHint (priceWidgetItem->sizeHint());

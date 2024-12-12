@@ -40,7 +40,7 @@ public:
     // cud - create, update, delete(0x01,0x02,0x03)
     void crudDrinkInfo(QCoffeeDrinkInfo &drinkInfo,quint32 idOperation);
 
-
+    bool tesst = false;
 
 
 
@@ -165,7 +165,8 @@ public:
 
 
   void crudCategoryInfo(QCoffeeCategoryInfo &categoryInfo,QVector<qint32> newDrinks,quint32 idOperation);
-
+    void setIdCurrentPointSale(int id);
+     int getIdCurrentPointSale();
 
 
 private:

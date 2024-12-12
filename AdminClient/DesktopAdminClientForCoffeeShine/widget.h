@@ -16,10 +16,12 @@ class Widget : public QWidget
 
 public:
     Widget(QWidget *parent = 0);
-    Widget(QSettings *settings_,QUnNetProtokolCLient *client_,QCoffeeClientPlugin *plugin_,QWidget *parent = 0);
+    Widget(QSettings *settings_, QUnNetProtokolCLient *client_, QCoffeeClientPlugin *plugin_, QWidget *parent = 0);
     ~Widget();
 
 private:
+
+    QCoffeePointSale pickedPoint;
     QSettings *settings;
     QUnNetProtokolCLient *client;
     QCoffeeClientPlugin *plugin;

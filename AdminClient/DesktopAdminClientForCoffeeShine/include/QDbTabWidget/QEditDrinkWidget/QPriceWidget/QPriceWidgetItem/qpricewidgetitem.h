@@ -43,6 +43,7 @@ private:
     QLabel *volumeTitle;
     QLabel *newVolumeValueTitle;
     QLineEdit *priceLine;
+    QLineEdit *volemeLine;
     QLineEdit *newVolumeValue;
     QLineEdit *newVolumeUnits;
 

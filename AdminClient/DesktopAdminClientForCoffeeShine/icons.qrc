@@ -6,5 +6,6 @@
         <file>icons/other/Search.png</file>
         <file>icons/other/Loading.gif</file>
         <file>icons/mainTabs/Nn.png</file>
+         <file>icons/other/pointSale.png</file>
     </qresource>
 </RCC>

@@ -82,6 +82,8 @@ void QDbTabWidget::updateDrinkItems()
 
     QVector<QCoffeeDrinkInfo> listDrink = currentPlugin->getListDrink();
 
+
+
     for (int i=0;i<listDrink.count();i++)
     {
         QListWidgetItem *listWidgetItem = new QListWidgetItem(drinkListWidget);

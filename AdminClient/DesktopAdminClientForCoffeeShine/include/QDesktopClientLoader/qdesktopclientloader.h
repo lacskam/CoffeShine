@@ -11,6 +11,7 @@
 #include "../../Common/QUnNetProtokol/QUnHostsWidget/qunhostswidget.h"
 #include "../QUserAccDialog/quseraccdialog.h"
 #include "../../widget.h"
+#include "QPointSalePickWidget/qpointsalepickwidget.h"
 
 class QDesktopClientLoader : public QObject
 {
@@ -22,8 +23,10 @@ private:
     QSplashScreen *splashScreen;
     QSettings *settings;
     QCoffeeClientPlugin *currentPlugin;
-    QUnNetProtokolCLient *client;
 
+
+    QUnNetProtokolCLient *client;
+    bool test = false;
     QString currentLogin;
     QString currentPassword;
 

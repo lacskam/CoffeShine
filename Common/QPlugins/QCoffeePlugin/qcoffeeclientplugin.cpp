@@ -19,6 +19,15 @@ QCoffeeClientPlugin::QCoffeeClientPlugin(QUnNetProtokolCLient *client, quint16 b
     mutexDBPicture = new QMutex;
 }
 
+
+void QCoffeeClientPlugin::setIdCurrentPointSale(int id) {
+    idCurrentPointSale = id;
+}
+
+int QCoffeeClientPlugin::getIdCurrentPointSale() {
+    return idCurrentPointSale;
+}
+
 QCoffeeClientPlugin::~QCoffeeClientPlugin()
 {
     delete mutexCurrentUserInfo;
@@ -3171,26 +3180,26 @@ void QCoffeeClientPlugin::doStep ()
     {        switch (currentStep) {
         case 0: loadPointSales();
             break;
-        case 1: loadAllCategoryes();
+         case 1: loadAllCategoryes();
+             break;
+         case 2: loadAllDrinks();
+             break;
+         case 3: loadVolumeDrink();
             break;
-        case 2: loadAllDrinks();
+         case 4: loadTypeDrink();
             break;
-        case 3: loadVolumeDrink();
-            break;
-        case 4: loadTypeDrink();
-            break;
-        case 5: loadUserInfo();
-            break;
-        case 6: loadAllPrices();
-            break;
-        case 7: loadAllShifts();
+         case 5: loadUserInfo();
+             break;
+         case 6: loadAllPrices();
+             break;
+         case 7: loadAllShifts();
             break;
         // case 8: loadAllReceipt();
         //     break;
         // case 9: loadAllSoldPositions();
         //     break;
         case 8: updateDrinkPicture(); //10 эт временно
-            break;
+           break;
         default: endSynchronization();
             break;
         }

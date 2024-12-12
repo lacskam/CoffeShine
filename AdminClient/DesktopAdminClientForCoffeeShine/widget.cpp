@@ -8,9 +8,12 @@ Widget::Widget(QWidget *parent)
 
 Widget::Widget(QSettings *settings_, QUnNetProtokolCLient *client_, QCoffeeClientPlugin *plugin_, QWidget *parent) : QWidget (parent)
 {
+
+
     settings = settings_;
     client = client_;
     plugin = plugin_;
+    plugin->setIdCurrentPointSale(pickedPoint.id);
     createForm();
     loadSettings();
 }

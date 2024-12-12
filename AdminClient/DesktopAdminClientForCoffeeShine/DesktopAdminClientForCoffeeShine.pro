@@ -72,6 +72,8 @@ SOURCES += \
     include/QNnTabWidget/QProductsStatPred/qproductstatisticprediction.cpp \
     include/QNnTabWidget/QLoadingWidget/qloadingwidget.cpp \
     include/QNnFileProcessing/QNnDbProcessing.cpp \
+    include/QDesktopClientLoader/QPointSalePickWidget/qpointsalepickwidget.cpp \
+    include/QDesktopClientLoader/QPointSalePickWidget/QPointSalePickWidgetItem/qpointsalepickwidgetitem.cpp \
   #  include/QNnFileProcessing/QWeather/weather.cpp \
    # ../../Common/QPlugins/QCoffeePlugin/QNnPredictionInfo/qnnpredictioninfo.cpp  \
     main.cpp \
@@ -125,6 +127,8 @@ HEADERS += \
     include/QNnTabWidget/QProductsStatPred/qproductstatisticprediction.h \
     include/QNnTabWidget/QLoadingWidget/qloadingwidget.h \
     include/QNnFileProcessing/QNnDbProcessing.h \
+    include/QDesktopClientLoader/QPointSalePickWidget/qpointsalepickwidget.h \
+    include/QDesktopClientLoader/QPointSalePickWidget/QPointSalePickWidgetItem/qpointsalepickwidgetitem.h \
   #  ../../Common/QPlugins/QCoffeePlugin/QNnPredictionInfo/qnnpredictioninfo.h \
    #  include/QNnFileProcessing/QWeather/weather.h \
     widget.h

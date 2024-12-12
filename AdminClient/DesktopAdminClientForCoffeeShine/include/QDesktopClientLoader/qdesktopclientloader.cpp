@@ -58,8 +58,23 @@ void QDesktopClientLoader::setSplashMessage (QString message)
 
 void QDesktopClientLoader::showMainWindow()
 {
-    Widget *w = new Widget(settings,client,currentPlugin);
-    w->show();
+
+
+        QPointSalePickWidget *wgPick = new QPointSalePickWidget(currentPlugin);
+
+        connect(wgPick, &QPointSalePickWidget::signalPointSalePicked, this, [=](const QCoffeePointSale &pointSale) {
+            wgPick->close();
+
+            Widget *w = new Widget(settings, client, currentPlugin);
+            w->show();
+
+
+        });
+          wgPick->show();
+
+
+
+
 }
 
 void QDesktopClientLoader::showSplashScreen()
@@ -127,7 +142,10 @@ void QDesktopClientLoader::slotDisconnected()
 
 void QDesktopClientLoader::slotUserInfoReceived()
 {
+
+
     currentPlugin = new QCoffeeClientPlugin(client,0x06,this);
+
 
     connect(currentPlugin,SIGNAL(signalBeginSynchronization()),
             this,SLOT(slotBeginSynchronization()));
