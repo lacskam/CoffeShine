@@ -55,3 +55,12 @@ void QPointSalePickWidget::fillForm() {
 
 }
 
+void QPointSalePickWidget::closeEvent(QCloseEvent *event) {
+
+    QCoffeePointSale *pS = new QCoffeePointSale();
+    pS->id=-1;
+
+
+     emit signalPointSalePicked(*pS);
+    delete pS;
+}

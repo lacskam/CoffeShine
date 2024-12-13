@@ -30,6 +30,8 @@ private:
     QListWidget *listWidgetPickPointSale;
     QListWidgetItem *listWidgetItem;
     QPointSalePickWidgetItem *pointSaleWgItem;
+protected:
+    virtual void closeEvent(QCloseEvent *event);
 
 
 signals:

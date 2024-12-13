@@ -3194,10 +3194,10 @@ void QCoffeeClientPlugin::doStep ()
              break;
          case 7: loadAllShifts();
             break;
-        // case 8: loadAllReceipt();
-        //     break;
-        // case 9: loadAllSoldPositions();
-        //     break;
+        // // case 8: loadAllReceipt();
+        // //     break;
+        // // case 9: loadAllSoldPositions();
+        // //     break;
         case 8: updateDrinkPicture(); //10 эт временно
            break;
         default: endSynchronization();
@@ -3206,7 +3206,7 @@ void QCoffeeClientPlugin::doStep ()
     }
     else {
         switch (currentStep) {
-        case 0: loadCurrentPintSaleInfo(idCurrentPointSale);
+        case 0: loadPointSales();
             break;
         case 1: loadCategoriesForPointSale();
             break;
