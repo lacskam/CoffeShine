@@ -25,17 +25,22 @@ public:
 private:
 
     QCoffeeClientPlugin *currentPlugin;
-    QHBoxLayout *mainLayout;
+    QVBoxLayout *mainLayout;
+    QHBoxLayout *lFoButtons;
     QScrollArea *scrolAreaForPoints;
     QListWidget *listWidgetPickPointSale;
     QListWidgetItem *listWidgetItem;
     QPointSalePickWidgetItem *pointSaleWgItem;
+
+    QPushButton *btnAllPointsales;
+    QPushButton *btnAccept;
+    QPushButton *btnDecline;
 protected:
-    virtual void closeEvent(QCloseEvent *event);
+
 
 
 signals:
-    void signalPointSalePicked(const QCoffeePointSale &pointSale);
+    void signalPointSalePicked(const QVector<int> &pointSales);
 public slots:
 
 

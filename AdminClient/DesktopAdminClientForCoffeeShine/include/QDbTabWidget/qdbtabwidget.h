@@ -24,6 +24,8 @@ public:
 private:
     QCoffeeClientPlugin *currentPlugin;
 
+
+
     QHBoxLayout *mainLayout;
     QLayout *editDrinksLayout;
     QVBoxLayout *drinksWidgetLayout;
@@ -53,15 +55,25 @@ private:
     QEditDrinkWidget * editDrinkWidget;
     QVBoxLayout * editLayout;
 
+    QHBoxLayout *hblForButtons;
     QCategoryWidget *catrgoryEdit;
     QStackedWidget *stackedWidget;
+    QComboBox *pickPointSaleForCategory;
+    QPushButton *btnAddExistenCategory;
 
+
+    QWidget *wgExCategory;
+    QVBoxLayout *vblExCategory;
+    QListWidget *categoryListWidgetToAddEx;
+    QPushButton *btnExAccept;
     void createForm();
 signals:
 
 public slots:
     void updateDrinkItems();
     void updateCategoryItems();
+
+     void updateCategoryItemsForEx();
 
 private slots:
     void slotOpenDrinkEditWidget(QCoffeeDrinkInfo);

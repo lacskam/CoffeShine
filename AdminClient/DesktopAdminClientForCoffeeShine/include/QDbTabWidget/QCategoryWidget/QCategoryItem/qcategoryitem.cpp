@@ -2,19 +2,29 @@
 
 
 
-QCategoryItem::QCategoryItem(QCoffeeCategoryInfo info, QCoffeeClientPlugin *plugin_,  QWidget *parent) {
+QCategoryItem::QCategoryItem(QCoffeeCategoryInfo info, QCoffeeClientPlugin *plugin_,  QWidget *parent, int isEx) {
 
 
     currentPlugin = plugin_;
     categoryInfo = info;
-
+    isEx_ = isEx;
     hblCategory = new QHBoxLayout(this);
 
+
     categoryName = new QLabel(categoryInfo.name);
-    categoryName->setAlignment(Qt::AlignCenter);
-    categoryName->setFont(QFont("Sans",12));
+    categoryName->setAlignment(Qt::AlignLeft);
+    categoryName->setFont(QFont("Sans", 10));
+    categoryName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+
 
     hblCategory->addWidget(categoryName);
+
+
+
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+
 
 
 }
@@ -22,5 +32,31 @@ QCategoryItem::QCategoryItem(QCoffeeCategoryInfo info, QCoffeeClientPlugin *plug
 
 void QCategoryItem::mouseDoubleClickEvent(QMouseEvent *)
 {
-    emit signalOpenEditCategoryWidget(categoryInfo);
+    if (!isEx_) {
+        emit signalOpenEditCategoryWidget(categoryInfo);
+
+    }
 }
+void QCategoryItem::mousePressEvent(QMouseEvent* e) {
+    if (isEx_) {
+        if (isPicked) {
+
+            isPicked = false;
+            categoryName->setStyleSheet("color: rgb(255, 255, 255)");
+        } else {
+
+            isPicked = true;
+            categoryName->setStyleSheet("color: rgb(0, 204, 255)");
+
+
+
+        }
+
+
+        this->update();
+    }
+
+    QWidget::mousePressEvent(e);
+}
+
+

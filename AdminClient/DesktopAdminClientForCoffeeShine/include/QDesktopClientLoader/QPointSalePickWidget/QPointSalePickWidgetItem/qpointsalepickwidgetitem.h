@@ -19,7 +19,8 @@ class QPointSalePickWidgetItem : public QWidget
     Q_OBJECT
 public:
     explicit QPointSalePickWidgetItem(QCoffeeClientPlugin *currentPlugin_, QCoffeePointSale pointSaleInfo_, QWidget *parent = nullptr);
-
+    bool isPicked=false;
+        QCoffeePointSale  pointSaleInfo;
 
 protected:
     virtual void paintEvent(QPaintEvent*);
@@ -42,7 +43,7 @@ private:
     QAction *actionDeleteHost;
 
     QCoffeeClientPlugin *currentPlugin;
-    QCoffeePointSale  pointSaleInfo;
+
 
     QLabel *pointSaleNamef ;
 

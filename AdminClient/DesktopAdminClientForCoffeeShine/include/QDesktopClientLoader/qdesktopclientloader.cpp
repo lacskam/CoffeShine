@@ -62,16 +62,11 @@ void QDesktopClientLoader::showMainWindow()
 
 
 
-        QPointSalePickWidget *wgPick = new QPointSalePickWidget(currentPlugin);
 
-        connect(wgPick, &QPointSalePickWidget::signalPointSalePicked, this, [=](const QCoffeePointSale &pointSale) {
-            delete wgPick;
-            currentPlugin->setIdCurrentPointSale(pointSale.id);
             Widget *w = new Widget(settings, client, currentPlugin);
             w->show();
 
-        });
-          wgPick->show();
+
 
 
 

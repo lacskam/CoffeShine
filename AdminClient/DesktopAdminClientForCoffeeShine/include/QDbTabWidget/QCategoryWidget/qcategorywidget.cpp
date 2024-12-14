@@ -1,10 +1,10 @@
 #include "qcategorywidget.h"
 
-QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInfo *currentCat, QWidget *parent) {
+QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInfo *currentCat, QWidget *parent,int pointSaleId) {
 
     currentPlugin = plugin_;
 
-
+    currentPointSaleId = pointSaleId;
     currentCategory = new QCoffeeCategoryInfo;
 
 
@@ -56,7 +56,7 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 
     drinkListWidget->setFlow(QListView::LeftToRight);    //Lays out horizontally instead of vertically
     drinkListWidget->setResizeMode(QListView::Adjust);   //Dynamically adjust contents
-    drinkListWidget->setGridSize(QSize(170, 190));      //This is an arbitrary value, but it forces the layout into a grid
+    drinkListWidget->setGridSize(QSize(165, 185));      //This is an arbitrary value, but it forces the layout into a grid
     drinkListWidget->setSpacing(30);                     //As an alternative to using setGridSize(), set a fixed spacing in the layout:
     drinkListWidget->setViewMode(QListView::IconMode);   //And the most important part:
 
@@ -84,17 +84,47 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     hblButton->addWidget(btnSave);
     hblButton->addWidget(btnCancel);
 
-    QLabel *labelDelete = new QLabel("Удаление категории");
-    QPushButton *buttonDelete = new QPushButton("Удалить");
-    connect(buttonDelete,SIGNAL(clicked()),this,SLOT(slotDeleteCategory()));
+    if (currentPointSaleId==0) {
+        labelDelete = new QLabel("Удаление категории");
+        QPushButton *buttonDelete = new QPushButton("Удалить");
+         connect(buttonDelete,SIGNAL(clicked()),this,SLOT(slotDeleteCategory()));
+        if (currentCategory->id>0) {
+            mainLayout->addSpacing(10);
+            mainLayout->addWidget(labelDelete);
 
+            mainLayout->addWidget(buttonDelete);
+        }
+    } else {
+        labelUnlink = new QLabel("Отвязать категорию от точки продажи "+currentPlugin->getPointSaleInfo(currentPointSaleId).name);
+        buttonUnlink = new QPushButton("Отвязать");
 
-    if (currentCategory->id>0) {
-        mainLayout->addSpacing(10);
-        mainLayout->addWidget(labelDelete);
+        connect(buttonUnlink,&QPushButton::clicked,this,[=](){
+            QVector<int> iDsDrinks = currentPlugin->getIdDrinkForCategory(currentCategory->id);
 
-        mainLayout->addWidget(buttonDelete);
+            for (int i =0;i< currentCategory->idPointSale.size();i++) {
+                if (currentCategory->idPointSale.at(i)==currentPointSaleId) {
+                    currentCategory->idPointSale.removeAt(i);
+                }
+            }
+
+            currentPlugin->crudCategoryInfo(*currentCategory,iDsDrinks,0x02);
+              emit btnCancel->clicked();
+        });
+
+        if (currentCategory->id>0) {
+            mainLayout->addSpacing(10);
+            mainLayout->addWidget(labelUnlink);
+
+            mainLayout->addWidget(buttonUnlink);
+        }
     }
+
+
+
+
+
+
+
 
     mainLayout->addSpacing(20);
 
@@ -198,7 +228,7 @@ void QCategoryWidget::drinkPickDialogAccepted() {
     drinkListWidget->clear();
 
 
-    // создание виджетов каждого напитка
+
     for (int i=0;i<currentCategoryDrinkInfo.count();i++)
     {
         QListWidgetItem *listWidgetItem = new QListWidgetItem(drinkListWidget);
@@ -223,7 +253,7 @@ void QCategoryWidget::updateDrinkItems()
     drinkListWidget->clear();
 
     QVector<QCoffeeDrinkInfo> currentCategoryDrinkInfo = currentPlugin->getListDrink(currentCategory->id);
-    // создание виджетов каждого напитка
+
     for (int i=0;i<currentCategoryDrinkInfo.count();i++)
     {
         QListWidgetItem *listWidgetItem = new QListWidgetItem(drinkListWidget);
@@ -310,13 +340,28 @@ void QCategoryWidget::sendCategory() {
             currentCategory->color.setRed(1);
             currentCategory->color.setGreen(1);
 
-            currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x01);
+            PsPw = new QPointSalePickWidget(currentPlugin);
+
+            connect(PsPw, &QPointSalePickWidget::signalPointSalePicked, this, [=](const QVector<int> &pointSales) {
+
+                currentCategory->idPointSale = pointSales;
+
+
+
+                delete PsPw;
+                PsPw = nullptr;
+                 currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x01);
+                 emit btnCancel->clicked();
+            });
+            PsPw->show();
+
         } else {
             currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x02);
+             emit btnCancel->clicked();
         }
     }
 
-    emit btnCancel->clicked();
+
     }
 }
 

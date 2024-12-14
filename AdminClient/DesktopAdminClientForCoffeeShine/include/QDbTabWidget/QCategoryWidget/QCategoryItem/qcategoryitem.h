@@ -10,10 +10,13 @@ class QCategoryItem : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QCategoryItem(QCoffeeCategoryInfo info, QCoffeeClientPlugin* plugin_, QWidget *parent);
+    explicit QCategoryItem(QCoffeeCategoryInfo info, QCoffeeClientPlugin* plugin_, QWidget *parent,int isEx =0);
+    bool isPicked = false;
+    int isEx_;
+    QCoffeeCategoryInfo categoryInfo;
 private:
     QCoffeeClientPlugin * currentPlugin;
-    QCoffeeCategoryInfo categoryInfo;
+
 
     QLabel *categoryName;
     QHBoxLayout *hblCategory;
@@ -21,6 +24,7 @@ private:
 protected:
 
     virtual void mouseDoubleClickEvent(QMouseEvent*);
+    virtual void mousePressEvent(QMouseEvent*e);
 
 signals:
 

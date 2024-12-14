@@ -594,9 +594,16 @@ QVector<int> QCoffeeClientPlugin::getDrinkIdForPointSale(int idPointSale)
     return Output;
 }
 
+
+
+
+
 QVector<int> QCoffeeClientPlugin::getCategoryIdForPointSale(int idPointSale)
 {
     QVector<int> Output;
+
+
+
 
     QString textQuery = "select tbl_drinkСategory_id_drinkСategory from tbl_pointSale_drinkСategory "
                         "where tbl_pointSale_id_pointSale = '" + QString::number(idPointSale) + "';";
@@ -605,8 +612,10 @@ QVector<int> QCoffeeClientPlugin::getCategoryIdForPointSale(int idPointSale)
     QSqlQuery *queryCategoryId = execQuery(textQuery,&ok);
 
     if (ok) {
+
         int currentId;
         while (queryCategoryId->next()) {
+
             currentId = queryCategoryId->value(0).toInt();
             Output.push_back(currentId);
         }
@@ -978,11 +987,7 @@ int QCoffeeClientPlugin::getIdCategory(QCoffeeCategoryInfo &category)
     int Output = -1;
 
     QString textQuery = "select id_drinkСategory from tbl_drinkСategory "
-                        "where name_drinkСategory = '" + category.name + "' "
-                        "and description_drinkСategory = '" + category.description + "' "
-                        "and red_drinkСategory - '" + QString::number(category.color.red()) + "' "
-                        "and green_drinkСategory - '" + QString::number(category.color.green()) + "' "
-                        "and blue_drinkСategory - '" + QString::number(category.color.blue()) + "';";
+                        "where name_drinkСategory = '" + category.name +  "';";
 
     bool ok = false;
     QSqlQuery *queryCategoryId = execQuery(textQuery,&ok);

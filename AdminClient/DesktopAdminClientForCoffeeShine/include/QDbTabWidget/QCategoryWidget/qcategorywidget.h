@@ -14,16 +14,18 @@
 #include "../../Common/QPlugins/QCoffeePlugin/qcoffeeclientplugin.h"
 #include "../QDrinkWidgetItem//qdrinkwidgetitem.h"
 #include <QDialog>
+#include "../../QDesktopClientLoader/QPointSalePickWidget/qpointsalepickwidget.h"
 
 class QCategoryWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QCategoryWidget(QCoffeeClientPlugin *plugin_, QCoffeeCategoryInfo *currentCat, QWidget *parent = nullptr);
+    explicit QCategoryWidget(QCoffeeClientPlugin *plugin_, QCoffeeCategoryInfo *currentCat, QWidget *parent = nullptr, int pointSaleId=0);
 
 private:
     QCoffeeClientPlugin *currentPlugin;
-
+    QPointSalePickWidget *PsPw;
+    int currentPointSaleId;
     QCoffeeCategoryInfo *currentCategory;
      QVBoxLayout *mainLayout;
     QHBoxLayout *hblCategory;
@@ -36,6 +38,12 @@ private:
     QTextEdit *descriptionCategoryEdit;
      QPushButton *buttonAddNewDrinkToCategory;
     QPushButton *buttonDelete;
+
+     QLabel *labelDelete;
+    QPushButton *buttonDelete1;
+     QLabel *labelUnlink;
+    QPushButton *buttonUnlink;
+
 
 
      QString nameFirst;

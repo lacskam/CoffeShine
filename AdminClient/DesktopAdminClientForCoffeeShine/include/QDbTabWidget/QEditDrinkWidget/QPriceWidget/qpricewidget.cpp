@@ -65,6 +65,7 @@ void QPriceWidget::slotDeleteItem(QPriceWidgetItem * deleteItem)
         {
             listWidgetWithPriceAndVolume->removeItemWidget(listWidgetWithPriceAndVolume->item(i));
             delete listWidgetWithPriceAndVolume->item(i);
+
         }
     }
 

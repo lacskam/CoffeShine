@@ -121,12 +121,21 @@ void QPointSalePickWidgetItem::slotShowMenuContext(QPoint pos)
 // }
 
 void QPointSalePickWidgetItem::mousePressEvent(QMouseEvent*) {
+    qDebug() << "Mouse press event triggered";  // Отладка
 
+    if (isPicked) {
+         qDebug() << isPicked;
+        isPicked = false;
+        pointSaleNamef->setFont(QFont("Sans", 11));
+        pointSaleNamef->setStyleSheet("color: rgb(255, 255, 255)");
+    } else {
+         qDebug() << isPicked;
+        isPicked = true;
+        pointSaleNamef->setFont(QFont("Sans", 12));
+        pointSaleNamef->setStyleSheet("color: rgb(0, 204, 255)");
+    }
 
-       emit signalPointSalePicked(pointSaleInfo);
-
-
-
+    update();  // Обновляем виджет
 }
 
 

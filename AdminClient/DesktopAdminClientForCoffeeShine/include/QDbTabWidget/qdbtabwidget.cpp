@@ -44,19 +44,107 @@ void QDbTabWidget::createForm()
 
 
     categoryWidget = new QWidget();
+    hblForButtons = new QHBoxLayout;
     categoryWidgetLayout = new QVBoxLayout(categoryWidget);
     QPushButton *addCategoryButton = new QPushButton(tr("Создать новую"));
+    btnAddExistenCategory = new QPushButton("Добавить существующую категорию");
+
+    connect(btnAddExistenCategory,&QPushButton::clicked,this,[=]() {
+        wgExCategory = new QWidget;
+
+        vblExCategory = new QVBoxLayout(wgExCategory);
+
+
+        categoryListWidgetToAddEx = new QListWidget();
+        categoryListWidgetToAddEx->setFlow(QListView::TopToBottom);    //Lays out horizontally instead of vertically
+        categoryListWidgetToAddEx->setResizeMode(QListView::Adjust);   //Dynamically adjust contents
+        categoryListWidgetToAddEx->setGridSize(QSize(200, 40));       //This is an arbitrary value, but it forces the layout into a grid
+
+        categoryListWidgetToAddEx->setViewMode(QListView::ListMode);
+        categoryListWidgetToAddEx->setSelectionMode(QAbstractItemView::NoSelection);
+        categoryListWidgetToAddEx->setStyleSheet(
+            "QListWidget::item:hover { "
+            "background-color: rgba(0, 120, 240, 15); "
+            "}"
+            );
+
+        vblExCategory->addWidget(categoryListWidgetToAddEx);
+
+        btnExAccept = new QPushButton("Принять");
+        vblExCategory->addWidget(btnExAccept);
+        updateCategoryItemsForEx();
+        wgExCategory->show();
+        connect(btnExAccept,&QPushButton::clicked,this,[=]() {
+            QVector<QCoffeeCategoryInfo> pickedExCategories;
+
+
+            for (int i = 0; i < categoryListWidgetToAddEx->count(); ++i) {
+                QListWidgetItem *listItem = categoryListWidgetToAddEx->item(i);
+
+
+                QCategoryItem *categoryItem = qobject_cast<QCategoryItem*>(categoryListWidgetToAddEx->itemWidget(listItem));
+
+
+                if (categoryItem && categoryItem->isPicked) {
+                    categoryItem->categoryInfo.idPointSale.push_back(pickPointSaleForCategory->currentIndex());
+                    pickedExCategories.push_back(categoryItem->categoryInfo);
+                }
+            }
+            for (int i=0;i<pickedExCategories.count();i++) {
+                QCoffeeCategoryInfo categoryCopy = pickedExCategories.at(i);
+                currentPlugin->crudCategoryInfo(categoryCopy,currentPlugin->getIdDrinkForCategory(pickedExCategories.at(i).id),0x02);
+
+            }
+
+
+
+            wgExCategory->close();
+
+        });
+
+    });
+
+    addCategoryButton->setMaximumWidth(100);
+    pickPointSaleForCategory = new  QComboBox;
+    pickPointSaleForCategory->addItem("Все катеогрии");
+    QVector<QCoffeePointSale> pointSales = currentPlugin->getListPointSale();
+
+    for (int i =0;i<pointSales.count();i++) {
+        pickPointSaleForCategory->addItem("Категории для точки продаж "+pointSales.at(i).name);
+
+    }
+
+    connect(pickPointSaleForCategory, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
+            this, [this](int index) {
+
+             updateCategoryItems();
+
+            });
      connect(addCategoryButton,SIGNAL(clicked()),this,SLOT(slotAddNewCategory())); //что это блять
-    categoryWidgetLayout->addWidget(addCategoryButton);
+
+     hblForButtons->addWidget(pickPointSaleForCategory);
+       hblForButtons->addWidget(addCategoryButton);
+    categoryWidgetLayout->addLayout(hblForButtons);
     tabWidget->addTab(categoryWidget,"Категории");
 
     categoryListWidget = new QListWidget();
-    categoryListWidget->setFlow(QListView::TopToBottom);    //Lays out horizontally instead of vertically
-    categoryListWidget->setResizeMode(QListView::Adjust);   //Dynamically adjust contents
-    /*categoryListWidget->setGridSize(QSize(180, 230));  */     //This is an arbitrary value, but it forces the layout into a grid
-    categoryListWidget->setSpacing(10);                     //As an alternative to using setGridSize(), set a fixed spacing in the layout:
-    categoryListWidget->setViewMode(QListView::ListMode);   //And the most important part:
+
+    categoryListWidget->setFlow(QListView::TopToBottom);
+    categoryListWidget->setResizeMode(QListView::Fixed);
+    categoryListWidget->setGridSize(QSize(200, 50));
+    categoryListWidget->setSpacing(1);
+    categoryListWidget->setViewMode(QListView::ListMode);
+      categoryListWidget->setSelectionMode(QAbstractItemView::NoSelection);
+    categoryListWidget->setStyleSheet(
+        "QListWidget::item:hover { "
+        "background-color: rgba(0, 120, 240, 15); "
+        "}"
+        );
+
+
     categoryWidgetLayout->addWidget(categoryListWidget);
+    categoryWidgetLayout->addWidget(btnAddExistenCategory);
+    btnAddExistenCategory->hide();
 
 
     tabWidget->addTab(new QWidget(),"Точки продаж");
@@ -101,25 +189,74 @@ void QDbTabWidget::updateDrinkItems()
 
 void QDbTabWidget::updateCategoryItems() {
     categoryListWidget->clear();
+    int index = pickPointSaleForCategory->currentIndex();
+    QVector<QCoffeeCategoryInfo> listCategories;
+    if (index==0) {
+         listCategories = currentPlugin->getListCategories();
+        btnAddExistenCategory->hide();
+    } else {
+        QVector<int> categiryIdis = currentPlugin->getPointSaleInfo(index).idCategories;
 
-    QVector<QCoffeeCategoryInfo> listCategories = currentPlugin->getListCategories();
+        for (int i =0;i<categiryIdis.count();i++) {
+             listCategories.push_back(currentPlugin->getCategoryInfo(categiryIdis.at(i)));
+        }
+        btnAddExistenCategory->show();
+
+    }
+
 
     for (int i = 0; i < listCategories.count(); i++) {
 
-
         QListWidgetItem *listWidgetItem = new QListWidgetItem(categoryListWidget);
-        listWidgetItem->setText(listCategories.at(i).name);
 
 
         QCategoryItem *categoryWidgetItem = new QCategoryItem(listCategories.at(i), currentPlugin, categoryListWidget);
-          connect(categoryWidgetItem,SIGNAL(signalOpenEditCategoryWidget(QCoffeeCategoryInfo)),this,SLOT(slotOpenCategoryEditWidget(QCoffeeCategoryInfo)));
+        connect(categoryWidgetItem, SIGNAL(signalOpenEditCategoryWidget(QCoffeeCategoryInfo)),
+                this, SLOT(slotOpenCategoryEditWidget(QCoffeeCategoryInfo)));
+
+
+        listWidgetItem->setSizeHint(categoryWidgetItem->sizeHint());
+
 
         categoryListWidget->setItemWidget(listWidgetItem, categoryWidgetItem);
-
 
         qDebug() << listCategories.at(i).name;
     }
 }
+
+void QDbTabWidget::updateCategoryItemsForEx() {
+
+    categoryListWidgetToAddEx->clear();
+
+    int index = pickPointSaleForCategory->currentIndex();
+
+
+    QVector<QCoffeeCategoryInfo> listCategories;
+    listCategories = currentPlugin->getListCategories();
+
+    QVector<int> categiryIdis = currentPlugin->getPointSaleInfo(index).idCategories;
+
+
+
+    for (int i = 0; i < listCategories.count(); i++) {
+
+        if (!categiryIdis.contains(listCategories.at(i).id)) {
+            QListWidgetItem *listWidgetItem = new QListWidgetItem(categoryListWidgetToAddEx);
+
+
+            QCategoryItem *categoryWidgetItem = new QCategoryItem(listCategories.at(i), currentPlugin, categoryListWidgetToAddEx,1);
+            connect(categoryWidgetItem,SIGNAL(signalOpenEditCategoryWidget(QCoffeeCategoryInfo)),this,SLOT(slotOpenCategoryEditWidget(QCoffeeCategoryInfo)));
+            listWidgetItem->setSizeHint(categoryWidgetItem->sizeHint());
+
+            categoryListWidgetToAddEx->setItemWidget(listWidgetItem, categoryWidgetItem);
+
+
+            qDebug() << listCategories.at(i).name;
+        }
+
+    }
+}
+
 
 
 void QDbTabWidget::slotOpenDrinkEditWidget(QCoffeeDrinkInfo info)
@@ -136,7 +273,7 @@ void QDbTabWidget::slotOpenCategoryEditWidget(QCoffeeCategoryInfo info)
 
     delete scrollAreaForEdit->widget();
     editOrAddItemGroupBox->setTitle(tr("Редактировние категории"));
-    catrgoryEdit = new QCategoryWidget(currentPlugin,&info,this);
+    catrgoryEdit = new QCategoryWidget(currentPlugin,&info,this,pickPointSaleForCategory->currentIndex());
 
       scrollAreaForEdit->setWidget(catrgoryEdit);
 
