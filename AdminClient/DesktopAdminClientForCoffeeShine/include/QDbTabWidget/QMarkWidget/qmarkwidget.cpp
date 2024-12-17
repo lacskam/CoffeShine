@@ -38,6 +38,8 @@ void QMarkWidget::createForm()
 
 void QMarkWidget::setItems(QVector<WidgetToMarkItemInfo> infoList)
 {
+
+    listWidget->clear();
     for (int i=0;i<infoList.count();i++)
     {
         listWidgetItem = new QListWidgetItem(listWidget);

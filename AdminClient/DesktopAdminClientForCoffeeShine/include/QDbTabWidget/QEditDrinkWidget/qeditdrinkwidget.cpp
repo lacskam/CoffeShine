@@ -61,7 +61,7 @@ void QEditDrinkWidget::createForm()
     categoryItemsWidget = new QMarkWidget();
     categoryItemsWidget->setTitle("Добавление категорий");
     categoryItemsWidget->setMinAndMaxHeight(300,500);
-    categoryItemsWidget->setItems(createCategoryInfoListForWidget());
+
     mainLayout->addWidget(categoryItemsWidget);
     connect(categoryItemsWidget,SIGNAL(signalNumberOfCategoriesUsedHasChanged()),this,SLOT(updateCategories()));
 
@@ -69,8 +69,22 @@ void QEditDrinkWidget::createForm()
     QLabel * priceLabel = new QLabel(tr("Цены для:"));
     mainLayout->addWidget(priceLabel);
     mainLayout->addSpacing(15);
+    QHBoxLayout *hblForPickPriceData = new QHBoxLayout;
     drinkCategoryComboBox = new QComboBox();
-    mainLayout->addWidget(drinkCategoryComboBox);
+    drinkPointSaleComboBox = new QComboBox();
+    connect(drinkPointSaleComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),this,[=]() {
+
+
+                categoryItemsWidget->setItems(createCategoryInfoListForWidget());
+
+                  updateCategories();
+    });
+
+     hblForPickPriceData->addWidget(drinkCategoryComboBox);
+      hblForPickPriceData->addWidget(drinkPointSaleComboBox);
+
+
+    mainLayout->addLayout(hblForPickPriceData);
     QPushButton *openPriceDialog = new QPushButton(tr("Изменить"));
     connect(openPriceDialog,&QPushButton::clicked,this,[=]() {
         QVBoxLayout *vblPrice = new QVBoxLayout;
@@ -78,6 +92,8 @@ void QEditDrinkWidget::createForm()
         QVector<VolumeForComboBoxInfo> volumesForCb = createListVolumeForPriceWidget();
         QVector<PriceAndVolumeInfo> priceAndVolume = getPriceAndVolumeInfoForCurrentDrink();
         QVector<CategoryForComboBoxInfo> categoryForCb = getCategoryInfoForCurrentDrink();
+
+
         QPriceWidget *priceWg = new QPriceWidget(categoryForCb, priceAndVolume,volumesForCb);
         QDialog *dio1 = new QDialog;
         vblPrice->addWidget(priceWg);
@@ -85,7 +101,12 @@ void QEditDrinkWidget::createForm()
         dio1->show();
     });
     mainLayout->addWidget(openPriceDialog);
+
+    updatePointSales();
+
     updateCategories();
+
+    categoryItemsWidget->setItems(createCategoryInfoListForWidget());
 
     mainLayout->addSpacing(20);
 
@@ -154,7 +175,12 @@ QVector<VolumeForComboBoxInfo> QEditDrinkWidget::createListVolumeForPriceWidget(
 QVector<WidgetToMarkItemInfo> QEditDrinkWidget::createCategoryInfoListForWidget()     //сюда из базы взять
 {
     QVector<WidgetToMarkItemInfo> Output;
-    QVector<QCoffeeCategoryInfo> list = currentPlugin->getListCategories();
+    QVector<int> listIdC = currentPlugin->getCategoryIdForPointSale(currentPoinstSales.at(drinkPointSaleComboBox->currentIndex()).id);
+    QVector<QCoffeeCategoryInfo> list;
+    for (int i=0;i<listIdC.count();i++) {
+        list.push_back(currentPlugin->getCategoryInfo(listIdC.at(i)));
+    }
+
     QVector<int> listIdCategoriesForDrink;
 
     if (currentEditedDrink.id > 0)
@@ -192,17 +218,31 @@ QVector<PriceAndVolumeInfo> QEditDrinkWidget::getPriceAndVolumeInfoForCurrentDri
 
     QVector<QCoffeeVolumeDrinkInfo> listVolume = currentPlugin->getListVolume(currentEditedDrink.id);
        QVector<CategoryForComboBoxInfo> currentCategory = this->getCategoryInfoForCurrentDrink();
+
+       QCoffeePriceInfo tempPrice;
     for(int i=0;i<listVolume.count();i++)
     {
-        PriceAndVolumeInfo info;
-        info.itemWasChanged = false;
-        info.volumeId = listVolume.at(i).id;
-        info.volume = listVolume.at(i).volume;
-        info.units = listVolume.at(i).units;
-        info.price = currentPlugin->getPricceInfo(currentCategory.at(drinkCategoryComboBox->currentIndex()).idCategory, currentEditedDrink.id, info.volumeId).value;
-        if (info.price>0.1) {
-            Output.push_back(info);
+
+        tempPrice = currentPlugin->getPricceInfo(currentCategory.at(drinkCategoryComboBox->currentIndex()).idCategory, currentEditedDrink.id, listVolume.at(i).id);
+
+        if (currentPlugin->getIdPointSaleForPriceInfo(tempPrice.id).contains(currentPoinstSales.at(drinkPointSaleComboBox->currentIndex()).id)) {
+            PriceAndVolumeInfo info;
+            info.itemWasChanged = false;
+            info.volumeId = listVolume.at(i).id;
+            info.volume = listVolume.at(i).volume;
+            info.units = listVolume.at(i).units;
+
+
+
+            info.price = tempPrice.value;
+
+
+
+            if (info.price>0.1) {
+                Output.push_back(info);
+            }
         }
+
 
     }
 
@@ -240,6 +280,21 @@ void QEditDrinkWidget::updateCategories()
         {
             drinkCategoryComboBox->addItem(currentCategory.at(i).nameCaregory, QVariant::fromValue(currentCategory.at(i)));
         }
+    }
+}
+
+
+void QEditDrinkWidget::updatePointSales()
+{
+
+    currentPoinstSales = currentPlugin->getListPointSale();
+    drinkPointSaleComboBox->clear();
+    for (int i = 0; i < currentPoinstSales.count(); ++i)
+    {
+
+
+            drinkPointSaleComboBox->addItem(currentPoinstSales.at(i).name);
+
     }
 }
 

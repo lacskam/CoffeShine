@@ -38,6 +38,8 @@ protected:
     virtual void paintEvent(QPaintEvent* e);
 
 private:
+
+    QVector<QCoffeePointSale> currentPoinstSales;
     QBoxLayout *mainLayout;
     QLabel *label;
     QGroupBox *editDrinksGroupBox;
@@ -54,6 +56,7 @@ private:
     QPriceWidget * priceWidget;
     QMarkWidget *  categoryItemsWidget;
     QComboBox * drinkCategoryComboBox;
+    QComboBox *drinkPointSaleComboBox;
 
     void createForm();
     void fillingFormByDrinkInfo();
@@ -72,6 +75,7 @@ public slots:
      void slotDeleteDrink(qint32 id);
 private slots:
     void updateCategories();
+    void updatePointSales();
     void slotCloseEditing();
     void slotSaveChanges();
 
