@@ -95,7 +95,7 @@ void QEditDrinkWidget::createForm()
 
 
         QPriceWidget *priceWg = new QPriceWidget(categoryForCb, priceAndVolume,volumesForCb);
-        QDialog *dio1 = new QDialog;
+        QDialog *dio1 = new QDialog(this);
         vblPrice->addWidget(priceWg);
         dio1->setLayout(vblPrice);
         dio1->show();
@@ -118,7 +118,7 @@ void QEditDrinkWidget::createForm()
     QPushButton *openDeleteDialog = new QPushButton(tr("Удалить напиток"));
     mainLayout->addWidget(openDeleteDialog);
     mainLayout->addSpacing(20);
-    deleteDialog = new QDeleteDialog;
+    deleteDialog = new QDeleteDialog(this);
 
     connect(openDeleteDialog,&QPushButton::clicked,this,[=]() {
         deleteDialog->setIdDrink(currentEditedDrink.id);

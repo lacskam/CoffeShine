@@ -21,6 +21,8 @@ class QCategoryWidget : public QWidget
     Q_OBJECT
 public:
     explicit QCategoryWidget(QCoffeeClientPlugin *plugin_, QCoffeeCategoryInfo *currentCat, QWidget *parent = nullptr, int pointSaleId=0);
+    ~QCategoryWidget();
+
 
 private:
     QCoffeeClientPlugin *currentPlugin;

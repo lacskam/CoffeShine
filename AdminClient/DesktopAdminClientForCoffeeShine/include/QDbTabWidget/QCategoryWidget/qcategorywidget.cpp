@@ -1,11 +1,43 @@
 #include "qcategorywidget.h"
 
+
+QCategoryWidget::~QCategoryWidget() {
+
+    delete currentCategory;
+
+    delete drinkPickDialog;
+
+    delete PsPw;
+
+    if (vDrinkAddres) {
+
+        for (int i = 0; i < vDrinkAddres->size(); ++i) {
+            QDrinkWidgetItem* widget = (*vDrinkAddres)[i];
+            if (widget) {
+                delete widget;
+                (*vDrinkAddres)[i] = nullptr;
+            }
+        }
+        vDrinkAddres->clear();
+        delete vDrinkAddres;
+        vDrinkAddres = nullptr;
+    }
+
+
+
+
+
+}
+
 QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInfo *currentCat, QWidget *parent,int pointSaleId) {
 
     currentPlugin = plugin_;
 
     currentPointSaleId = pointSaleId;
     currentCategory = new QCoffeeCategoryInfo;
+    vDrinkAddres = new QVector<QDrinkWidgetItem*>;
+
+     drinkPickDialog = new QDialog;
 
 
     *currentCategory = *currentCat;
@@ -140,7 +172,8 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 void QCategoryWidget::createDrinkPickDialog() {
 
 
-    vDrinkAddres = new QVector<QDrinkWidgetItem*>;
+
+
     QVector<QCoffeeDrinkInfo> currentCategoryDrinkInfo = currentPlugin->getListDrink();
 
 
@@ -151,7 +184,7 @@ void QCategoryWidget::createDrinkPickDialog() {
     bntA = new QPushButton("Добавить");
     btnD = new QPushButton("Отмена");
 
-    drinkPickDialog = new QDialog;
+
     connect(bntA,SIGNAL(clicked()),this,SLOT(drinkPickDialogAccepted()));
     connect(btnD,SIGNAL(clicked()),drinkPickDialog,SLOT(close()));
     drinkPickScrolarea = new QScrollArea;
