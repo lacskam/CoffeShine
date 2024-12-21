@@ -7,7 +7,7 @@ QCategoryWidget::~QCategoryWidget() {
 
     delete drinkPickDialog;
 
-    delete PsPw;
+
 
     if (vDrinkAddres) {
 
@@ -37,7 +37,7 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     currentCategory = new QCoffeeCategoryInfo;
     vDrinkAddres = new QVector<QDrinkWidgetItem*>;
 
-     drinkPickDialog = new QDialog;
+    drinkPickDialog = new QDialog(this);
 
 
     *currentCategory = *currentCat;
@@ -78,7 +78,7 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     buttonAddNewDrinkToCategory = new QPushButton("Добавить напиток");
     connect(buttonAddNewDrinkToCategory,SIGNAL(clicked()),this,SLOT(createDrinkPickDialog()));
 
-    // кнопка добавить напиток при которое появляется всплывающее окно с выбором напитка
+
 
 
     QHBoxLayout *hblDrink = new QHBoxLayout;
@@ -235,6 +235,7 @@ void QCategoryWidget::createDrinkPickDialog() {
         drinPickkListWidget->setItemWidget(listWidgetItem, drinkPickWidgetItemDio);
     }
     drinkPickDialog->setMinimumSize(570,500);
+    drinkPickDialog->setModal(true);
     drinkPickDialog->show();
 
 
@@ -386,6 +387,7 @@ void QCategoryWidget::sendCategory() {
                  currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x01);
                  emit btnCancel->clicked();
             });
+
             PsPw->show();
 
         } else {

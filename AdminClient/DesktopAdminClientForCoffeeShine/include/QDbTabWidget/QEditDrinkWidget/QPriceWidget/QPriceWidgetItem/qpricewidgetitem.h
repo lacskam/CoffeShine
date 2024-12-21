@@ -27,10 +27,12 @@ public:
     void fillingVolumeComboBox(QVector<VolumeForComboBoxInfo>*);
     void setTitle(QString);
 
+
 protected:
     virtual void paintEvent(QPaintEvent* e);
 
 private:
+
     QVBoxLayout *mainLayout;
     QHBoxLayout *layForPrice;
     QVBoxLayout *layForGroupBox;
@@ -64,6 +66,7 @@ signals:
 public slots:
 
 private slots:
+      void setNewInfoAboutWg();
     void slotChangeComboBox(int);
     void slotShowMenuContext(QPoint pos);
     void slotCheckBoxChanged();

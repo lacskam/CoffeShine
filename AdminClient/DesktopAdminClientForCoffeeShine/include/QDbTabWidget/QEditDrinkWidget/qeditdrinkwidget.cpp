@@ -91,13 +91,25 @@ void QEditDrinkWidget::createForm()
 
         QVector<VolumeForComboBoxInfo> volumesForCb = createListVolumeForPriceWidget();
         QVector<PriceAndVolumeInfo> priceAndVolume = getPriceAndVolumeInfoForCurrentDrink();
+        currentPriceAndVolumeInfo = priceAndVolume;
         QVector<CategoryForComboBoxInfo> categoryForCb = getCategoryInfoForCurrentDrink();
 
-
-        QPriceWidget *priceWg = new QPriceWidget(categoryForCb, priceAndVolume,volumesForCb);
         QDialog *dio1 = new QDialog(this);
+        QPriceWidget *priceWg = new QPriceWidget(categoryForCb, priceAndVolume,volumesForCb,dio1);
+        connect(priceWg,&QPriceWidget::signalAcceptedPrices,this,[=](const QVector<PriceAndVolumeInfo> &priceAndVol) {
+            tempReturnedPriceAndVolumeInfo = priceAndVol;
+            delete priceWg;
+            delete dio1;
+            for (int i =0;i<tempReturnedPriceAndVolumeInfo.count();i++) {
+                qDebug()<<i<<" "<<tempReturnedPriceAndVolumeInfo.at(i).volumeId<<" "<<tempReturnedPriceAndVolumeInfo.at(i).volume<<" "<<tempReturnedPriceAndVolumeInfo.at(i).priceId<<" "<<tempReturnedPriceAndVolumeInfo.at(i).price;
+            }
+
+            qDebug()<<checkChangesForPrices();
+
+        });
         vblPrice->addWidget(priceWg);
         dio1->setLayout(vblPrice);
+        dio1->setModal(true);
         dio1->show();
     });
     mainLayout->addWidget(openPriceDialog);
@@ -118,10 +130,13 @@ void QEditDrinkWidget::createForm()
     QPushButton *openDeleteDialog = new QPushButton(tr("Удалить напиток"));
     mainLayout->addWidget(openDeleteDialog);
     mainLayout->addSpacing(20);
-    deleteDialog = new QDeleteDialog(this);
+    deleteDialog = new QDeleteDialog();
+
+
 
     connect(openDeleteDialog,&QPushButton::clicked,this,[=]() {
         deleteDialog->setIdDrink(currentEditedDrink.id);
+        deleteDialog->setModal(true);
         deleteDialog->show();
     });
     connect(deleteDialog,&QDeleteDialog::accepted,this,[=]() {
@@ -233,7 +248,7 @@ QVector<PriceAndVolumeInfo> QEditDrinkWidget::getPriceAndVolumeInfoForCurrentDri
             info.units = listVolume.at(i).units;
 
 
-
+            info.priceId = tempPrice.id;
             info.price = tempPrice.value;
 
 
@@ -358,6 +373,23 @@ bool QEditDrinkWidget::checkChanges()
     return false;
 }
 
+bool QEditDrinkWidget::checkChangesForPrices() {
+     qDebug()<<"Проверка изменений для цен";
+    if (tempReturnedPriceAndVolumeInfo.size()==currentPriceAndVolumeInfo.size()) {
+         for (int i=0;i<tempReturnedPriceAndVolumeInfo.count();i++) {
+            if (tempReturnedPriceAndVolumeInfo.at(i).volume !=currentPriceAndVolumeInfo.at(i).volume) {
+                 return true;
+            } else if (tempReturnedPriceAndVolumeInfo.at(i).price !=currentPriceAndVolumeInfo.at(i).price) {
+                return true;
+            }
+         }
+    } else {
+        return true;
+    }
+
+    return false;
+}
+
 void QEditDrinkWidget::slotSaveChanges()
 {
     qDebug()<<"Coхранение изменений";
@@ -422,6 +454,26 @@ void QEditDrinkWidget::slotSaveChanges()
     }
 }
 
+
+void QEditDrinkWidget::slotSendVolumeInfo(PriceAndVolumeInfo &newVolumeInfo) {
+    QCoffeeVolumeDrinkInfo volumeDrinkInfo;
+
+
+    volumeDrinkInfo.id = newVolumeInfo.volumeId;
+    volumeDrinkInfo.idDrink = currentEditedDrink.id;
+    volumeDrinkInfo.volume = newVolumeInfo.volume;
+    volumeDrinkInfo.name = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).name;
+    volumeDrinkInfo.description = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).description;
+    volumeDrinkInfo.units = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).units;
+
+
+    if (volumeDrinkInfo.id>-1) {
+
+    } else {
+
+    }
+
+}
 
 void QEditDrinkWidget::slotDeleteDrink(qint32 id) {
 

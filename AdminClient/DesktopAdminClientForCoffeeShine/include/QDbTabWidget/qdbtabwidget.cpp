@@ -50,11 +50,12 @@ void QDbTabWidget::createForm()
     btnAddExistenCategory = new QPushButton("Добавить существующую категорию");
 
     connect(btnAddExistenCategory,&QPushButton::clicked,this,[=]() {
-        wgExCategory = new QWidget;
+        QDialog *dioWgEx = new QDialog(this);
+        wgExCategory = new QWidget();
 
         vblExCategory = new QVBoxLayout(wgExCategory);
 
-
+        dioWgEx->setLayout(vblExCategory);
         categoryListWidgetToAddEx = new QListWidget();
         categoryListWidgetToAddEx->setFlow(QListView::TopToBottom);    //Lays out horizontally instead of vertically
         categoryListWidgetToAddEx->setResizeMode(QListView::Adjust);   //Dynamically adjust contents
@@ -73,7 +74,8 @@ void QDbTabWidget::createForm()
         btnExAccept = new QPushButton("Принять");
         vblExCategory->addWidget(btnExAccept);
         updateCategoryItemsForEx();
-        wgExCategory->show();
+        dioWgEx->setModal(this);
+        dioWgEx->show();
         connect(btnExAccept,&QPushButton::clicked,this,[=]() {
             QVector<QCoffeeCategoryInfo> pickedExCategories;
 
@@ -98,7 +100,7 @@ void QDbTabWidget::createForm()
 
 
 
-            wgExCategory->close();
+            dioWgEx->close();
 
         });
 

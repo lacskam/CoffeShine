@@ -134,6 +134,9 @@ void QCoffeeClientPlugin::processCommand(quint8 command,QByteArray data)
     case 0x18: command18(data);
         break;
     case 0x19: command19(data);
+        break;
+    case 0x20: command20(data);
+        break;
     }
 }
 
@@ -4342,44 +4345,63 @@ void QCoffeeClientPlugin::command19(QByteArray &data) {
         emit signalNewCategory();
 }
 
-/*void QCoffeeClientPlugin::getNnPrediction(QNnPredictionInfo &predictionInfo)
-{
-    signalMessageSplashScreen(tr("Отправка запроса к нейронке"));
-    debugMessage("Sand info for nn");
+
+
+void QCoffeeClientPlugin::crudVolumeInfo(QCoffeeVolumeDrinkInfo &volumeInfo,quint32 idOperation) {
+
+    signalMessageSplashScreen(tr("Отправка обьема"));
+    debugMessage("Sand sale");
 
     QByteArray Output;
     QDataStream stream(&Output,QIODevice::WriteOnly);
 
+    stream << idOperation;
 
-    predictionInfo >> stream;
-    qDebug()<<predictionInfo.id;
-    sendExtData(0x17,Output);
+    volumeInfo >> stream;
+
+    qDebug()<<volumeInfo.id;
+    sendExtData(0x20,Output);
+
 }
 
-void QCoffeeClientPlugin::command17(QByteArray &data)
-{
-    qDebug()<<"1488";
-    signalMessageSplashScreen(tr("Получен информация о напитке"));
+
+
+void QCoffeeClientPlugin::command20(QByteArray &data) {
+    signalMessageSplashScreen(tr("Получен информация о ценах"));
     debugMessage("Received drink information");
     QDataStream streamIn (&data,QIODevice::ReadOnly);
     streamIn.device()->seek(0);
-
+    qDebug()<<"Получен информация о категории";
     bool result;
     streamIn >> result;
 
-    quint32 id;
-    streamIn >> id;
+    quint32 code;
+    streamIn >> code;
 
-    QNnPredictionInfo currentPrediction;
-    currentPrediction << streamIn;
+    QVector<qint32> newDrinks;
+    streamIn >> newDrinks;
+    QCoffeeCategoryInfo currentCategory;
+    currentCategory << streamIn;
 
 
+    if (code!=0x03) unlinkCategoryAndDrink(currentCategory.id);
 
-    this->currentPredictionInfo = currentPrediction;
+    switch (code) {
+    case 0x01: addCategory(currentCategory);
+        break;
+    case 0x02: editCategory(currentCategory);
+        break;
+    case 0x03: deleteCategoryInfo(currentCategory);
+        break;
+    }
+
+    if (code!=0x03) {
+        for (int i=0;i<newDrinks.size();i++) {
+            linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
+        }
+    }
+
+
+    emit signalNewCategory();
 }
 
-QNnPredictionInfo QCoffeeClientPlugin::getPredictionInfo(QNnPredictionInfo &predictionInfo) {
-    getNnPrediction(predictionInfo);
-    return currentPredictionInfo;
-}
-*/

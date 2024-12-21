@@ -24,6 +24,9 @@ QPriceWidget::QPriceWidget(const QVector<CategoryForComboBoxInfo> &categories, c
     QHBoxLayout *layForBtns = new QHBoxLayout();
 
     QPushButton *saveChangesBtn = new QPushButton("Сохранить", this);
+
+
+
     QPushButton *declineChangesBtn = new QPushButton("Удалить", this);
 
     layForBtns->addWidget(saveChangesBtn);
@@ -35,6 +38,7 @@ QPriceWidget::QPriceWidget(const QVector<CategoryForComboBoxInfo> &categories, c
     connect(addNewVolumeButton,SIGNAL(clicked()),this,SLOT(slotAddPriceAndVolumeItem()));
 
     createNewItems(categories,prices);
+     connect(saveChangesBtn, &QPushButton::clicked, this, &QPriceWidget::btnSaveClicked);
 }
 
 void QPriceWidget::createNewItems(const QVector<CategoryForComboBoxInfo> &currentCategory, const QVector<PriceAndVolumeInfo> &currentItems)
@@ -109,12 +113,13 @@ void QPriceWidget::slotAddPriceAndVolumeItem()
     listWidgetItem = new QListWidgetItem(listWidgetWithPriceAndVolume);
     listWidgetWithPriceAndVolume->addItem (listWidgetItem);
 
-    PriceAndVolumeInfo sadf;
-    sadf.volumeId = 2;
-    priceWidgetItem = new QPriceWidgetItem(sadf);
-    priceWidgetItem->setTitle(QString::number(listWidgetWithPriceAndVolume->count()));
+    PriceAndVolumeInfo tempPriceAndvolumeInfo;
+    tempPriceAndvolumeInfo.volumeId = -1;
+    tempPriceAndvolumeInfo.priceId = -1;
+    priceWidgetItem = new QPriceWidgetItem(tempPriceAndvolumeInfo);
+    //priceWidgetItem->setTitle(QString::number(listWidgetWithPriceAndVolume->count()));
     connect(priceWidgetItem,SIGNAL(signalDeleteThisItem(QPriceWidgetItem*)),this,SLOT(slotDeleteItem(QPriceWidgetItem*)));
-    slotFillingComboBoxInWidgetItem();
+
     //Making sure that the listWidgetItem has the same size as the TheWidgetItem
     listWidgetItem->setSizeHint (priceWidgetItem->sizeHint ());
     listWidgetWithPriceAndVolume->setItemWidget(listWidgetItem, priceWidgetItem);
@@ -124,4 +129,15 @@ void QPriceWidget::slotAddPriceAndVolumeItem()
 void QPriceWidget::slotFillingComboBoxInWidgetItem()
 {
     priceWidgetItem->fillingVolumeComboBox(allVolume);
+}
+
+
+void QPriceWidget::btnSaveClicked() {
+
+    QVector<PriceAndVolumeInfo> priceAndVolumeInfo;
+    priceAndVolumeInfo = getListInfoAboutPriceAndVolume();
+
+
+    emit signalAcceptedPrices(priceAndVolumeInfo);
+
 }

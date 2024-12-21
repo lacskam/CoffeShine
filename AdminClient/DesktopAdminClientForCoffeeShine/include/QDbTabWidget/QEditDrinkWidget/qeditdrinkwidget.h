@@ -62,10 +62,15 @@ private:
     void fillingFormByDrinkInfo();
     QVector<VolumeForComboBoxInfo> createListVolumeForPriceWidget();
     bool checkChanges();  // true если есть изменения
+    bool checkChangesForPrices();
     QVector<WidgetToMarkItemInfo> createCategoryInfoListForWidget();
 
     QCoffeeDrinkInfo currentEditedDrink;
     QCoffeeClientPlugin * currentPlugin;
+
+
+    QVector<PriceAndVolumeInfo> currentPriceAndVolumeInfo;
+    QVector<PriceAndVolumeInfo> tempReturnedPriceAndVolumeInfo;
 signals:
     void signalCloseEditDrink();
     void signalNumberOfCategoriesUsedHasChanged();
@@ -78,6 +83,7 @@ private slots:
     void updatePointSales();
     void slotCloseEditing();
     void slotSaveChanges();
+    void slotSendVolumeInfo(PriceAndVolumeInfo &newVolumeInfo);
 
 };
 

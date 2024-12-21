@@ -34,6 +34,7 @@ struct PriceAndVolumeInfo
     int volumeId = -1;        // id объёма, -1 если создаётся новый объём
     int volume;              // объём элемента
     QString units;          // единицы измерения объёма
+    int priceId;
     double price;          // цена в элементе
     bool itemWasChanged;  // определение был ли включён или исключён элемет
 };

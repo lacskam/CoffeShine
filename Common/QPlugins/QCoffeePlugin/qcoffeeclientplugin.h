@@ -38,7 +38,7 @@ public:
 
     // update date in database
     // cud - create, update, delete(0x01,0x02,0x03)
-    void crudDrinkInfo(QCoffeeDrinkInfo &drinkInfo,quint32 idOperation);
+
 
     bool tesst = false;
 
@@ -163,8 +163,12 @@ public:
     void sendPredictionRequest(QDate startDate, QDate endDate, quint32 id, qint32 idWg); // Отправление информации о дате и айди для прогноза
     void sendPredictionRequestFotStat(QDate startDate, QDate endDate, qint32 idstart, qint32 idend);
 
+    void crudDrinkInfo(QCoffeeDrinkInfo &drinkInfo,quint32 idOperation);
 
-  void crudCategoryInfo(QCoffeeCategoryInfo &categoryInfo,QVector<qint32> newDrinks,quint32 idOperation);
+    void crudCategoryInfo(QCoffeeCategoryInfo &categoryInfo,QVector<qint32> newDrinks,quint32 idOperation);
+
+    void crudAndVolumeInfo(QCoffeePriceInfo &priceInfo,QCoffeeVolumeDrinkInfo &volumeInfo,quint32 idOperation);
+
     void setIdCurrentPointSale(int id);
      int getIdCurrentPointSale();
 
@@ -253,10 +257,11 @@ private:
     void commandA0(QByteArray &data);   // Возвращение информации о напитке
 
 
-    void command19(QByteArray &data);
+    void command19(QByteArray &data);     //получение категории
 
     void command17(QByteArray &data);    //получение прогноза нейронки
     void command18(QByteArray &data);    //получение прогноза для диапазона товаров
+    void command20(QByteArray &data);   //получение цены
 
 
 

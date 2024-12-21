@@ -21,6 +21,10 @@ QPriceWidgetItem::QPriceWidgetItem(PriceAndVolumeInfo info,QWidget *parent) : QW
 
 }
 
+void QPriceWidgetItem::setNewInfoAboutWg() {
+
+}
+
 PriceAndVolumeInfo QPriceWidgetItem::getInfoAboutPriceAndVolume()
 {
     return infoAboutWidget;
@@ -93,7 +97,11 @@ void QPriceWidgetItem::createForm()
 
 void QPriceWidgetItem::fillingForm()
 {
-    priceLine->setText(QString::number(infoAboutWidget.price));
+
+    if (infoAboutWidget.priceId>0) {
+           priceLine->setText(QString::number(infoAboutWidget.price));
+    }
+
     if (infoAboutWidget.volumeId>0)
     {
 
@@ -106,6 +114,17 @@ void QPriceWidgetItem::fillingForm()
       //  newVolumeValue->setText(QString::number(infoAboutWidget.volume));
        // newVolumeUnits->setText(infoAboutWidget.units);
     }
+    connect(priceLine,&QLineEdit::textChanged,this,[=]() {
+        infoAboutWidget.price = priceLine->text().toDouble();
+
+        qDebug()<<"edited price";
+    });
+
+    connect(volemeLine,&QLineEdit::textChanged,this,[=]() {
+
+        infoAboutWidget.volume = volemeLine->text().toInt();
+        qDebug()<<"edited volume";
+    });
 }
 
 void QPriceWidgetItem::fillingVolumeComboBox(QVector<VolumeForComboBoxInfo>* volumeList)

@@ -28,20 +28,25 @@ public:
 private:
     QBoxLayout *mainLayout;
 
+
+
     QListWidget * listWidgetWithPriceAndVolume;
     QListWidgetItem *listWidgetItem;
     QPriceWidgetItem * priceWidgetItem;
     QVector<VolumeForComboBoxInfo> * allVolume;
     void refreshTitleForAllItems();
 signals:
+    void signalAcceptedPrices(const QVector<PriceAndVolumeInfo> &);
 
 public slots:
     void slotDeleteItem(QPriceWidgetItem*);
 
 
 private slots:
+    void btnSaveClicked();
     void slotAddPriceAndVolumeItem();
     void slotFillingComboBoxInWidgetItem();
+
 };
 
 #endif // QPRICEWIDGET_H
