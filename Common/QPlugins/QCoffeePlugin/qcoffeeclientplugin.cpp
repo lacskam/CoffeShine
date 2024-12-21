@@ -137,6 +137,8 @@ void QCoffeeClientPlugin::processCommand(quint8 command,QByteArray data)
         break;
     case 0x20: command20(data);
         break;
+    case 0x21: command21(data);
+        break;
     }
 }
 
@@ -4367,41 +4369,92 @@ void QCoffeeClientPlugin::crudVolumeInfo(QCoffeeVolumeDrinkInfo &volumeInfo,quin
 
 
 void QCoffeeClientPlugin::command20(QByteArray &data) {
-    signalMessageSplashScreen(tr("Получен информация о ценах"));
-    debugMessage("Received drink information");
+    signalMessageSplashScreen(tr("Получен информация о обьеме"));
+
     QDataStream streamIn (&data,QIODevice::ReadOnly);
     streamIn.device()->seek(0);
-    qDebug()<<"Получен информация о категории";
+    qDebug()<<"Получен информация о обьеме";
     bool result;
     streamIn >> result;
 
     quint32 code;
     streamIn >> code;
 
-    QVector<qint32> newDrinks;
-    streamIn >> newDrinks;
-    QCoffeeCategoryInfo currentCategory;
-    currentCategory << streamIn;
+
+    QCoffeeVolumeDrinkInfo currentVolume;
+    currentVolume << streamIn;
 
 
-    if (code!=0x03) unlinkCategoryAndDrink(currentCategory.id);
+
 
     switch (code) {
-    case 0x01: addCategory(currentCategory);
+    case 0x01: addVolumeDrink(currentVolume);
         break;
-    case 0x02: editCategory(currentCategory);
+    case 0x02: //editCategory(currentCategory);
         break;
-    case 0x03: deleteCategoryInfo(currentCategory);
+    case 0x03: //deleteCategoryInfo(currentCategory);
         break;
     }
 
-    if (code!=0x03) {
-        for (int i=0;i<newDrinks.size();i++) {
-            linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
-        }
-    }
 
 
-    emit signalNewCategory();
+    emit signalVolumeGetted();
+
+
+
 }
 
+
+
+void QCoffeeClientPlugin::crudPriceInfo(QCoffeePriceInfo &priceInfo,quint32 idOperation) {
+
+    signalMessageSplashScreen(tr("Отправка обьема"));
+    debugMessage("Sand sale");
+
+    QByteArray Output;
+    QDataStream stream(&Output,QIODevice::WriteOnly);
+
+    stream << idOperation;
+
+    priceInfo >> stream;
+
+    qDebug()<<priceInfo.id;
+    sendExtData(0x21,Output);
+
+}
+
+
+
+void QCoffeeClientPlugin::command21(QByteArray &data) {
+    signalMessageSplashScreen(tr("Получен информация о цене"));
+
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);
+    qDebug()<<"Получен информация о цене";
+    bool result;
+    streamIn >> result;
+
+    quint32 code;
+    streamIn >> code;
+
+
+    QCoffeePriceInfo currentPrice;
+    currentPrice << streamIn;
+
+
+
+
+    switch (code) {
+    case 0x01: addPriceInfo(currentPrice);
+        break;
+    case 0x02: //editCategory(currentCategory);
+        break;
+    case 0x03: //deleteCategoryInfo(currentCategory);
+        break;
+    }
+
+
+
+
+
+}

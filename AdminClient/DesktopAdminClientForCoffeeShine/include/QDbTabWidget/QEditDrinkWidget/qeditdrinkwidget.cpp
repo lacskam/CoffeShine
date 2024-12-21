@@ -449,32 +449,74 @@ void QEditDrinkWidget::slotSaveChanges()
 
             currentPlugin->crudDrinkInfo(Output,0x01);
         }
+
+        if (checkChangesForPrices()) {
+            for (int i=0;i<tempReturnedPriceAndVolumeInfo.count();i++) {
+                //проверит что с темпой творится
+                slotSendVolumeInfo(tempReturnedPriceAndVolumeInfo.at(i));
+            }
+        }
+
         emit updateListWidget();
         emit signalCloseEditDrink();
     }
 }
 
 
-void QEditDrinkWidget::slotSendVolumeInfo(PriceAndVolumeInfo &newVolumeInfo) {
+void QEditDrinkWidget::slotSendVolumeInfo(const PriceAndVolumeInfo &newVolumeInfo) {
+
+
     QCoffeeVolumeDrinkInfo volumeDrinkInfo;
+    currentInfo = newVolumeInfo;
 
-
-    volumeDrinkInfo.id = newVolumeInfo.volumeId;
-    volumeDrinkInfo.idDrink = currentEditedDrink.id;
-    volumeDrinkInfo.volume = newVolumeInfo.volume;
+    volumeDrinkInfo.id = currentInfo.volumeId;
+    volumeDrinkInfo.idDrink.push_back(currentEditedDrink.id);
+    volumeDrinkInfo.volume = currentInfo.volume;
     volumeDrinkInfo.name = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).name;
     volumeDrinkInfo.description = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).description;
     volumeDrinkInfo.units = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).units;
 
 
+
     if (volumeDrinkInfo.id>-1) {
 
     } else {
+        currentPlugin->crudVolumeInfo(volumeDrinkInfo,0x01);
+
+        slotPriceInfo(currentInfo);
 
     }
 
 }
 
+
+void QEditDrinkWidget::slotPriceInfo(const PriceAndVolumeInfo &newPriceInfo) {
+
+    QCoffeePriceInfo priceInfo;
+    QVector<CategoryForComboBoxInfo> currentCategory = this->getCategoryInfoForCurrentDrink();
+
+
+
+
+    priceInfo.id = newPriceInfo.priceId;
+    priceInfo.idDrink = currentEditedDrink.id;
+    priceInfo.idDrinkCategory = currentCategory.at(drinkCategoryComboBox->currentIndex()).idCategory;
+    priceInfo.idPointSale.push_back(currentPoinstSales.at(drinkPointSaleComboBox->currentIndex()).id);
+    priceInfo.idVolume = currentPlugin->getListVolume().last().id+1; //исправить на реагирование по сигналу когда приходит новы обьем
+    priceInfo.value = newPriceInfo.price;
+    priceInfo.startDate = QDateTime(QDate::currentDate());
+
+
+    if (priceInfo.id>-1) {
+
+    } else {
+        currentPlugin->crudPriceInfo(priceInfo,0x01);
+    }
+
+
+
+
+}
 void QEditDrinkWidget::slotDeleteDrink(qint32 id) {
 
 

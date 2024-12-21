@@ -175,10 +175,15 @@ public:
     void command16(QByteArray data, QUnClientHandler *client); //Получение всех проданых позиций
 
     void commandA0(QByteArray data, QUnClientHandler *client); // получение информации о напитке
-    void command19(QByteArray data,QUnClientHandler *client);
+
 
     void command17(QByteArray data, QUnClientHandler *client); //получение прогноза нейронки
     void command18(QByteArray data, QUnClientHandler *client); //получение прогноза среднего значения продаж для диапазона товаров
+
+    void command19(QByteArray data,QUnClientHandler *client); //получение инфы о категории
+    void command20(QByteArray data,QUnClientHandler *client); //получение обьема
+    void command21(QByteArray data,QUnClientHandler *client); //получение цены
+
 private:
 
 

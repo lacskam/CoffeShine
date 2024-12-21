@@ -167,7 +167,11 @@ public:
 
     void crudCategoryInfo(QCoffeeCategoryInfo &categoryInfo,QVector<qint32> newDrinks,quint32 idOperation);
 
-    void crudAndVolumeInfo(QCoffeePriceInfo &priceInfo,QCoffeeVolumeDrinkInfo &volumeInfo,quint32 idOperation);
+    void crudVolumeInfo(QCoffeeVolumeDrinkInfo &volumeInfo,quint32 idOperation);
+
+    void crudPriceInfo(QCoffeePriceInfo &priceInfo,quint32 idOperation);
+
+
 
     void setIdCurrentPointSale(int id);
      int getIdCurrentPointSale();
@@ -261,7 +265,8 @@ private:
 
     void command17(QByteArray &data);    //получение прогноза нейронки
     void command18(QByteArray &data);    //получение прогноза для диапазона товаров
-    void command20(QByteArray &data);   //получение цены
+    void command20(QByteArray &data);   //получение обьема
+     void command21(QByteArray &data);  //получение цены
 
 
 
@@ -283,6 +288,7 @@ signals:
     void predictionDataReceivedToStat(QMap<QDateTime, float> predictionResults,qint32 id);
     void predictionDataReceivedForStart(QMap<qint32, float> predictionResults);
     void signalNewCategory();
+    void signalVolumeGetted();
 
 };
 

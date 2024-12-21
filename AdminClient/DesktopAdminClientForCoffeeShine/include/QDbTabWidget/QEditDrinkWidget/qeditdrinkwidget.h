@@ -71,6 +71,7 @@ private:
 
     QVector<PriceAndVolumeInfo> currentPriceAndVolumeInfo;
     QVector<PriceAndVolumeInfo> tempReturnedPriceAndVolumeInfo;
+    PriceAndVolumeInfo currentInfo;
 signals:
     void signalCloseEditDrink();
     void signalNumberOfCategoriesUsedHasChanged();
@@ -83,7 +84,8 @@ private slots:
     void updatePointSales();
     void slotCloseEditing();
     void slotSaveChanges();
-    void slotSendVolumeInfo(PriceAndVolumeInfo &newVolumeInfo);
+    void slotSendVolumeInfo(const PriceAndVolumeInfo &newVolumeInfo);
+    void slotPriceInfo(const PriceAndVolumeInfo &newPriceInfo);
 
 };
 

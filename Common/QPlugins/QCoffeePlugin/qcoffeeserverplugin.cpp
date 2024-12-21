@@ -74,6 +74,10 @@ void QCoffeeServerPlugin::processCommand(quint8 command,QByteArray data, QUnClie
         break;
     case 0x19: command19(data,client);
         break;
+    case 0x20: command20(data,client);
+        break;
+    case 0x21: command21(data,client);
+        break;
     }
 
 }
@@ -3220,7 +3224,7 @@ void QCoffeeServerPlugin::command18(QByteArray data, QUnClientHandler *client) {
 
 void QCoffeeServerPlugin::command19(QByteArray data, QUnClientHandler *client) {
 
-    debugMessage("CommandA0: Received drink information");
+    debugMessage("");
     QDataStream streamIn (&data,QIODevice::ReadOnly);
     streamIn.device()->seek(0);
 
@@ -3263,86 +3267,86 @@ void QCoffeeServerPlugin::command19(QByteArray data, QUnClientHandler *client) {
 
 }
 
-/*void QCoffeeServerPlugin::command18(QByteArray data, QUnClientHandler *client) {
-    QDataStream streamIn(&data, QIODevice::ReadOnly);
-    qDebug()<<"command18NN";
-    QMap<qint32,float> result;
-    QMap<QDateTime, float> predictionResults;
 
-    QDate startDate;
-    QDate endDate;
-    qint32 idstart;
-    qint32 idend;
+void QCoffeeServerPlugin::command20(QByteArray data,QUnClientHandler *client) {
 
-    streamIn >> idstart;
-    streamIn >> startDate;
-    streamIn >> endDate;
-    streamIn >> idend;
 
-    QList<QDate> date = {startDate, endDate};
-    float srAr;
-    for (int i =idstart;i<=idend;i++) {
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);;
 
-        predictionResults = prediction(&date, &i);
 
-        if (!predictionResults.isEmpty()) {
-            continue;
-        }
-        for (QMap<QDateTime, float>::const_iterator i = predictionResults.begin(); i != predictionResults.end(); i++) {
-            srAr+=i.value();
-        }
-        srAr/=predictionResults.size();
 
-        result.insert(i,srAr);
+
+
+
+    quint32 code;
+    streamIn >> code;
+
+    QCoffeeVolumeDrinkInfo currentVolume;
+    currentVolume << streamIn;
+
+    switch (code) {
+    case 0x01: currentVolume.id = addVolumeDrink(currentVolume);
+        break;
+    case 0x02: //editCategory(currentCategory);
+        break;
+    case 0x03: //deleteCategoryInfo(currentCategory);
+        break;
     }
-
 
     QByteArray Output;
-    QDataStream streamOut(&Output, QIODevice::WriteOnly);
 
-    streamOut <<result;
+    bool result = true;
+    QDataStream streamOut (&Output,QIODevice::ReadWrite);
 
 
-    sendExtData(0x18, Output, client);
+    streamOut << result;
+    streamOut << code;
+    currentVolume >> streamOut;
+
+     sendExtData(0x20,Output,client);
 
 
 }
 
-*/
-/*void QCoffeeServerPlugin::command17(QByteArray data, QUnClientHandler *client)
-{
 
-    debugMessage("Command17: Received prediction for product");
+void QCoffeeServerPlugin::command21(QByteArray data,QUnClientHandler *client) {
+
+
     QDataStream streamIn (&data,QIODevice::ReadOnly);
-    streamIn.device()->seek(0);
-
-    qDebug()<<"1488";
-    QNnPredictionInfo endDate;
-    endDate << streamIn;
-    if (endDate.prediction.isEmpty()) {
-
-    } else {
-        QNnPredictionInfo predictionNn = endDate;
-        predictionNn.prediction = prediction(&predictionNn.endDate,&predictionNn.id);
-
-        QByteArray Output;
-        bool result = true;
-        QDataStream streamOut (&Output,QIODevice::ReadWrite);
-
-        streamOut << result;
+    streamIn.device()->seek(0);;
 
 
 
-        predictionNn >> streamOut;
 
 
 
-        sendExtData(0x17,Output,client);
+    quint32 code;
+    streamIn >> code;
+
+    QCoffeePriceInfo currentPrice;
+    currentPrice << streamIn;
+
+    switch (code) {
+    case 0x01: currentPrice.id = addPriceInfo(currentPrice);
+        break;
+    case 0x02: //editCategory(currentCategory);
+        break;
+    case 0x03: //deleteCategoryInfo(currentCategory);
+        break;
     }
 
+    QByteArray Output;
+
+    bool result = true;
+    QDataStream streamOut (&Output,QIODevice::ReadWrite);
 
 
+    streamOut << result;
+    streamOut << code;
+    currentPrice >> streamOut;
+
+    sendExtData(0x21,Output,client);
 
 
 }
-*/
