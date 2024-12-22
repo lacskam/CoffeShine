@@ -1,9 +1,9 @@
 #include "qpricewidget.h"
 
-QPriceWidget::QPriceWidget(const QVector<CategoryForComboBoxInfo> &categories, const QVector<PriceAndVolumeInfo> &prices, const QVector<VolumeForComboBoxInfo> &VolumesForCb, QWidget *parent) : QWidget(parent)
+QPriceWidget::QPriceWidget(QCoffeeClientPlugin *plugin_, const QVector<CategoryForComboBoxInfo> &categories, const QVector<PriceAndVolumeInfo> &prices, const QVector<VolumeForComboBoxInfo> &VolumesForCb, QWidget *parent) : QWidget(parent)
 {
     this->setMinimumHeight(600);
-
+    currentPlugin = plugin_;
     mainLayout = new QVBoxLayout(this);
     QGroupBox *mainGroupBox = new QGroupBox();
     mainLayout->addWidget(mainGroupBox);
@@ -50,7 +50,7 @@ void QPriceWidget::createNewItems(const QVector<CategoryForComboBoxInfo> &curren
     {
         listWidgetItem = new QListWidgetItem(listWidgetWithPriceAndVolume);
         listWidgetWithPriceAndVolume->addItem (listWidgetItem);
-        priceWidgetItem = new QPriceWidgetItem(currentItems.at(i));
+        priceWidgetItem = new QPriceWidgetItem(currentPlugin,currentItems.at(i));
         connect(priceWidgetItem,SIGNAL(signalDeleteThisItem(QPriceWidgetItem*)),this,SLOT(slotDeleteItem(QPriceWidgetItem*)));
 
         slotFillingComboBoxInWidgetItem();
@@ -67,6 +67,7 @@ void QPriceWidget::slotDeleteItem(QPriceWidgetItem * deleteItem)
         priceWidgetItem = dynamic_cast<QPriceWidgetItem*>(listWidgetWithPriceAndVolume->itemWidget(listWidgetWithPriceAndVolume->item(i)));
         if (deleteItem == priceWidgetItem)
         {
+            priceAndVolumeInfoForDelite.push_back(priceWidgetItem->infoAboutWidget);
             listWidgetWithPriceAndVolume->removeItemWidget(listWidgetWithPriceAndVolume->item(i));
             delete listWidgetWithPriceAndVolume->item(i);
 
@@ -116,7 +117,7 @@ void QPriceWidget::slotAddPriceAndVolumeItem()
     PriceAndVolumeInfo tempPriceAndvolumeInfo;
     tempPriceAndvolumeInfo.volumeId = -1;
     tempPriceAndvolumeInfo.priceId = -1;
-    priceWidgetItem = new QPriceWidgetItem(tempPriceAndvolumeInfo);
+    priceWidgetItem = new QPriceWidgetItem(currentPlugin,tempPriceAndvolumeInfo);
     //priceWidgetItem->setTitle(QString::number(listWidgetWithPriceAndVolume->count()));
     connect(priceWidgetItem,SIGNAL(signalDeleteThisItem(QPriceWidgetItem*)),this,SLOT(slotDeleteItem(QPriceWidgetItem*)));
 
@@ -137,7 +138,20 @@ void QPriceWidget::btnSaveClicked() {
     QVector<PriceAndVolumeInfo> priceAndVolumeInfo;
     priceAndVolumeInfo = getListInfoAboutPriceAndVolume();
 
+    int valid = true;
 
-    emit signalAcceptedPrices(priceAndVolumeInfo);
+    for (int i=0;i<priceAndVolumeInfo.size();i++) {
+        if (!priceAndVolumeInfo.at(i).valid) {
+            valid=false;
+        }
+    }
+
+
+
+
+    if (valid) {
+          emit signalAcceptedPrices(priceAndVolumeInfo,priceAndVolumeInfoForDelite);
+
+    } else (qDebug()<<"not valid");
 
 }

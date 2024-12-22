@@ -71,6 +71,7 @@ private:
 
     QVector<PriceAndVolumeInfo> currentPriceAndVolumeInfo;
     QVector<PriceAndVolumeInfo> tempReturnedPriceAndVolumeInfo;
+    QVector<PriceAndVolumeInfo> PriceAndVolumeInfoForDelete;
     PriceAndVolumeInfo currentInfo;
 signals:
     void signalCloseEditDrink();

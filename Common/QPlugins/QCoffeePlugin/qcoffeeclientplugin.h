@@ -93,6 +93,7 @@ public:
     QVector<int> getIdDrinkForVolume(int idVolume);
     bool linkVolumeAndDrink(int idVolume, int idDrink);
     bool unlinkVolumeAndDrink(int idVolume);
+    bool unlinkVolumeAndDrink2(int idVolume,int idDrink);
     int addVolumeDrink(QCoffeeVolumeDrinkInfo &volume);
     bool editVolume(QCoffeeVolumeDrinkInfo &volume);
 

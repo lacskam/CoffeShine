@@ -1536,6 +1536,25 @@ bool QCoffeeClientPlugin::unlinkVolumeAndDrink(int idVolume)
     return Output;
 }
 
+bool QCoffeeClientPlugin::unlinkVolumeAndDrink2(int idVolume,int idDrink)
+{
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_drink_volumeDrink "
+                        "where tbl_volumeDrink_id_volumeDrink = '" + QString::number(idVolume) + "' and tbl_drink_id_drink = '"+QString::number(idDrink)+ "';";
+
+    QSqlQuery *queryUnlinkVolumeAndDrink = execQuery(textQuery,&Output);
+
+    if (!Output) {
+        qDebug()<<"Error unlink volume and drink:"<<queryUnlinkVolumeAndDrink->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete queryUnlinkVolumeAndDrink;
+
+    return Output;
+}
+
 int QCoffeeClientPlugin::addVolumeDrink(QCoffeeVolumeDrinkInfo &volume)
 {
     int Output = -1;

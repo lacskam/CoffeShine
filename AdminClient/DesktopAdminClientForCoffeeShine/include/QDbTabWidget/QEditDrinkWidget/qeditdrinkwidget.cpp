@@ -95,13 +95,18 @@ void QEditDrinkWidget::createForm()
         QVector<CategoryForComboBoxInfo> categoryForCb = getCategoryInfoForCurrentDrink();
 
         QDialog *dio1 = new QDialog(this);
-        QPriceWidget *priceWg = new QPriceWidget(categoryForCb, priceAndVolume,volumesForCb,dio1);
-        connect(priceWg,&QPriceWidget::signalAcceptedPrices,this,[=](const QVector<PriceAndVolumeInfo> &priceAndVol) {
+        QPriceWidget *priceWg = new QPriceWidget(currentPlugin,categoryForCb, priceAndVolume,volumesForCb,dio1);
+        connect(priceWg,&QPriceWidget::signalAcceptedPrices,this,[=](const QVector<PriceAndVolumeInfo> &priceAndVol,const QVector<PriceAndVolumeInfo> &priceAndVolForDelete) {
             tempReturnedPriceAndVolumeInfo = priceAndVol;
+            PriceAndVolumeInfoForDelete = priceAndVolForDelete;
             delete priceWg;
             delete dio1;
             for (int i =0;i<tempReturnedPriceAndVolumeInfo.count();i++) {
                 qDebug()<<i<<" "<<tempReturnedPriceAndVolumeInfo.at(i).volumeId<<" "<<tempReturnedPriceAndVolumeInfo.at(i).volume<<" "<<tempReturnedPriceAndVolumeInfo.at(i).priceId<<" "<<tempReturnedPriceAndVolumeInfo.at(i).price;
+            }
+
+            for (int i =0;i<PriceAndVolumeInfoForDelete.count();i++) {
+                qDebug()<<i<<" for delete "<<PriceAndVolumeInfoForDelete.at(i).volumeId<<" "<<PriceAndVolumeInfoForDelete.at(i).volume<<" "<<PriceAndVolumeInfoForDelete.at(i).priceId<<" "<<PriceAndVolumeInfoForDelete.at(i).price;
             }
 
             qDebug()<<checkChangesForPrices();
@@ -361,14 +366,7 @@ bool QEditDrinkWidget::checkChanges()
     if (pictureWidget->getPictureInfo().id != pictureWidget->getInfoAboutNewPicture().id)
         return true;
 
-    QVector<WidgetToMarkItemInfo> listCategoryInfoFromWidget = categoryItemsWidget->getListInfoAboutWidgets();
-    for (int i=0;i<listCategoryInfoFromWidget.count();i++)
-    {
-        if (listCategoryInfoFromWidget.at(i).itemWasChanged)
-        {
-            return true;
-        }
-    }
+
 
     return false;
 }
@@ -390,8 +388,11 @@ bool QEditDrinkWidget::checkChangesForPrices() {
     return false;
 }
 
-void QEditDrinkWidget::slotSaveChanges()
+void QEditDrinkWidget::slotSaveChanges() {
 {
+
+
+    if (checkChanges()) {
     qDebug()<<"Coхранение изменений";
     QCoffeeDrinkInfo Output;
 
@@ -429,15 +430,14 @@ void QEditDrinkWidget::slotSaveChanges()
         Output.color.setGreen(newColor.green());
         Output.idPicture = pictureWidget->getInfoAboutNewPicture().id;
 
-        QVector<WidgetToMarkItemInfo> listCategoryInfoFromWidget = categoryItemsWidget->getListInfoAboutWidgets();
-        for (int i=0;i<listCategoryInfoFromWidget.count();i++)
-        {
-            if (listCategoryInfoFromWidget.at(i).isItemMarked)
-            {
-                qDebug()<<listCategoryInfoFromWidget.at(i).itemId;
-                Output.idCategories.push_back(listCategoryInfoFromWidget.at(i).itemId);
-            }
-        }
+
+
+
+
+
+        Output.idCategories=currentPlugin->getIdCategoriesForDrink(currentEditedDrink.id);
+
+
 
         if ((int)Output.id > 0) {
             currentPlugin->crudDrinkInfo(Output,0x02);
@@ -448,12 +448,17 @@ void QEditDrinkWidget::slotSaveChanges()
             }
 
             currentPlugin->crudDrinkInfo(Output,0x01);
-        }
-
+             }
+         }
+    }
         if (checkChangesForPrices()) {
             for (int i=0;i<tempReturnedPriceAndVolumeInfo.count();i++) {
                 //проверит что с темпой творится
                 slotSendVolumeInfo(tempReturnedPriceAndVolumeInfo.at(i));
+            }
+
+            for (int i=0;i<PriceAndVolumeInfoForDelete.count();i++) {
+                currentPlugin->unlinkVolumeAndDrink2(PriceAndVolumeInfoForDelete.at(i).volumeId,currentEditedDrink.id);
             }
         }
 
@@ -470,17 +475,19 @@ void QEditDrinkWidget::slotSendVolumeInfo(const PriceAndVolumeInfo &newVolumeInf
     currentInfo = newVolumeInfo;
 
     volumeDrinkInfo.id = currentInfo.volumeId;
-    volumeDrinkInfo.idDrink.push_back(currentEditedDrink.id);
-    volumeDrinkInfo.volume = currentInfo.volume;
-    volumeDrinkInfo.name = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).name;
-    volumeDrinkInfo.description = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).description;
-    volumeDrinkInfo.units = currentPlugin->getVolumeInfo( volumeDrinkInfo.id).units;
+
 
 
 
     if (volumeDrinkInfo.id>-1) {
 
     } else {
+        volumeDrinkInfo.idDrink.push_back(currentEditedDrink.id);
+        volumeDrinkInfo.volume = currentInfo.volume;
+        volumeDrinkInfo.name = currentInfo.nameVolume;
+        volumeDrinkInfo.description = "";
+        volumeDrinkInfo.units = currentInfo.units;
+
         currentPlugin->crudVolumeInfo(volumeDrinkInfo,0x01);
 
         slotPriceInfo(currentInfo);
@@ -508,7 +515,7 @@ void QEditDrinkWidget::slotPriceInfo(const PriceAndVolumeInfo &newPriceInfo) {
 
 
     if (priceInfo.id>-1) {
-
+        //хз нужна ли вообще функция добавления
     } else {
         currentPlugin->crudPriceInfo(priceInfo,0x01);
     }

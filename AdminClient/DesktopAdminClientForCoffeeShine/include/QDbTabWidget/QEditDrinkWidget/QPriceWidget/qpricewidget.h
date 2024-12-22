@@ -11,12 +11,13 @@
 #include <QComboBox>
 #include <QPushButton>
 #include "QPriceWidgetItem/qpricewidgetitem.h"
+#include "../../../../Common/QPlugins/QCoffeePlugin/qcoffeeclientplugin.h"
 
 class QPriceWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QPriceWidget(const QVector<CategoryForComboBoxInfo>& categories,
+    explicit QPriceWidget(QCoffeeClientPlugin *plugin_,const QVector<CategoryForComboBoxInfo>& categories,
                           const QVector<PriceAndVolumeInfo>& prices,const QVector<VolumeForComboBoxInfo> &VolumesForCb,
                           QWidget* parent = nullptr);
 
@@ -25,9 +26,13 @@ public:
     void setListExistenVolumes(QVector<VolumeForComboBoxInfo>);
     QVector<PriceAndVolumeInfo> getListInfoAboutPriceAndVolume();
 
-private:
-    QBoxLayout *mainLayout;
 
+private:
+    QCoffeeClientPlugin *currentPlugin;
+
+
+    QBoxLayout *mainLayout;
+    QVector<PriceAndVolumeInfo> priceAndVolumeInfoForDelite;
 
 
     QListWidget * listWidgetWithPriceAndVolume;
@@ -36,7 +41,7 @@ private:
     QVector<VolumeForComboBoxInfo> * allVolume;
     void refreshTitleForAllItems();
 signals:
-    void signalAcceptedPrices(const QVector<PriceAndVolumeInfo> &);
+    void signalAcceptedPrices(const QVector<PriceAndVolumeInfo> &,const QVector<PriceAndVolumeInfo> &);
 
 public slots:
     void slotDeleteItem(QPriceWidgetItem*);

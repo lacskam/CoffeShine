@@ -14,24 +14,32 @@
 #include <QDebug>
 #include <QGroupBox>
 #include "../../../commondbtabtypes.h"
+#include "../../../../Common/QPlugins/QCoffeePlugin/qcoffeeclientplugin.h"
+
 
 class QPriceWidgetItem : public QWidget
 {
     Q_OBJECT
 public:
     explicit QPriceWidgetItem(QWidget *parent = nullptr);
-    explicit QPriceWidgetItem(PriceAndVolumeInfo info, QWidget *parent = nullptr);
+    explicit QPriceWidgetItem(QCoffeeClientPlugin *plugin_,PriceAndVolumeInfo info, QWidget *parent = nullptr);
 
     PriceAndVolumeInfo getInfoAboutPriceAndVolume();
     void setNewPriceAndVolumeInfo(PriceAndVolumeInfo);
     void fillingVolumeComboBox(QVector<VolumeForComboBoxInfo>*);
     void setTitle(QString);
 
-
+    PriceAndVolumeInfo infoAboutWidget;
 protected:
     virtual void paintEvent(QPaintEvent* e);
 
 private:
+
+    QCoffeeClientPlugin *currentPlugin;
+    bool validName = true;
+    bool validUnits = true;
+    bool validPrice = true;
+    bool validVolume = true;
 
     QVBoxLayout *mainLayout;
     QHBoxLayout *layForPrice;
@@ -40,23 +48,33 @@ private:
     QHBoxLayout *layForVolumeTitle;
     QHBoxLayout *layForNewVolume;
 
+    QHBoxLayout *layForVolumeName;
+    QHBoxLayout *layForNewUnits;
+
     QGroupBox* mainGroupBox;
+
     QLabel *priceTitle;
     QLabel *volumeTitle;
     QLabel *newVolumeValueTitle;
+    QLabel *nameVolumeLabel;
+    QLabel *unitsLabel;
+
     QLineEdit *priceLine;
     QLineEdit *volemeLine;
-    QLineEdit *newVolumeValue;
+    QLineEdit *newNameVolume;
     QLineEdit *newVolumeUnits;
 
     QComboBox * volumeListComboBox;
     QCheckBox * newVolume;
     QWidget * widgetForNewVolume;
 
-    PriceAndVolumeInfo infoAboutWidget;
+
+    QComboBox *volumeComboBox;
+
 
     void createForm();
     void fillingForm();
+    void fillComboBoxVolumes();
 
 
 signals:
