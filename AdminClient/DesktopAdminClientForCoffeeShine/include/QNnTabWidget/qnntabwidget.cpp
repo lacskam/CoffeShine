@@ -179,17 +179,31 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     lLoading->addWidget(loading);
 
 
-
+    mainLayout = new QVBoxLayout(this);
 
     vbstacked = new QVBoxLayout;
-    vb = new QVBoxLayout(this);
+    groupBox = new QGroupBox();
+    mainLayout->addWidget(groupBox);
+    vb = new QVBoxLayout(groupBox);
     hb = new QHBoxLayout;
     hblcharts = new QHBoxLayout;
     vbs = new QHBoxLayout;
 
     stackedWidget = new QStackedWidget();
 
+    hblforhead = new QHBoxLayout;
+
+    buttonettings = new QPushButton();
+    buttonettings->setIcon(QIcon(":/icons/other/settingsNn.png"));
+    buttonettings->setMaximumSize(30,30);
+    connect(buttonettings,&QPushButton::clicked,this,&QNnTabWidget::openSettingsDialog);
+
     chartsComboBox = new QComboBox();
+
+
+    hblforhead->addWidget(chartsComboBox,10,Qt::AlignLeft);
+
+    hblforhead->addWidget(buttonettings,0,Qt::AlignRight);
 
     QStringList list;
     list <<"Предсказание по одному товару"<<"Рейтинг востребованности товаров";
@@ -207,7 +221,7 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     stackedWidget->addWidget(productStatisticPrediction);
     stackedWidget->addWidget(loadingWg);
 
-    vb->addWidget(chartsComboBox);
+    vb->addLayout(hblforhead);
     vb->addWidget(stackedWidget);
 
 
@@ -610,5 +624,12 @@ void QNnTabWidget::lineMoveNN(QMap<QDateTime,float> *mapSaless) {
     qfloat16 g = std::abs((mapSaless->begin()+sliderNN->value()).value());
 
     labelValueNN->setText("<p style=\"color: rgb(0, 0, 0)\">"+QString::number(g,'f',2)+"</p>");
+
+}
+
+
+void QNnTabWidget::openSettingsDialog() {
+    settingsWidget = new QNnSettingsWidget(this);
+    settingsWidget->show();
 
 }

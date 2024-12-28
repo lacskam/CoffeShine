@@ -19,7 +19,7 @@
 #include "QLoadingWidget/qloadingwidget.h"
 #include <algorithm>
 #include <QWidget>
-
+#include "QNnSettingsWidget/qnnsettingswidget.h"
 QT_CHARTS_USE_NAMESPACE
 
 class QNnTabWidget : public QWidget {
@@ -45,8 +45,13 @@ public slots:
     void lineMoveNN(QMap<QDateTime,float> *mapSaless);
     void GetStatPrediction(QMap<qint32, float> predictionResults);
     void updateStatWg();
+    void openSettingsDialog();
 
 private:
+
+
+    QVBoxLayout *mainLayout;
+    QGroupBox *groupBox;
     QCoffeeClientPlugin *currentPlugin;
     DB *dbase;
 
@@ -59,6 +64,8 @@ private:
     QStackedWidget *stackedWidget ;
     QComboBox *chartsComboBox;
      QVBoxLayout *vbstacked;
+    QHBoxLayout *hblforhead;
+     QPushButton *buttonettings;
 
     quint32 *idForGetStatStart;
      quint32 *idForGetStatEnd;
@@ -125,6 +132,9 @@ private:
     LoadingWidget *loading;
     bool isLoadingPred;
     bool isLoadingStat;
+
+
+    QNnSettingsWidget *settingsWidget;
 
 
 

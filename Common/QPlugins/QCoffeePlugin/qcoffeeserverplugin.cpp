@@ -3170,36 +3170,31 @@ void QCoffeeServerPlugin::commandA0(QByteArray data, QUnClientHandler *client)
 
     sendExtData(0xA0,Output,client);
 }
-
+#include "QNnPredictionInfo/qnnpredictioninfo.h"
 void QCoffeeServerPlugin::command17(QByteArray data, QUnClientHandler *client) {
-    QDataStream streamIn(&data, QIODevice::ReadOnly);
-
-    qint32 id;
-    qint32 idWg;
-    QDate startDate, endDate;
-
-    qDebug()<<"command17NN";
-    streamIn >> id;
-    streamIn >> startDate;
-    streamIn >> endDate;
-    streamIn >> idWg;
-    QList<QDate> date = {startDate, endDate};
+    QThread *thread = new QThread;
+    Command17Worker *worker = new Command17Worker(data);
+    worker->moveToThread(thread);
 
 
-    QMap<QDateTime, float> predictionResults = prediction(&date, &id);
+    connect(thread, &QThread::started, worker, &Command17Worker::process);
+    connect(worker, &Command17Worker::finished, this, [this, client, thread, worker](QByteArray result) {
+        sendExtData(0x17, result, client);
+
+        thread->quit();
+        thread->wait();
+        worker->deleteLater();
+        thread->deleteLater();
+    });
 
 
-    QByteArray Output;
-    QDataStream streamOut(&Output, QIODevice::WriteOnly);
-
-    streamOut << predictionResults;
-    streamOut << idWg;
-    streamOut << id;
-
-    sendExtData(0x17, Output, client);
+    thread->start();
 }
 
-#include "QNnPredictionInfo/qnnpredictioninfo.h"
+
+
+
+
 void QCoffeeServerPlugin::command18(QByteArray data, QUnClientHandler *client) {
 
     QThread *thread = new QThread;

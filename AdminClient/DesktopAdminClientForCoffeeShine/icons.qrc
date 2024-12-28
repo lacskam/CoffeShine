@@ -7,5 +7,6 @@
         <file>icons/other/Loading.gif</file>
         <file>icons/mainTabs/Nn.png</file>
          <file>icons/other/pointSale.png</file>
+         <file>icons/other/settingsNn.png</file>
     </qresource>
 </RCC>

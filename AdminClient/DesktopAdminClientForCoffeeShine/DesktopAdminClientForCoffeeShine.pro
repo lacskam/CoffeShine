@@ -66,6 +66,7 @@ SOURCES += \
     include/QHostsDialog/qhostsdialog.cpp \
     include/QHTabWidget/qhtabbar.cpp \
     include/QHTabWidget/qhtabwidget.cpp \
+    include/QNnTabWidget/QNnSettingsWidget/qnnsettingswidget.cpp \
     include/QStatisticTabWidget/qstatistictabwidget.cpp \
     include/QUserAccDialog/quseraccdialog.cpp \
     include/QNnTabWidget/qnntabwidget.cpp \
@@ -121,6 +122,7 @@ HEADERS += \
     include/QHostsDialog/qhostsdialog.h \
     include/QHTabWidget/qhtabbar.h \
     include/QHTabWidget/qhtabwidget.h \
+    include/QNnTabWidget/QNnSettingsWidget/qnnsettingswidget.h \
     include/QStatisticTabWidget/qstatistictabwidget.h \
     include/QUserAccDialog/quseraccdialog.h \
     include/QNnTabWidget/qnntabwidget.h \

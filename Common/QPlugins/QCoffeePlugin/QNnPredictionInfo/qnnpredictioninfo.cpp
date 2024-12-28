@@ -44,6 +44,41 @@ Command18Worker::Command18Worker(QByteArray data)  {
 
 
 
+void Command17Worker::process() {
+    QDataStream streamIn(&data, QIODevice::ReadOnly);
+
+    qint32 id;
+    qint32 idWg;
+    QDate startDate, endDate;
+
+
+    streamIn >> id;
+    streamIn >> startDate;
+    streamIn >> endDate;
+    streamIn >> idWg;
+    QList<QDate> date = {startDate, endDate};
+
+
+    QMap<QDateTime, float> predictionResults = prediction(&date, &id);
+
+
+    QByteArray Output;
+    QDataStream streamOut(&Output, QIODevice::WriteOnly);
+
+    streamOut << predictionResults;
+    streamOut << idWg;
+    streamOut << id;
+
+    emit finished(Output);
+}
+
+Command17Worker::Command17Worker(QByteArray data)  {
+    this->data=data;
+}
+
+
+
+
 
 
 

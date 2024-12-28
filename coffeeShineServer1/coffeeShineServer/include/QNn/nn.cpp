@@ -207,8 +207,10 @@ std::tuple<float,float,float,float,float,float,float,float,float,float,float,flo
 QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
     QMap<QDateTime, float> result;
 
-    try {
+    qDebug() << "Начало выполнения функции prediction";
 
+    try {
+        qDebug() << "Проверка входных данных";
         if (endDate == nullptr || pickedprod == nullptr) {
             qDebug() << "Ошибка: указатели на данные nullptr.";
             return result;
@@ -218,8 +220,8 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
             return result;
         }
 
+        qDebug() << "Инициализация модели";
         SalesPredictionModel model;
-
 
         QString path = "/home/asdxx/Coffee/CoffeeShine_expert/CoffeShine/coffeeShineServer1/coffeeShineServer/include/QNn/models/" + QString::number(*pickedprod) + "model.pt";
         if (!QFile::exists(path)) {
@@ -227,8 +229,8 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
             return result;
         }
 
-
         try {
+            qDebug() << "Загрузка модели из файла:" << path;
             torch::serialize::InputArchive archive;
             archive.load_from(path.toStdString());
             model.load(archive);
@@ -238,7 +240,7 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
             return result;
         }
 
-
+        qDebug() << "Получение данных для продукта";
         std::vector<std::tuple<float, float, float, float, float, float, float, float>> data;
         try {
             data = getfile1(pickedprod);
@@ -251,7 +253,7 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
             return result;
         }
 
-
+        qDebug() << "Получение стандартных отклонений и средних значений для данных";
         float idmean, idstd, daysmean, daysstd, moumean, moustd, salesmean, salesstd, tempmean, tempstd, hummean, humstd, osmean, osstd, windmean, windstd;
         try {
             std::tie(idmean, idstd, daysmean, daysstd, moumean, moustd, salesmean, salesstd, tempmean, tempstd, hummean, humstd, osmean, osstd, windmean, windstd) = getStdAndMean(data);
@@ -260,16 +262,18 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
             return result;
         }
 
-
+        qDebug() << "Инициализация цикла прогноза";
         QDate tempdate = endDate->at(0);
         int n = 1;
-        Weather weather(&tempdate, 1);
 
         while (tempdate <= endDate->at(1)) {
             try {
+                qDebug() << "Прогнозирование для даты:" << tempdate.toString();
 
-                weather = Weather(&tempdate, 1);
+                qDebug() << "Получение погодных данных";
+                Weather weather(&tempdate, 1);
 
+                qDebug() << "Подготовка входных данных для модели";
                 torch::Tensor test_id = torch::tensor({ *pickedprod }, torch::kFloat32);
                 torch::Tensor test_day = torch::tensor({ tempdate.day() }, torch::kFloat32);
                 torch::Tensor test_month = torch::tensor({ tempdate.month() }, torch::kFloat32);
@@ -278,34 +282,37 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
                 torch::Tensor test_os = torch::tensor({ weather.getOs() }, torch::kFloat32);
                 torch::Tensor test_wind = torch::tensor({ weather.getWindSpeed() }, torch::kFloat32);
 
-
+                qDebug() << "Нормализация входных данных";
                 auto [normalized_id, normalized_days, normalized_months, normalized_temp, normalized_hum, normalized_os, normalized_wind] =
                     normalize_input_data(test_id, test_day, test_month, test_temp, test_hum, test_os, test_wind, idmean, idstd, daysmean, daysstd, moumean, moustd, tempmean, tempstd, hummean, humstd, osmean, osstd, windmean, windstd);
 
-
+                qDebug() << "Запуск модели для прогнозирования";
                 torch::Tensor predicted_output = model.forward(normalized_id, normalized_days, normalized_months, normalized_temp, normalized_hum, normalized_os, normalized_wind);
 
-
+                qDebug() << "Денормализация выходных данных";
                 float denormalized_output = denormalize_value(predicted_output.item<float>(), salesmean, salesstd);
 
-
+                qDebug() << "Добавление результата прогноза в итоговую карту";
                 result.insert(QDateTime(tempdate.startOfDay()), std::abs(denormalized_output));
             } catch (const std::exception& e) {
                 qDebug() << "Ошибка во время прогнозирования для даты" << tempdate.toString() << ":" << e.what();
             }
 
-
+            qDebug() << "Переход к следующей дате";
             tempdate = tempdate.addDays(1);
         }
 
+        qDebug() << "Цикл прогноза завершён";
     } catch (const std::exception& e) {
         qDebug() << "Общая ошибка в функции prediction:" << e.what();
     } catch (...) {
         qDebug() << "Неизвестная ошибка в функции prediction";
     }
 
+    qDebug() << "Завершение выполнения функции prediction";
     return result;
 }
+
 std::tuple<float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float> getStdAndMean(
     const std::vector<std::tuple<float,float,float,float,float,float,float,float>>& data) {
     std::vector<float> ids, days, months, temp, hum, os, wind;

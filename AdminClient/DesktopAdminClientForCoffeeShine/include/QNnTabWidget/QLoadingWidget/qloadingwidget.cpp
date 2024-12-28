@@ -9,7 +9,9 @@ LoadingWidget::LoadingWidget(QWidget *parent): QWidget(parent) {
 
 
     QMovie *movie = new QMovie(":/icons/other/Loading.gif");
+     movie->setScaledSize(QSize(200, 200));
     loadingLabel->setMovie(movie);
+
     movie->start();
 
 
@@ -18,4 +20,5 @@ LoadingWidget::LoadingWidget(QWidget *parent): QWidget(parent) {
     setLayout(layout);
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
 }

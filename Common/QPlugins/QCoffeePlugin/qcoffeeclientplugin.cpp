@@ -2272,7 +2272,7 @@ bool QCoffeeClientPlugin::editPriceInfo(QCoffeePriceInfo &priceInfo)
                         "startTime_price = '" + priceInfo.startDate.toString("yyyy-MM-dd hh:mm:ss") + "',"
                         "description_price = '" + priceInfo.description + "',"
                         "price_id_drink = '" + QString::number(priceInfo.idDrink) + "',"
-                        "price_id_volumeDrink = '" + QString::number(priceInfo.idVolume) + "'."
+                        "price_id_volumeDrink = '" + QString::number(priceInfo.idVolume) + "',"
                         "price_id_drinkСategory = '" + QString::number(priceInfo.idDrinkCategory) + "' "
                         "where id_price = '" + QString::number(priceInfo.id) + "';";
 
