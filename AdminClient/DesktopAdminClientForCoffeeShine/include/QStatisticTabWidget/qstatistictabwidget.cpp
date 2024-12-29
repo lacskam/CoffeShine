@@ -3,15 +3,24 @@
 QStatisticTabWidget::QStatisticTabWidget(QCoffeeClientPlugin *plugin_, QWidget *parent) : QWidget(parent)
 {
     currentPlugin = plugin_;
-    chartList << "Деньги";
+    chartList << "Деньги"<<"Продажи";
     createForm();
 }
 
 void QStatisticTabWidget::createForm()
 {
-    mainLayout = new QVBoxLayout(this);
+
+
+       mainLayout = new QVBoxLayout(this);
+    stat1 = new QWidget;
+    QVBoxLayout *subLayout = new QVBoxLayout(stat1);
+
+
+    tabWidget = new QTabWidget;
+    mainLayout->addWidget(tabWidget);
+    tabWidget->addTab(stat1,"Общее");
     QGroupBox * groupBox = new QGroupBox();
-    mainLayout->addWidget(groupBox);
+    subLayout->addWidget(groupBox);
     QVBoxLayout * layForGroupBox = new QVBoxLayout();
     groupBox->setLayout(layForGroupBox);
     QHBoxLayout* layForDate = new QHBoxLayout();
@@ -45,10 +54,87 @@ void QStatisticTabWidget::createForm()
     layForGroupBox->addWidget(openStat);
     connect(openStat,SIGNAL(clicked()),this,SLOT(createMoneyStatictic()));
 
-    chartView = new QChartView();
+    QChartView *chartView = new QChartView();
     chartView->setRenderHint(QPainter::Antialiasing);
     layForGroupBox->addWidget(chartView,1);
+
+
+    createDrinkStatForm();
+
+    tabWidget->addTab(stat2,"Напитки");
+    tabWidget->addTab(new QWidget(),"Категории");
 }
+
+
+void QStatisticTabWidget::createDrinkStatForm() {
+
+    stat2 = new QWidget();
+    vb = new QVBoxLayout(stat2);
+    hb = new QHBoxLayout();
+
+
+    leFirstDateLabel = new QLabel("C: ");
+    leFirstDate = new QDateEdit;
+
+    leFSecondDateLabel = new QLabel("До: ");
+    leSecondDate = new QDateEdit;
+
+    drinksComboBox = new QComboBox;
+    drinksComboBox->setMinimumWidth(200);
+
+    lePickedProd = new QSpinBox;
+    lePickedProd->setRange(0, 153);
+
+    btn = new QPushButton("Показать");
+
+    axisY = new QValueAxis();
+    axisX = new QDateTimeAxis();
+    axisX->setTickCount(22);
+    axisX->setFormat("dd.MM.yyyy");
+    axisX->setTitleText("дата");
+    axisY->setTitleText("продажи");
+
+    mapSaless = new QMap<QDateTime, qint32>;
+
+    chart = new QChart();
+    series = new QSplineSeries();
+    chartView = new QChartView(chart);
+
+
+    hb->addWidget(leFirstDateLabel);
+    hb->addWidget(leFirstDate, Qt::AlignLeft);
+    hb->addWidget(leFSecondDateLabel);
+    hb->addWidget(leSecondDate, Qt::AlignLeft);
+    hb->addWidget(drinksComboBox);
+    hb->addWidget(btn);
+
+    vb->addWidget(chartView);
+    vb->addLayout(hb);
+
+    QList<QDateTime> dates;
+    QList<qint32> values;
+
+    for (QMap<QDateTime, qint32>::const_iterator i = mapSaless->begin(); i != mapSaless->end(); ++i) {
+        dates.push_back(i.key());
+        values.push_back(i.value());
+    }
+
+    for (int i = 0; i < dates.size(); ++i) {
+        series->append(dates[i].toMSecsSinceEpoch(), values[i]);
+    }
+
+
+    chart->addSeries(series);
+    chart->addAxis(axisX, Qt::AlignBottom);
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisX);
+    series->attachAxis(axisY);
+}
+
+
+
+
+
 
 void QStatisticTabWidget::createMoneyStatictic()
 {
