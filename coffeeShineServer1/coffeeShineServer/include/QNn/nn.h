@@ -5,7 +5,7 @@
 #undef slots
 #include <torch/torch.h>
 #pragma pop_macro("slots")
-
+#include <QDir>
 
 class SalesPredictionModel : public torch::nn::Module {
 

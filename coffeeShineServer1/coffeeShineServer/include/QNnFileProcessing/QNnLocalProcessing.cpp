@@ -112,3 +112,63 @@ std::vector<std::tuple<float,float,float,float,float,float,float,float>> getfile
     }
     return data;
 }
+
+
+std::vector<std::tuple<float, float, float, float, float, float, float, float>>
+getDataById(int id_drink) {
+    std::vector<std::tuple<float, float, float, float, float, float, float, float>> result;
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName("127.0.0.1");
+    db.setUserName("root");
+    db.setPassword("1756");
+    db.setDatabaseName("nninfo");
+
+    if (!db.open()) {
+        qDebug() << "Failed to connect to database:" << db.lastError().text();
+        return result;
+    }
+
+
+    QSqlQuery salesQuery(db);
+    salesQuery.prepare("SELECT id_drink, DAY(dateSale) AS day, MONTH(dateSale) AS month, "
+                       "sales, dateSale FROM salesInfo WHERE id_drink = :id_drink");
+    salesQuery.bindValue(":id_drink", id_drink);
+
+    if (!salesQuery.exec()) {
+        qDebug() << "Failed to execute sales query:" << salesQuery.lastError().text();
+        return result;
+    }
+
+
+    QSqlQuery weatherQuery(db);
+    while (salesQuery.next()) {
+        float salesId = salesQuery.value("id_drink").toFloat();
+        float day = salesQuery.value("day").toFloat();
+        float month = salesQuery.value("month").toFloat();
+        float sales = salesQuery.value("sales").toFloat();
+        QString date = salesQuery.value("dateSale").toString();
+
+
+        weatherQuery.prepare("SELECT temp, hum, os, wind FROM weather WHERE dateWeather = :date");
+        weatherQuery.bindValue(":date", date);
+
+        if (!weatherQuery.exec()) {
+            qDebug() << "Failed to execute weather query:" << weatherQuery.lastError().text();
+            continue;
+        }
+
+
+        if (weatherQuery.next()) {
+            float temp = weatherQuery.value("temp").toFloat();
+            float hum = weatherQuery.value("hum").toFloat();
+            float os = weatherQuery.value("os").toFloat();
+            float wind = weatherQuery.value("wind").toFloat();
+
+            result.emplace_back(salesId, month, day, sales, temp, hum, os, wind);
+        }
+    }
+
+    db.close();
+    return result;
+}

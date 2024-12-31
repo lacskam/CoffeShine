@@ -120,7 +120,7 @@ bool learn(int* prod) {
     std::vector<std::tuple<float,float,float,float,float,float,float,float>> data1;
 
    // data = getfile(prod);
-    data1 = getfile1(prod);
+    data1 = getDataById(*prod);
 
    // auto [id, days, months, sales] = normalize_data(data);
     auto [id, days, months, sales, temp, hum, os, wind] = normalize_data(data1);
@@ -141,7 +141,7 @@ bool learn(int* prod) {
             auto wind_batch = batch.data()[7];
             auto sales_batch = torch::stack({ sales_batch1 }).unsqueeze(2);
 
-            // Логируем входные данные
+
             optimizer.zero_grad();
 
             auto predictions = model.forward(id_batch, days_batch, months_batch, temp_batch, hum_batch, os_batch, wind_batch);
@@ -165,11 +165,21 @@ bool learn(int* prod) {
     if (h == 1) {
         torch::serialize::OutputArchive archive;
         model.save(archive);
-        QString path = "models/" + QString::number(*prod) + "model.pt";
+        QDir dirForModels;
+        QString nameDir = "models_"+ QDateTime::currentDateTime().toString();
+        dirForModels.exists(nameDir);
+        QString path = nameDir+"/" + QString::number(*prod) + "model.pt";
         archive.save_to(path.toStdString());
     }
+
       return 0;
 }
+
+
+
+
+
+
 
 float denormalize_value(float normalized_value, float mean, float std) {
     return (normalized_value * std) + mean;
@@ -243,7 +253,7 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
         qDebug() << "Получение данных для продукта";
         std::vector<std::tuple<float, float, float, float, float, float, float, float>> data;
         try {
-            data = getfile1(pickedprod);
+            data = getDataById(*pickedprod);
             if (data.empty()) {
                 qDebug() << "Ошибка: данные для продукта пустые.";
                 return result;
