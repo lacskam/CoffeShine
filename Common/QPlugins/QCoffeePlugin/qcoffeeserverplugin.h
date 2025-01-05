@@ -23,6 +23,8 @@
 #include "QCoffeePictureInfo/qcoffeepictureinfo.h"
 #include "QNnPredictionInfo/qnnpredictioninfo.h"
 #include "../../../coffeeShineServer1/coffeeShineServer/include/QNn/nn.h"
+#include "../../../coffeeShineServer1/coffeeShineServer/include/QNnFileProcessing/QNnDbProcessing.h"
+
 
 
 
@@ -176,7 +178,7 @@ public:
 
     void commandA0(QByteArray data, QUnClientHandler *client); // получение информации о напитке
 
-
+     void command22(QByteArray data, QUnClientHandler *client); //запрос на обучение нейронки
     void command17(QByteArray data, QUnClientHandler *client); //получение прогноза нейронки
     void command18(QByteArray data, QUnClientHandler *client); //получение прогноза среднего значения продаж для диапазона товаров
 

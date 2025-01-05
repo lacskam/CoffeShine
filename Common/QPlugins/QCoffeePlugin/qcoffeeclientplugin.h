@@ -160,7 +160,7 @@ public:
     int getIdPicture(QCoffeePictureInfo &picture);
     void editPicture(QCoffeePictureInfo &picture);
 
-
+    void sendRelearnRequest();
     void sendPredictionRequest(QDate startDate, QDate endDate, quint32 id, qint32 idWg); // Отправление информации о дате и айди для прогноза
     void sendPredictionRequestFotStat(QDate startDate, QDate endDate, qint32 idstart, qint32 idend);
 

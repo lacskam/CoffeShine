@@ -4252,6 +4252,14 @@ void QCoffeeClientPlugin::commandA0(QByteArray &data)
 
     emit signalNewDrink();
 }
+void QCoffeeClientPlugin::sendRelearnRequest() {
+    QByteArray Output;
+    QDataStream stream(&Output, QIODevice::WriteOnly);
+     stream << 1;
+    qDebug()<<"command sendLearnRequest";
+
+     sendExtData(0x22, Output);
+}
 
 void QCoffeeClientPlugin::sendPredictionRequest(QDate startDate, QDate endDate, quint32 id,qint32 idWg) {
 

@@ -81,6 +81,24 @@ Command17Worker::Command17Worker(QByteArray data)  {
 
 
 
+void Command22Worker::process() {
+
+    int i;
+    for (i=0;i<10;i++) {
+        if (retrain(&i)) {
+
+        }
+    }
+
+
+    emit finished();
+}
+
+
+Command22Worker::Command22Worker(QByteArray data)  {
+    this->data=data;
+
+}
 
 
 

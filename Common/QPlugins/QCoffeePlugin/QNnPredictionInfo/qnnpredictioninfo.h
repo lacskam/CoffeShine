@@ -16,6 +16,26 @@
 #include <QDateTime>
 #include "../../../../coffeeShineServer1/coffeeShineServer/include/QNn/nn.h"
 
+
+
+class Command22Worker : public QObject {
+    Q_OBJECT
+
+public:
+    Command22Worker(QByteArray data);
+
+
+signals:
+    void finished();
+
+public slots:
+    void process();
+
+private:
+    QByteArray data;
+};
+
+
 class Command18Worker : public QObject {
     Q_OBJECT
 

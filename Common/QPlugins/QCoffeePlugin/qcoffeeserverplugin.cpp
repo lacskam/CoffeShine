@@ -78,6 +78,8 @@ void QCoffeeServerPlugin::processCommand(quint8 command,QByteArray data, QUnClie
         break;
     case 0x21: command21(data,client);
         break;
+    case 0x22: command22(data,client);
+        break;
     }
 
 }
@@ -3214,6 +3216,57 @@ void QCoffeeServerPlugin::command18(QByteArray data, QUnClientHandler *client) {
 
 
     thread->start();
+}
+
+
+void QCoffeeServerPlugin::command22(QByteArray data, QUnClientHandler *client) {
+
+    DB dbase(&(this->dataBase));
+
+
+
+    QString lastDate = dbase.getLastDateFromNn();
+    QList<Data> dataDb = getDateFromDb(
+        &dbase,
+        QDate(
+            lastDate.split("-")[0].toInt(),
+            lastDate.split("-")[1].toInt(),
+            lastDate.split("-")[2].toInt()
+            ).addDays(1),
+        0
+        );
+
+
+    if (dataDb.size()>0) {
+        updateDataForNN(&dataDb,&dbase);
+
+        QThread *thread = new QThread;
+        Command22Worker *worker = new Command22Worker(data);
+        worker->moveToThread(thread);
+
+
+        connect(thread, &QThread::started, worker, &Command22Worker::process);
+        connect(worker, &Command22Worker::finished, this, [this, client, thread, worker]() {
+            QByteArray result;
+            sendExtData(0x22, result, client);
+
+            thread->quit();
+            thread->wait();
+            worker->deleteLater();
+            thread->deleteLater();
+        });
+
+
+        thread->start();
+
+
+    } else {
+        qDebug()<<"обновление не требуется";
+
+    }
+
+
+
 }
 
 

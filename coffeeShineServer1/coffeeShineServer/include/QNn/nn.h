@@ -17,6 +17,8 @@ public:
 
 
     friend bool learn(int *prod);
+
+    friend bool retrain(int *prod);
     friend QMap<QDateTime,float> prediction(QList<QDate> *endDate,qint32 *pickedprod);
 
 private:
@@ -31,6 +33,7 @@ private:
 
 
 bool learn(int *prod);
+bool retrain(int* prod);
 
 
 QMap<QDateTime,float> prediction(QList<QDate> *endDate,qint32 *pickedprod);

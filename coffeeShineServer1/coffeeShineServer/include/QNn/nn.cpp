@@ -176,6 +176,104 @@ bool learn(int* prod) {
 }
 
 
+bool retrain(int* prod) {
+
+    if (prod == nullptr) {
+        qDebug() << "Ошибка: указатель на продукт nullptr.";
+        return false;
+    }
+
+    SalesPredictionModel model;
+
+    QString modelPath = "models/" + QString::number(*prod) + "model.pt";
+    if (!QFile::exists(modelPath)) {
+        qDebug() << "Ошибка: файл модели не найден по пути:" << modelPath;
+        return false;
+    }
+
+    try {
+        qDebug() << "Загрузка модели из файла:" << modelPath;
+        torch::serialize::InputArchive archive;
+        archive.load_from(modelPath.toStdString());
+        model.load(archive);
+        model.train();
+    } catch (const std::exception& e) {
+        qDebug() << "Ошибка загрузки или инициализации модели:" << e.what();
+        return false;
+    }
+
+    std::vector<std::tuple<float,float,float,float,float,float,float,float>> new_data;
+
+    // data = getfile(prod);
+    new_data = getDataById(*prod);
+
+    torch::optim::Adam optimizer(model.parameters(), torch::optim::AdamOptions(learning_rate));
+    torch::nn::MSELoss loss;
+
+    auto [id, days, months, sales, temp, hum, os, wind] = normalize_data(new_data);
+
+    auto dataset = torch::data::datasets::TensorDataset({ id, days, months, sales, temp, hum, os, wind });
+    auto data_loader = torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(
+        std::move(dataset), torch::data::DataLoaderOptions().batch_size(64));
+
+    int epoch = 0;
+    float d;
+    do {
+        for (auto& batch : *data_loader) {
+            auto id_batch = batch.data()[0];
+            auto days_batch = batch.data()[1];
+            auto months_batch = batch.data()[2];
+            auto sales_batch1 = batch.data()[3];
+            auto temp_batch = batch.data()[4];
+            auto hum_batch = batch.data()[5];
+            auto os_batch = batch.data()[6];
+            auto wind_batch = batch.data()[7];
+            auto sales_batch = torch::stack({ sales_batch1 }).unsqueeze(2);
+
+            optimizer.zero_grad();
+
+            auto predictions = model.forward(id_batch, days_batch, months_batch, temp_batch, hum_batch, os_batch, wind_batch);
+            auto l = loss(predictions, sales_batch);
+
+            if (std::isnan(l.item<float>())) {
+                qDebug() << " потери NaN, прерывание обучения.";
+                return false;
+            }
+
+            l.backward();
+            optimizer.step();
+
+            std::cout << "epoch: " << epoch << "  loss:" << l.item<float>() << std::endl;
+            d = l.item<float>();
+        }
+        epoch++;
+    } while (d > 0.0001);
+
+    try {
+        QString currentDate = QDate::currentDate().toString("yyyy_MM_dd");
+        QString newDir = "models_" + currentDate;
+
+        QDir dir;
+        if (!dir.exists(newDir)) {
+            if (!dir.mkpath(newDir)) {
+                qDebug() << "не удалось создать директорию для сохранения модели:" << newDir;
+                return false;
+            }
+        }
+
+        QString newModelPath = newDir + "/" + QString::number(*prod) + "model.pt";
+
+        qDebug() << "сохранение модели в директорию:" << newDir;
+        torch::serialize::OutputArchive archive;
+        model.save(archive);
+        archive.save_to(newModelPath.toStdString());
+    } catch (const std::exception& e) {
+        qDebug() << "Ошибка при сохранении модели:" << e.what();
+        return false;
+    }
+
+    return true;
+}
 
 
 

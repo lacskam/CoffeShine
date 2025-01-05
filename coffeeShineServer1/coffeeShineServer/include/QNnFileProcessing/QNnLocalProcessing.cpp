@@ -118,7 +118,7 @@ std::vector<std::tuple<float, float, float, float, float, float, float, float>>
 getDataById(int id_drink) {
     std::vector<std::tuple<float, float, float, float, float, float, float, float>> result;
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","db_nn");
     db.setHostName("127.0.0.1");
     db.setUserName("root");
     db.setPassword("1756");

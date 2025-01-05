@@ -15,14 +15,26 @@ Data::~Data() {
 }
 
 
-DB::DB(QCoffeeServerPlugin *plugin_) {
-    currentPlugin = plugin_;
-    getIdProduct();
+DB::DB(QSqlDatabase *dbase) {
+    db = dbase;
+
+    dbForNn =  QSqlDatabase::addDatabase("QMYSQL", "db_connection2");
+    dbForNn.setHostName("127.0.0.1");
+    dbForNn.setUserName("root");
+    dbForNn.setPassword("1756");
+    dbForNn.setDatabaseName("nninfo");
+
+    if (!dbForNn.open()) {
+        qDebug() << "Failed to connect to database:" << dbForNn.lastError().text();
+
+    }
+
 
 
 }
 
 DB::~DB() {
+    dbForNn.close();
 
 }
 
@@ -31,19 +43,29 @@ DB::~DB() {
 
 
 void DB::getIdProduct() {
-    QVector<QCoffeeSoldPositionInfo> SPinfo= currentPlugin->getListSoldPosition();
+    // QVector<QCoffeeSoldPositionInfo> SPinfo= currentPlugin->getListSoldPosition();
 
-    int i =1;
-    while (i<SPinfo.size()) {
+    // int i =1;
+    // while (i<SPinfo.size()) {
 
-        idProduct.push_back(SPinfo.at(i).idDrink);
+    //     idProduct.push_back(SPinfo.at(i).idDrink);
 
-        dateProductSale.push_back(QString::number(SPinfo.at(i).date.date().year())+
-                                  "-"+QString::number(SPinfo.at(i).date.date().month())+"-"
-                                  +QString::number(SPinfo.at(i).date.date().day()));
-        i++;
+    //     dateProductSale.push_back(QString::number(SPinfo.at(i).date.date().year())+
+    //                               "-"+QString::number(SPinfo.at(i).date.date().month())+"-"
+    //                               +QString::number(SPinfo.at(i).date.date().day()));
+    //     i++;
+
+    // }
+
+
+    QSqlQuery *query = new QSqlQuery(*db);
+    query->exec("SELECT soldPosition_id_drink FROM tbl_soldPosition ORDER BY id_soldPosition;");
+    while (query->next()) {
+
+        idProduct.push_back(query->value(0).toInt());
 
     }
+    delete query;
 
 
 }
@@ -52,8 +74,9 @@ void DB::getDateProductSale() {
 
 
 
+
     QSqlQuery *query = new QSqlQuery(*db);
-    query->exec("select date_soldPosition from tbl_soldPosition where id_soldPosition<70000;");
+    query->exec("select date_soldPosition from tbl_soldPosition;");
     while (query->next()) {
 
         dateProductSale.push_back(query->value(0).toString().split("T")[0]);
@@ -70,39 +93,112 @@ void DB::getDateProductSale() {
 
 QString DB::getProductName(qint32 *id) {
 
-    QCoffeeDrinkInfo DrinkInfo = currentPlugin->getDrinkInfo(*id);
+    // QCoffeeDrinkInfo DrinkInfo = currentPlugin->getDrinkInfo(*id);
 
-    QString answ = DrinkInfo.name;
+    // QString answ = DrinkInfo.name;
 
+    // return answ;
+
+
+    QSqlQuery *query = new QSqlQuery(*db);
+    query->exec("select name_drink from tbl_drink where id_drink="+QString::number(*id)+";");
+    query->first();
+    QString answ = query->value(0).toString();
+    delete query;
     return answ;
+}
+
+void DB::getIdProducForDate(QDate startDate) {
+
+    // bool ok = false;
+    //  QString textQuery = "SELECT soldPosition_id_drink FROM tbl_soldPosition where date_soldPosition > '"+startDate.toString("yyyy-MM-dd")+"' ORDER BY id_soldPosition;";
+    // QSqlQuery *query = currentPlugin->execQuery(textQuery,&ok);
+
+    // while (query->next()) {
+
+    //     idProduct.push_back(query->value(0).toInt());
+
+    // }
+    // delete query;
+
+
+    QSqlQuery *query = new QSqlQuery(*db);
+    query->exec("SELECT soldPosition_id_drink FROM tbl_soldPosition where date_soldPosition > '"+startDate.toString("yyyy-MM-dd")+"' ORDER BY id_soldPosition;");
+    while (query->next()) {
+
+        idProduct.push_back(query->value(0).toInt());
+
+    }
+    delete query;
+
+
+
+}
+
+void DB::getDateProductSaleForDate(QDate startDate) {
+
+
+    //    bool ok = false;
+    //  QString textQuery = "SELECT date_soldPosition FROM tbl_soldPosition WHERE date_soldPosition > '" + startDate.toString("yyyy-MM-dd") + "';";
+    // QSqlQuery *query = currentPlugin->execQuery(textQuery,&ok);
+
+
+    // while (query->next()) {
+
+    //     dateProductSale.push_back(query->value(0).toString().split("T")[0]);
+
+    // }
+
+    // delete query;
+
+
+    QSqlQuery *query = new QSqlQuery(*db);
+    query->exec("SELECT date_soldPosition FROM tbl_soldPosition WHERE date_soldPosition > '" + startDate.toString("yyyy-MM-dd") + "';");
+
+    while (query->next()) {
+
+        dateProductSale.push_back(query->value(0).toString().split("T")[0]);
+
+    }
+
+    delete query;
+
+
 }
 
 
 
 
+QList<Data> getDateFromDb(DB *dbase, QDate startDate,bool readAll) {
 
 
-QList<Data> getDateFromDb(DB *dbase) {
-
-
+    if (readAll) {
+        dbase->getIdProduct();
+        dbase->getDateProductSale();
+    } else {
+        dbase->getIdProducForDate(startDate);
+        dbase->getDateProductSaleForDate(startDate);
+    }
 
     QList<Data> D;
 
     QString *tempDate = new QString;
     int i1 =0;
-
-    *tempDate = dbase->dateProductSale[0];
-    D.push_back(Data(&dbase->dateProductSale[0]));
-    for (int i =0;i<dbase->dateProductSale.size();i++) {
-        if (*tempDate==dbase->dateProductSale[i]) {
-            D[i1].prod.push_back(dbase->idProduct[i]);
-        } else {
-            *tempDate = dbase->dateProductSale[i];
-            D.push_back(Data(&dbase->dateProductSale[i]));
-            i1++;
+    if (dbase->dateProductSale.size()>0) {
+        *tempDate = dbase->dateProductSale[0];
+        D.push_back(Data(&dbase->dateProductSale[0]));
+        for (int i =0;i<dbase->dateProductSale.size();i++) {
+            if (*tempDate==dbase->dateProductSale[i]) {
+                D[i1].prod.push_back(dbase->idProduct[i]);
+            } else {
+                *tempDate = dbase->dateProductSale[i];
+                D.push_back(Data(&dbase->dateProductSale[i]));
+                i1++;
+            }
         }
     }
     delete tempDate;
+    qDebug()<<D.size()<<"sizeeee";
     return D;
 }
 
@@ -205,4 +301,74 @@ void importFullInfo(QList<Data> *data) {
            qDebug() << "Ошибка открытия файла";
        }
     file1.close();
+}
+
+
+
+QString DB::getLastDateFromNn() {
+    QSqlQuery *query = new QSqlQuery(dbForNn);
+    query->exec("select dateSale from salesInfo ORDER BY dateSale DESC LIMIT 1;");
+    query->first();
+    QString answ = query->value(0).toString();
+    delete query;
+    qDebug()<<answ<<"laaaastt";
+    return answ;
+}
+
+
+void DB::insertInNnTable(double id_prod,double day,double mou,double sales,double year) {
+    QString textQuery = "INSERT INTO salesInfo (id_drink, sales, dateSale) VALUES ('" +
+                        QString::number(id_prod) + "','" +
+                        QString::number(sales) + "','" +
+                        QString::number(static_cast<int>(year)) + "-" +
+                        QString::number(static_cast<int>(mou)).rightJustified(2, '0') + "-" +
+                        QString::number(static_cast<int>(day)).rightJustified(2, '0') + "');";
+
+
+    QSqlQuery *query = new QSqlQuery(dbForNn);
+    query->exec(textQuery);
+
+    qDebug()<<textQuery;
+    delete query;
+
+}
+
+
+
+
+void updateDataForNN(QList<Data> *data,DB *db) {
+    std::vector<std::vector<double>> a1;
+    QMap<QDateTime,qint32> temp;
+    qint32 *a=new qint32;
+    QList<QDate> endDAte {data->first().date,data->last().date};
+
+
+    for (int prod=1;prod<=150;prod++) {
+        *a=prod;
+
+        temp = getNumSalesProd(a,data,&endDAte);
+
+
+        for (auto i=temp.begin();i!=temp.end();i++) {
+            qDebug()<<i.value();
+
+            a1.push_back({prod,i.key().date().day(),i.key().date().month(),i.value(),i.key().date().year()});
+
+            // stream << QString::number(prod)+" "+ QString::number(i.key().date().day())+" "+ QString::number(i.key().date().month())+" "+ QString::number(i.value())<< endl;
+        }
+
+    }
+
+    sort(a1.begin(),a1.end(),comp);
+
+
+    for (int i=0;i<a1.size();i++) {
+        db->insertInNnTable(a1.at(i).at(0),a1.at(i).at(1),a1.at(i).at(2),a1.at(i).at(3),a1.at(i).at(4));
+
+    }
+
+
+
+
+
 }
