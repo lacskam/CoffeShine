@@ -139,6 +139,8 @@ void QCoffeeClientPlugin::processCommand(quint8 command,QByteArray data)
         break;
     case 0x21: command21(data);
         break;
+    case 0x23: command23(data);
+        break;
     }
 }
 
@@ -4480,6 +4482,40 @@ void QCoffeeClientPlugin::command21(QByteArray &data) {
         break;
     }
 
+
+
+}
+
+
+void QCoffeeClientPlugin::getListNnVersions() {
+
+    signalMessageSplashScreen(tr("Запрос на получение версий"));
+
+
+    QByteArray Output;
+    QDataStream stream(&Output,QIODevice::WriteOnly);
+
+    stream <<1;
+
+    sendExtData(0x23,Output);
+
+
+
+
+}
+
+void QCoffeeClientPlugin::command23(QByteArray &data) {
+
+
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);
+    qDebug()<<"Получены версии нейронки";
+    QList<QString> result;
+    streamIn >> result;
+
+
+
+    emit signalNnVersiomsGetted(result);
 
 
 

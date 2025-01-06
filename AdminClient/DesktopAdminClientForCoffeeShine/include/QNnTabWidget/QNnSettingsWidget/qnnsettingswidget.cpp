@@ -1,8 +1,16 @@
 #include "qnnsettingswidget.h"
 
+void QNnSettingsWidget::updateVersionsCb(QList<QString> versions) {
+    confComboBox->clear();
+    confComboBox->addItems(versions);
+}
+
+QNnSettingsWidget::QNnSettingsWidget(QCoffeeClientPlugin *plugin, QWidget *parent)  {
+
+    currentPlugin = plugin;
 
 
-QNnSettingsWidget::QNnSettingsWidget(QWidget *parent)  {
+    connect(currentPlugin,&QCoffeeClientPlugin::signalNnVersiomsGetted,this,&QNnSettingsWidget::updateVersionsCb);
     mainLayout = new QVBoxLayout(this);
 
     mainScrol = new QScrollArea(this);
@@ -76,5 +84,6 @@ QNnSettingsWidget::QNnSettingsWidget(QWidget *parent)  {
     mainLayout->addLayout(buttonslayout);
 
     setMinimumSize(300,400);
+    currentPlugin->getListNnVersions();
 
 }

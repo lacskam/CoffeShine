@@ -80,6 +80,8 @@ void QCoffeeServerPlugin::processCommand(quint8 command,QByteArray data, QUnClie
         break;
     case 0x22: command22(data,client);
         break;
+    case 0x23: command23(data,client);
+        break;
     }
 
 }
@@ -3172,7 +3174,11 @@ void QCoffeeServerPlugin::commandA0(QByteArray data, QUnClientHandler *client)
 
     sendExtData(0xA0,Output,client);
 }
-#include "QNnPredictionInfo/qnnpredictioninfo.h"
+
+
+
+
+
 void QCoffeeServerPlugin::command17(QByteArray data, QUnClientHandler *client) {
     QThread *thread = new QThread;
     Command17Worker *worker = new Command17Worker(data);
@@ -3395,6 +3401,42 @@ void QCoffeeServerPlugin::command21(QByteArray data,QUnClientHandler *client) {
     currentPrice >> streamOut;
 
     sendExtData(0x21,Output,client);
+
+
+}
+
+
+
+void QCoffeeServerPlugin::command23(QByteArray data, QUnClientHandler *client)
+{
+
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);
+
+    QString path = "../../NnModels/";
+    QList<QString> listVersions;
+    QDir directory(path);
+
+
+    if (!directory.exists()) {
+        qDebug() << "Директория с моделями не найдена:" << path;
+        listVersions = {};
+    } else {
+        directory.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+
+
+        listVersions = directory.entryList();
+
+    }
+    QByteArray Output;
+
+    QDataStream streamOut (&Output,QIODevice::ReadWrite);
+
+
+    streamOut << listVersions;
+
+
+    sendExtData(0x23,Output,client);
 
 
 }

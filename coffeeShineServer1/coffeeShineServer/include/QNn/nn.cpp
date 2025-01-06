@@ -185,7 +185,7 @@ bool retrain(int* prod) {
 
     SalesPredictionModel model;
 
-    QString modelPath = "models/" + QString::number(*prod) + "model.pt";
+    QString modelPath = "../../NnModels/models/" + QString::number(*prod) + "model.pt";
     if (!QFile::exists(modelPath)) {
         qDebug() << "Ошибка: файл модели не найден по пути:" << modelPath;
         return false;
@@ -251,7 +251,7 @@ bool retrain(int* prod) {
 
     try {
         QString currentDate = QDate::currentDate().toString("yyyy_MM_dd");
-        QString newDir = "models_" + currentDate;
+        QString newDir = "../../NnModels/models_" + currentDate;
 
         QDir dir;
         if (!dir.exists(newDir)) {
@@ -331,7 +331,8 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
         qDebug() << "Инициализация модели";
         SalesPredictionModel model;
 
-        QString path = "/home/asdxx/Coffee/CoffeeShine_expert/CoffeShine/coffeeShineServer1/coffeeShineServer/include/QNn/models/" + QString::number(*pickedprod) + "model.pt";
+
+        QString path = "../../NnModels/models/" + QString::number(*pickedprod) + "model.pt";
         if (!QFile::exists(path)) {
             qDebug() << "Ошибка: файл модели не найден по пути:" << path;
             return result;

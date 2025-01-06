@@ -196,10 +196,10 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     buttonettings = new QPushButton();
     buttonettings->setIcon(QIcon(":/icons/other/settingsNn.png"));
     buttonettings->setMaximumSize(30,30);
-    // connect(buttonettings,&QPushButton::clicked,this,&QNnTabWidget::openSettingsDialog);
-    connect(buttonettings,&QPushButton::clicked,this, [=]() {
-        currentPlugin->sendRelearnRequest();
-    });
+     connect(buttonettings,&QPushButton::clicked,this,&QNnTabWidget::openSettingsDialog);
+    // connect(buttonettings,&QPushButton::clicked,this, [=]() {
+    //     currentPlugin->sendRelearnRequest();
+    // });
 
     chartsComboBox = new QComboBox();
 
@@ -632,7 +632,7 @@ void QNnTabWidget::lineMoveNN(QMap<QDateTime,float> *mapSaless) {
 
 
 void QNnTabWidget::openSettingsDialog() {
-    settingsWidget = new QNnSettingsWidget(this);
+    settingsWidget = new QNnSettingsWidget(currentPlugin,this);
     settingsWidget->show();
 
 }

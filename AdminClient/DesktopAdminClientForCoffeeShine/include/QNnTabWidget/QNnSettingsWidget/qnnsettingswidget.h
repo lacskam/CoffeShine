@@ -9,7 +9,7 @@
 #include <QHBoxLayout>
 #include <QGroupBox>
 #include <QScrollArea>
-
+#include "../../../../Common/QPlugins/QCoffeePlugin/qcoffeeclientplugin.h"
 
 
 class QNnSettingsWidget : public QWidget
@@ -17,10 +17,11 @@ class QNnSettingsWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit QNnSettingsWidget(QWidget *parent=nullptr);
+    explicit QNnSettingsWidget(QCoffeeClientPlugin *plugin,QWidget *parent=nullptr);
 
 
 private:
+    QCoffeeClientPlugin *currentPlugin;
     QVBoxLayout *mainLayout;
     QGroupBox *mainGroupBox;
     QVBoxLayout *vblGroupBox;
@@ -57,7 +58,8 @@ private:
 
 
 
-
+private slots:
+    void updateVersionsCb(QList<QString> versions);
 
 
 

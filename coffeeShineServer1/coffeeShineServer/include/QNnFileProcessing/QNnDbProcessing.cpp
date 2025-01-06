@@ -334,6 +334,26 @@ void DB::insertInNnTable(double id_prod,double day,double mou,double sales,doubl
 }
 
 
+void DB::insettInWeatherTable(double temp,double hum,double os,double wind,QDate date) {
+
+
+    QString textQuery = "INSERT INTO weather (temp, hum, os,wind,dateWeather) VALUES ('" +
+                        QString::number(temp) + "','" +
+                        QString::number(hum) + "','" +
+                         QString::number(os) + "','" +
+                         QString::number(wind) + "','" +
+                        QString::number(static_cast<int>(date.year())) + "-" +
+                        QString::number(static_cast<int>(date.month())).rightJustified(2, '0') + "-" +
+                        QString::number(static_cast<int>(date.day())).rightJustified(2, '0') + "');";
+
+
+    QSqlQuery *query = new QSqlQuery(dbForNn);
+    query->exec(textQuery);
+
+    qDebug()<<textQuery;
+    delete query;
+}
+
 
 
 void updateDataForNN(QList<Data> *data,DB *db) {
@@ -364,6 +384,15 @@ void updateDataForNN(QList<Data> *data,DB *db) {
 
     for (int i=0;i<a1.size();i++) {
         db->insertInNnTable(a1.at(i).at(0),a1.at(i).at(1),a1.at(i).at(2),a1.at(i).at(3),a1.at(i).at(4));
+
+    }
+
+
+
+    for (QDate i = endDAte.at(0);i<endDAte.at(1);i = i.addDays(1)) {
+        Weather weather(&i);
+
+        db->insettInWeatherTable(weather.get_temperature(),weather.get_humidity(),weather.getOs(),weather.getWindSpeed(),i);
 
     }
 

@@ -24,7 +24,7 @@
 #include "QNnPredictionInfo/qnnpredictioninfo.h"
 #include "../../../coffeeShineServer1/coffeeShineServer/include/QNn/nn.h"
 #include "../../../coffeeShineServer1/coffeeShineServer/include/QNnFileProcessing/QNnDbProcessing.h"
-
+#include "QNnPredictionInfo/qnnpredictioninfo.h"
 
 
 
@@ -185,6 +185,8 @@ public:
     void command19(QByteArray data,QUnClientHandler *client); //получение инфы о категории
     void command20(QByteArray data,QUnClientHandler *client); //получение обьема
     void command21(QByteArray data,QUnClientHandler *client); //получение цены
+
+    void command23(QByteArray data,QUnClientHandler *client); //получение списка версий модели
 
 private:
 

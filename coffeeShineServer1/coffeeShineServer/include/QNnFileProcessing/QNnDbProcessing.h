@@ -6,6 +6,7 @@
 #include<QSqlQuery>
 #include "QWeather/weather.h"
 #include"../../../../Common/QPlugins/QCoffeePlugin/qcoffeeserverplugin.h"
+#include"QDate"
 class Data;
 class DB {
     private:
@@ -27,11 +28,14 @@ class DB {
         void getDateProductSale();
         QString getProductName(qint32 *id);
 
+
+        QString getLastDateFromNn();
+
         void getDateProductSaleForDate(QDate startDate);
             void getIdProducForDate(QDate startDate);
 
         void insertInNnTable(double id_prod,double day,double mou,double sales,double year);
-        QString getLastDateFromNn();
+            void insettInWeatherTable(double temp,double hum,double os,double wind,QDate date);
 
 
 };
