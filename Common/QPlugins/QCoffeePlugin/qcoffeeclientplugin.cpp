@@ -139,6 +139,8 @@ void QCoffeeClientPlugin::processCommand(quint8 command,QByteArray data)
         break;
     case 0x21: command21(data);
         break;
+    case 0x22: command22(data);
+        break;
     case 0x23: command23(data);
         break;
     }
@@ -4254,14 +4256,9 @@ void QCoffeeClientPlugin::commandA0(QByteArray &data)
 
     emit signalNewDrink();
 }
-void QCoffeeClientPlugin::sendRelearnRequest() {
-    QByteArray Output;
-    QDataStream stream(&Output, QIODevice::WriteOnly);
-     stream << 1;
-    qDebug()<<"command sendLearnRequest";
 
-     sendExtData(0x22, Output);
-}
+
+
 
 void QCoffeeClientPlugin::sendPredictionRequest(QDate startDate, QDate endDate, quint32 id,qint32 idWg) {
 
@@ -4486,6 +4483,29 @@ void QCoffeeClientPlugin::command21(QByteArray &data) {
 
 }
 
+void QCoffeeClientPlugin::sendRelearnRequest() {
+    QByteArray Output;
+    QDataStream stream(&Output, QIODevice::WriteOnly);
+    stream << 1;
+    qDebug()<<"command sendLearnRequest";
+
+    sendExtData(0x22, Output);
+}
+
+
+void QCoffeeClientPlugin::command22(QByteArray &data) {
+
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);
+
+
+
+    qint32 progress;
+    streamIn >> progress;
+    qDebug()<<"new status"<<progress;
+    emit signalSendStatus(progress);
+}
+
 
 void QCoffeeClientPlugin::getListNnVersions() {
 
@@ -4507,17 +4527,35 @@ void QCoffeeClientPlugin::getListNnVersions() {
 void QCoffeeClientPlugin::command23(QByteArray &data) {
 
 
+    QMap<QString,QString> config;
+     QList<QString> result;
+    qint32 progresLearn;
+    \
     QDataStream streamIn (&data,QIODevice::ReadOnly);
     streamIn.device()->seek(0);
-    qDebug()<<"Получены версии нейронки";
-    QList<QString> result;
+    qDebug()<<"Получены версий и конфига нейронки";
+
     streamIn >> result;
+    streamIn >> config;
+    streamIn >> progresLearn;
 
 
 
-    emit signalNnVersiomsGetted(result);
+    emit signalNnVersiomsGetted(result,config,progresLearn);
 
 
+}
 
+void QCoffeeClientPlugin::sendNnConfig(QMap<QString,QString> &config) {
+
+    signalMessageSplashScreen(tr("Запрос на обновление конфига"));
+
+
+    QByteArray Output;
+    QDataStream stream(&Output,QIODevice::WriteOnly);
+
+    stream << config;
+
+    sendExtData(0x24,Output);
 
 }

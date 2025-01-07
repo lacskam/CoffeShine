@@ -10,7 +10,7 @@
 #include <QGroupBox>
 #include <QScrollArea>
 #include "../../../../Common/QPlugins/QCoffeePlugin/qcoffeeclientplugin.h"
-
+#include <QProgressBar>
 
 class QNnSettingsWidget : public QWidget
 {
@@ -22,6 +22,7 @@ public:
 
 private:
     QCoffeeClientPlugin *currentPlugin;
+    QMap<QString,QString> firstConfig;
     QVBoxLayout *mainLayout;
     QGroupBox *mainGroupBox;
     QVBoxLayout *vblGroupBox;
@@ -49,18 +50,21 @@ private:
     QGroupBox *groupStartLearn;
     QPushButton *btnLearn;
 
+    QLabel *statusNn;
+    QProgressBar *progressBarLearn;
 
      QHBoxLayout *buttonslayout;
     QPushButton *btnSave;
     QPushButton *btnCancel;
 
-
+    bool chekChanges();
 
 
 
 private slots:
-    void updateVersionsCb(QList<QString> versions);
-
+    void updateVersionsCb(QList<QString> &versions, QMap<QString, QString> &config,qint32 &progressLearn);
+    void sendNnSettings();
+    void startLearn();
 
 
 };

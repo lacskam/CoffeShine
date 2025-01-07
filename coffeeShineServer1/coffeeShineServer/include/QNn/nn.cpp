@@ -312,7 +312,7 @@ std::tuple<torch::Tensor, torch::Tensor, torch::Tensor,torch::Tensor,torch::Tens
 std::tuple<float,float,float,float,float,float,float,float,float,float,float,float,float,float,float,float> getStdAndMean(
     const std::vector<std::tuple<float,float,float,float,float,float,float,float>>& data);
 
-QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
+QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod,QMap<QString,QString> &config) {
     QMap<QDateTime, float> result;
 
     qDebug() << "Начало выполнения функции prediction";
@@ -331,8 +331,8 @@ QMap<QDateTime, float> prediction(QList<QDate>* endDate, qint32* pickedprod) {
         qDebug() << "Инициализация модели";
         SalesPredictionModel model;
 
-
-        QString path = "../../NnModels/models/" + QString::number(*pickedprod) + "model.pt";
+        QString currentModel = config.value("currentModel");
+        QString path = "../../NnModels/"+currentModel+"/" + QString::number(*pickedprod) + "model.pt";
         if (!QFile::exists(path)) {
             qDebug() << "Ошибка: файл модели не найден по пути:" << path;
             return result;

@@ -177,7 +177,7 @@ public:
     void command16(QByteArray data, QUnClientHandler *client); //Получение всех проданых позиций
 
     void commandA0(QByteArray data, QUnClientHandler *client); // получение информации о напитке
-
+    qint32 progresLearn =-1;
      void command22(QByteArray data, QUnClientHandler *client); //запрос на обучение нейронки
     void command17(QByteArray data, QUnClientHandler *client); //получение прогноза нейронки
     void command18(QByteArray data, QUnClientHandler *client); //получение прогноза среднего значения продаж для диапазона товаров
@@ -187,6 +187,7 @@ public:
     void command21(QByteArray data,QUnClientHandler *client); //получение цены
 
     void command23(QByteArray data,QUnClientHandler *client); //получение списка версий модели
+    void command24(QByteArray data,QUnClientHandler *client); //получение обновлений конфига
 
 private:
 

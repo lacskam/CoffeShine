@@ -7,6 +7,7 @@
 #include "QWeather/weather.h"
 #include"../../../../Common/QPlugins/QCoffeePlugin/qcoffeeserverplugin.h"
 #include"QDate"
+
 class Data;
 class DB {
     private:
@@ -59,6 +60,9 @@ public:
 
 
 };
+
+bool saveNnConfig(QMap<QString, QString> &config);
+QMap<QString, QString> loadNnConfig();
 
 
 QList<Data> getDateFromDb(DB *dbase, QDate startDate,bool readAll); //получение всей инфы

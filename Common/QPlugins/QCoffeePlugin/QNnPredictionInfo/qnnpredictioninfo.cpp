@@ -18,7 +18,7 @@ void Command18Worker::process() {
     QList<QDate> date = {startDate, endDate};
     float srAr;
     for (int i = idstart; i <= idend; i++) {
-        predictionResults = prediction(&date, &i);
+        predictionResults = prediction(&date, &i,config);
         if (predictionResults.isEmpty()) {
             continue;
         }
@@ -37,8 +37,9 @@ void Command18Worker::process() {
     emit finished(Output);
 }
 
-Command18Worker::Command18Worker(QByteArray data)  {
+Command18Worker::Command18Worker(QByteArray data, QMap<QString, QString> &config)  {
     this->data=data;
+      this->config = config;
 }
 
 
@@ -59,7 +60,7 @@ void Command17Worker::process() {
     QList<QDate> date = {startDate, endDate};
 
 
-    QMap<QDateTime, float> predictionResults = prediction(&date, &id);
+    QMap<QDateTime, float> predictionResults = prediction(&date, &id,config);
 
 
     QByteArray Output;
@@ -72,8 +73,9 @@ void Command17Worker::process() {
     emit finished(Output);
 }
 
-Command17Worker::Command17Worker(QByteArray data)  {
+Command17Worker::Command17Worker(QByteArray data, QMap<QString, QString> &config)  {
     this->data=data;
+    this->config = config;
 }
 
 
@@ -83,11 +85,14 @@ Command17Worker::Command17Worker(QByteArray data)  {
 
 void Command22Worker::process() {
 
-    int i;
-    for (i=0;i<10;i++) {
+    qint32 i;
+    for (i=1;i<10;i++) {
+
         if (retrain(&i)) {
 
         }
+        emit step(i);
+
     }
 
 
@@ -97,6 +102,7 @@ void Command22Worker::process() {
 
 Command22Worker::Command22Worker(QByteArray data)  {
     this->data=data;
+
 
 }
 

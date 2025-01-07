@@ -82,6 +82,8 @@ void QCoffeeServerPlugin::processCommand(quint8 command,QByteArray data, QUnClie
         break;
     case 0x23: command23(data,client);
         break;
+    case 0x24: command24(data,client);
+        break;
     }
 
 }
@@ -3180,8 +3182,12 @@ void QCoffeeServerPlugin::commandA0(QByteArray data, QUnClientHandler *client)
 
 
 void QCoffeeServerPlugin::command17(QByteArray data, QUnClientHandler *client) {
+
+    QMap<QString,QString> currentConfig = loadNnConfig();
+
+
     QThread *thread = new QThread;
-    Command17Worker *worker = new Command17Worker(data);
+    Command17Worker *worker = new Command17Worker(data,currentConfig);
     worker->moveToThread(thread);
 
 
@@ -3205,8 +3211,11 @@ void QCoffeeServerPlugin::command17(QByteArray data, QUnClientHandler *client) {
 
 void QCoffeeServerPlugin::command18(QByteArray data, QUnClientHandler *client) {
 
+    QMap<QString,QString> currentConfig = loadNnConfig();
+
+
     QThread *thread = new QThread;
-    Command18Worker *worker = new Command18Worker(data);
+    Command18Worker *worker = new Command18Worker(data,currentConfig);
     worker->moveToThread(thread);
 
 
@@ -3244,6 +3253,14 @@ void QCoffeeServerPlugin::command22(QByteArray data, QUnClientHandler *client) {
 
 
     if (dataDb.size()>0) {
+
+        QByteArray status;
+        QDataStream streamOut (&status,QIODevice::ReadWrite);
+
+        streamOut<<-2;
+        progresLearn=0;
+        sendExtData(0x22, status, client);
+
         updateDataForNN(&dataDb,&dbase);
 
         QThread *thread = new QThread;
@@ -3252,8 +3269,19 @@ void QCoffeeServerPlugin::command22(QByteArray data, QUnClientHandler *client) {
 
 
         connect(thread, &QThread::started, worker, &Command22Worker::process);
+        connect(worker, &Command22Worker::step,this,[=](qint32 step) {
+            progresLearn=step;
+            QByteArray currentStep;
+            QDataStream streamOut (&currentStep,QIODevice::ReadWrite);
+
+            streamOut<<step;
+            sendExtData(0x22, currentStep, client);
+        });
         connect(worker, &Command22Worker::finished, this, [this, client, thread, worker]() {
             QByteArray result;
+            QDataStream streamOut (&result,QIODevice::ReadWrite);
+            streamOut<<-3;
+            progresLearn=-1;
             sendExtData(0x22, result, client);
 
             thread->quit();
@@ -3268,10 +3296,18 @@ void QCoffeeServerPlugin::command22(QByteArray data, QUnClientHandler *client) {
 
     } else {
         qDebug()<<"обновление не требуется";
+        QByteArray result;
+         progresLearn=-1;
+        QDataStream streamOut (&result,QIODevice::ReadWrite);
+        streamOut<<-1;
+
+        sendExtData(0x22, result, client);
 
     }
 
-
+    // -1 - Обучение не требуется
+    // -3 - Обучение оконченно
+    // -2 - Начало обучения
 
 }
 
@@ -3413,6 +3449,8 @@ void QCoffeeServerPlugin::command23(QByteArray data, QUnClientHandler *client)
     QDataStream streamIn (&data,QIODevice::ReadOnly);
     streamIn.device()->seek(0);
 
+
+     QMap<QString,QString> config;
     QString path = "../../NnModels/";
     QList<QString> listVersions;
     QDir directory(path);
@@ -3435,8 +3473,42 @@ void QCoffeeServerPlugin::command23(QByteArray data, QUnClientHandler *client)
 
     streamOut << listVersions;
 
+    config = loadNnConfig();
+
+    streamOut << config;
+    streamOut << this->progresLearn;
 
     sendExtData(0x23,Output,client);
+
+
+}
+
+
+
+void QCoffeeServerPlugin::command24(QByteArray data, QUnClientHandler *client)
+{
+
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);
+
+
+    QMap<QString,QString> config;
+
+    streamIn >> config;
+
+
+    bool result = saveNnConfig(config);
+
+
+    QByteArray Output;
+
+    QDataStream streamOut (&Output,QIODevice::ReadWrite);
+
+
+    streamOut << result;
+
+
+    sendExtData(0x24,Output,client);
 
 
 }

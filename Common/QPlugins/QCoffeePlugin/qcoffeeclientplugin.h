@@ -178,6 +178,7 @@ public:
      int getIdCurrentPointSale();
 
     void getListNnVersions();
+     void sendNnConfig(QMap<QString, QString> &config);
 
 
 private:
@@ -270,7 +271,9 @@ private:
     void command18(QByteArray &data);    //получение прогноза для диапазона товаров
     void command20(QByteArray &data);   //получение обьема
      void command21(QByteArray &data);  //получение цены
+    void command22(QByteArray &data); // получение статуса
     void command23(QByteArray &data); //получение версий нейронки
+
 
 
 
@@ -293,7 +296,8 @@ signals:
     void predictionDataReceivedForStart(QMap<qint32, float> predictionResults);
     void signalNewCategory();
     void signalVolumeGetted();
-    void signalNnVersiomsGetted(QList<QString> versions);
+    void signalNnVersiomsGetted(QList<QString> &versions,QMap<QString,QString> &config,qint32 &progressLearn);
+    void signalSendStatus(qint32 &status);
 
 };
 

@@ -168,6 +168,73 @@ void DB::getDateProductSaleForDate(QDate startDate) {
 
 
 
+bool saveNnConfig(QMap<QString, QString> &config) {
+
+    QString filePath;
+    filePath="../../NnModels/config";
+
+
+    QFile file1(filePath);
+    std::vector<std::vector<double>> a1;
+    QMap<QDateTime,qint32> temp;
+    if (file1.open(QIODevice::WriteOnly | QIODevice::Text)) {
+
+
+        QTextStream stream1(&file1);
+
+        for (const QString &key: config.keys()) {
+            stream1<<key+": "+config.value(key)+'\n';
+        }
+
+        return true;
+
+    } else {
+
+        qDebug() << "Ошибка открытия конфига";
+    }
+    file1.close();
+     return false;
+}
+
+
+QMap<QString, QString> loadNnConfig() {
+  QMap<QString, QString> result;
+
+    QString filePath;
+    filePath="../../NnModels/config";
+
+    if (!filePath.isEmpty()) {
+        QFile file(filePath);
+
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream stream(&file);
+
+            QString fileContents = stream.readAll();
+
+            QStringList splitedConfig;
+            splitedConfig = fileContents.split('\n');
+            file.close();
+
+            for (int i=0;i<splitedConfig.size()-1;i++) {
+
+
+                result[splitedConfig.at(i).split(": ").at(0)] = splitedConfig.at(i).split(": ").at(1);
+
+
+
+                qDebug()<<result.keys().at(i)<<result.value(result.keys().at(i));
+            }
+            return result;
+        }
+    } else {
+        qDebug() << "Ошибка чтения конфига";
+    }
+
+    return result;
+}
+
+
+
 
 QList<Data> getDateFromDb(DB *dbase, QDate startDate,bool readAll) {
 
@@ -262,45 +329,7 @@ void importFullInfo(QList<Data> *data) {
         }
    }
     file.close();*/
-    QFile file1("allprod1.sex");
-    std::vector<std::vector<double>> a1;
-    QMap<QDateTime,qint32> temp;
-    if (file1.open(QIODevice::WriteOnly | QIODevice::Text)) {
 
-
-           QTextStream stream1(&file1);
-
-           for (int prod=1;prod<=153;prod++) {
-                *a=prod;
-
-               temp = getNumSalesProd(a,data,&endDAte);
-
-
-               for (auto i=temp.begin();i!=temp.end();i++) {
-                   qDebug()<<i.value();
-
-                   a1.push_back({prod,i.key().date().day(),i.key().date().month(),i.value(),i.key().date().year()});
-
-                  // stream << QString::number(prod)+" "+ QString::number(i.key().date().day())+" "+ QString::number(i.key().date().month())+" "+ QString::number(i.value())<< endl;
-               }
-
-           }
-            sort(a1.begin(),a1.end(),comp);
-           for (int i=0;i<a1.size();i++) {
-                    stream1 << QString::number(a1[i][0])+" "+ QString::number(a1[i][1])+" "+
-                            QString::number(a1[i][2])+" "+ QString::number(a1[i][3])+" "+ QString::number(a1[i][4])<< endl;
-
-
-           }
-
-
-
-
-       } else {
-
-           qDebug() << "Ошибка открытия файла";
-       }
-    file1.close();
 }
 
 

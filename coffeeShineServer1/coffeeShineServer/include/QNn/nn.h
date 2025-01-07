@@ -19,7 +19,7 @@ public:
     friend bool learn(int *prod);
 
     friend bool retrain(int *prod);
-    friend QMap<QDateTime,float> prediction(QList<QDate> *endDate,qint32 *pickedprod);
+    friend QMap<QDateTime,float> prediction(QList<QDate> *endDate,qint32 *pickedprod,QMap<QString,QString> &config);
 
 private:
     torch::nn::LSTM lstm1 = nullptr;
@@ -36,7 +36,7 @@ bool learn(int *prod);
 bool retrain(int* prod);
 
 
-QMap<QDateTime,float> prediction(QList<QDate> *endDate,qint32 *pickedprod);
+QMap<QDateTime,float> prediction(QList<QDate> *endDate,qint32 *pickedprod,QMap<QString,QString> &config);
 
 
 std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor> normalize_data(
