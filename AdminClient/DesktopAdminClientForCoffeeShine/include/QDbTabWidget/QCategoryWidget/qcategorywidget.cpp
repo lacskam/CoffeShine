@@ -5,7 +5,6 @@ QCategoryWidget::~QCategoryWidget() {
 
     delete currentCategory;
 
-    delete drinkPickDialog;
 
 
 
@@ -37,7 +36,7 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     currentCategory = new QCoffeeCategoryInfo;
     vDrinkAddres = new QVector<QDrinkWidgetItem*>;
 
-    drinkPickDialog = new QDialog(this);
+
 
 
     *currentCategory = *currentCat;
@@ -171,24 +170,36 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 
 void QCategoryWidget::createDrinkPickDialog() {
 
-
+     drinkPickDialog = new QDialog(this);
 
 
     QVector<QCoffeeDrinkInfo> currentCategoryDrinkInfo = currentPlugin->getListDrink();
 
 
+
+    gruopBoxPick = new QGroupBox;
+    gruopBoxPick->setTitle("Все напитки");
+      gruopBoxPicked = new QGroupBox;
+     gruopBoxPicked->setTitle("Напитки в категории");
+
+     hblgruopBoxPick = new QHBoxLayout(gruopBoxPick);
+     hblgruopBoxPicked = new QHBoxLayout(gruopBoxPicked);
+
+
     lDrinkPick = new QLabel("Выберите напитки для добавления в категорию.");
     hblDPick = new QHBoxLayout;
+
     vblDPick = new QVBoxLayout;
     hblDPickListW = new QHBoxLayout;
-    bntA = new QPushButton("Добавить");
+    bntA = new QPushButton("Добавить выбранное");
     btnD = new QPushButton("Отмена");
 
 
     connect(bntA,SIGNAL(clicked()),this,SLOT(drinkPickDialogAccepted()));
     connect(btnD,SIGNAL(clicked()),drinkPickDialog,SLOT(close()));
-    drinkPickScrolarea = new QScrollArea;
+
     drinPickkListWidget = new QListWidget();
+    hblgruopBoxPick->addWidget(drinPickkListWidget);
 
     drinPickkListWidget->setFlow(QListView::LeftToRight);    //Lays out horizontally instead of vertically
     drinPickkListWidget->setResizeMode(QListView::Adjust);   //Dynamically adjust contents
@@ -197,12 +208,29 @@ void QCategoryWidget::createDrinkPickDialog() {
     drinPickkListWidget->setViewMode(QListView::IconMode);
 
 
+    drinPickkListWidgetPicked = new QListWidget;
+    hblgruopBoxPicked->addWidget(drinPickkListWidgetPicked);
 
-    hblDPickListW->addWidget(drinPickkListWidget);
-    drinkPickScrolarea->setLayout(hblDPickListW);
+    drinPickkListWidgetPicked->setFlow(QListView::LeftToRight);    //Lays out horizontally instead of vertically
+    drinPickkListWidgetPicked->setResizeMode(QListView::Adjust);   //Dynamically adjust contents
+    drinPickkListWidgetPicked->setGridSize(QSize(170, 190));      //This is an arbitrary value, but it forces the layout into a grid
+    drinPickkListWidgetPicked->setSpacing(30);                     //As an alternative to using setGridSize(), set a fixed spacing in the layout:
+    drinPickkListWidgetPicked->setViewMode(QListView::IconMode);
+
+
+
+
+
+    hblDPickListW->addWidget(gruopBoxPick);
+    hblDPickListW->addWidget(gruopBoxPicked);
+
     drinkPickDialog->setLayout(vblDPick);
     vblDPick->addWidget(lDrinkPick);
-    vblDPick->addWidget(drinkPickScrolarea);
+    vblDPick->addSpacing(10);
+
+
+
+    vblDPick->addLayout(hblDPickListW);
     vblDPick->addLayout(hblDPick);
     hblDPick->addWidget(bntA);
     hblDPick->addWidget(btnD);
@@ -210,8 +238,7 @@ void QCategoryWidget::createDrinkPickDialog() {
     for (int i=0;i<currentCategoryDrinkInfo.count();i++)
     {
         qDebug()<<currentCategoryDrinkInfo.at(i).id;
-        QListWidgetItem *listWidgetItem = new QListWidgetItem(drinPickkListWidget);
-        drinPickkListWidget->addItem (listWidgetItem);
+
             //Creating an object of the designed widget which is to be added to the listwidget
 
         QVector<qint32> cDrinksId;
@@ -221,20 +248,30 @@ void QCategoryWidget::createDrinkPickDialog() {
         }
 
         if (cDrinksId.contains(currentCategoryDrinkInfo.at(i).id)) {
-            drinkPickWidgetItemDio = new QDrinkWidgetItem(currentCategoryDrinkInfo.at(i),currentPlugin,3,drinPickkListWidget);
+            QListWidgetItem *listWidgetItem = new QListWidgetItem(drinPickkListWidgetPicked);
+            drinPickkListWidgetPicked->addItem (listWidgetItem);
+            drinkPickWidgetItemDio = new QDrinkWidgetItem(currentCategoryDrinkInfo.at(i),currentPlugin,3,drinPickkListWidgetPicked);
             vDrinkAddres->push_back(drinkPickWidgetItemDio);
+
+            listWidgetItem->setSizeHint (drinkPickWidgetItemDio->sizeHint ());
+            drinPickkListWidgetPicked->setItemWidget(listWidgetItem, drinkPickWidgetItemDio);
         } else {
+            QListWidgetItem *listWidgetItem = new QListWidgetItem(drinPickkListWidget);
+            drinPickkListWidget->addItem (listWidgetItem);
             drinkPickWidgetItemDio = new QDrinkWidgetItem(currentCategoryDrinkInfo.at(i),currentPlugin,4,drinPickkListWidget);
             vDrinkAddres->push_back(drinkPickWidgetItemDio);
+
+            listWidgetItem->setSizeHint (drinkPickWidgetItemDio->sizeHint ());
+            drinPickkListWidget->setItemWidget(listWidgetItem, drinkPickWidgetItemDio);
         }
 
         // connect(drinkWidgetItem,SIGNAL(QDrinkWidgetItem::signalOpenEditDrinkWidget(QCoffeeDrinkInfo)),this,SLOT(QDrinkWidgetItem::slotOpenDrinkEditWidget(QCoffeeDrinkInfo)));
         // connect(drinkWidgetItem,SIGNAL(QDrinkWidgetItem::signalUpdateListWidget()),this,SLOT(QDrinkWidgetItem::updateDrinkItems()));
         //Making sure that the listWidgetItem has the same size as the TheWidgetItem
-        listWidgetItem->setSizeHint (drinkPickWidgetItemDio->sizeHint ());
-        drinPickkListWidget->setItemWidget(listWidgetItem, drinkPickWidgetItemDio);
+
     }
-    drinkPickDialog->setMinimumSize(570,500);
+
+    drinkPickDialog->setMinimumSize(810,600);
     drinkPickDialog->setModal(true);
     drinkPickDialog->show();
 
@@ -278,7 +315,7 @@ void QCategoryWidget::drinkPickDialogAccepted() {
 
 
 
-    drinkPickDialog->close();
+    delete drinkPickDialog;
 
 }
 

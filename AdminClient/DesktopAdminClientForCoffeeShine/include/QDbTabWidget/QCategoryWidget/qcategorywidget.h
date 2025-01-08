@@ -61,10 +61,26 @@ private:
      QHBoxLayout *hblDPickListW ;
      QPushButton *bntA;
      QPushButton *btnD;
+
+     QGroupBox * gruopBoxPick;
+
+         QGroupBox * gruopBoxPicked;
+
+
+        QHBoxLayout  *hblgruopBoxPick;
+        QHBoxLayout  *hblgruopBoxPicked;
+
      QDialog *drinkPickDialog;
      QScrollArea *drinkPickScrolarea;
      QListWidget *drinPickkListWidget;
        QDrinkWidgetItem *drinkPickWidgetItemDio;
+
+     QDialog *drinkPickDialogPicked;
+     QScrollArea *drinkPickScrolareaPicked;
+     QListWidget *drinPickkListWidgetPicked;
+     QDrinkWidgetItem *drinkPickWidgetItemDioPicked;
+
+
 
 
        QDialog *delDio;

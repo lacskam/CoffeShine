@@ -81,7 +81,7 @@ QDrinkWidgetItem::QDrinkWidgetItem(QCoffeeDrinkInfo info,QCoffeeClientPlugin* pl
 
     QPixmap  picture;
     picture.loadFromData(currentPlugin->getPicture(drinkInfo.idPicture).data);
-    picture = picture.scaled(135,135,Qt::KeepAspectRatio);
+    picture = picture.scaled(110,120,Qt::KeepAspectRatio);
     drinkName->setPixmap(picture);
 
 

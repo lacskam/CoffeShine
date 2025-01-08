@@ -26,7 +26,7 @@ Widget::~Widget()
 
 void Widget::createForm()
 {
-    this->setMinimumSize(640,480);
+    this->setMinimumSize(1020,570);
 
     mainLayout = new QVBoxLayout(this);
     mainLayout->setMargin(0);
