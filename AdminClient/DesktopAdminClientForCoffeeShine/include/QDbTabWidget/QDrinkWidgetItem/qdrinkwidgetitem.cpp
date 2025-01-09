@@ -106,12 +106,18 @@ QDrinkWidgetItem::QDrinkWidgetItem(QCoffeeDrinkInfo info, QCoffeeClientPlugin* p
     drinkName->setPixmap(picture);
 
 
-
     setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(this,SIGNAL(customContextMenuRequested(QPoint)),
             this,SLOT(slotShowMenuContext(QPoint)));
     setMinimumSize( QSize(152,208));
+
+
+    if (flagAnim==2) {
+        setFixedSize(129,190);
+
+        picture = picture.scaled(20,20,Qt::KeepAspectRatio);
+    }
 
 
 }

@@ -58,10 +58,11 @@ private:
     QMap<QDateTime,qint32> *mapSaless;
     QMap<QDateTime,float> *mapNN;
 
-
+    QTabWidget *mainTabWidget;
     QWidget *productPrediction;
     QWidget *productStatisticPrediction;
     QStackedWidget *stackedWidget ;
+    QStackedWidget *stackedWidget2;
     QComboBox *chartsComboBox;
      QVBoxLayout *vbstacked;
     QHBoxLayout *hblforhead;
@@ -130,6 +131,12 @@ private:
     QWidget *loadingWg;
     QVBoxLayout *lLoading;
     LoadingWidget *loading;
+
+
+    QWidget *loadingWg2;
+    QVBoxLayout *lLoading2;
+    LoadingWidget *loading2;
+
     bool isLoadingPred;
     bool isLoadingStat;
 

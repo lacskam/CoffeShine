@@ -38,8 +38,8 @@ void QNnTabWidget::GetStatPrediction(QMap<qint32, float> predictionResults) {
         updateStatWg();
 
          isLoadingStat=0;
-        if (chartsComboBox->currentIndex()==1) {
-            chartsComboBox->activated(1);
+        if (mainTabWidget->currentIndex()==1) {
+            stackedWidget2->setCurrentIndex(0);
         }
 
 
@@ -139,7 +139,7 @@ void QNnTabWidget::createStatForm() {
             QDate endDate = leSecondDate->date();
 
             *idForGetStatStart =1;
-            *idForGetStatEnd =50;
+            *idForGetStatEnd =9;
             chartProdStat->removeAllSeries();
             chartProdStat->series().clear();
             series = new QHorizontalBarSeries();
@@ -148,7 +148,7 @@ void QNnTabWidget::createStatForm() {
                 >= QDate::currentDate() && endDate <= QDate::currentDate().addDays(14) && *idForGetStatStart < 153
                 && *idForGetStatStart > 0 && *idForGetStatEnd < 153
                 && *idForGetStatEnd > 0 && *idForGetStatEnd >= *idForGetStatStart) {
-                stackedWidget->setCurrentIndex(2);
+                stackedWidget2->setCurrentIndex(1);
                 isLoadingStat=1;
                 currentPlugin->sendPredictionRequestFotStat(startDate, endDate, *idForGetStatStart,*idForGetStatEnd);
             } else {
@@ -169,6 +169,7 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     createStatForm();
 
 
+    mainTabWidget = new QTabWidget;
     loadingWg = new QWidget;
 
     lLoading = new QVBoxLayout;
@@ -178,6 +179,13 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     isLoadingStat=0;
     lLoading->addWidget(loading);
 
+
+    loadingWg2 = new QWidget;
+
+    lLoading2 = new QVBoxLayout;
+    loadingWg2->setLayout(lLoading2);
+    loading2 = new LoadingWidget();
+      lLoading2->addWidget(loading2);
 
     mainLayout = new QVBoxLayout(this);
 
@@ -190,7 +198,7 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     vbs = new QHBoxLayout;
 
     stackedWidget = new QStackedWidget();
-
+     stackedWidget2 = new QStackedWidget;
     hblforhead = new QHBoxLayout;
 
     buttonettings = new QPushButton();
@@ -201,18 +209,15 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     //     currentPlugin->sendRelearnRequest();
     // });
 
-    chartsComboBox = new QComboBox();
+
+    mainTabWidget->setCornerWidget(buttonettings, Qt::TopRightCorner);
+
+    hblforhead->addWidget(mainTabWidget);
 
 
-    hblforhead->addWidget(chartsComboBox,10,Qt::AlignLeft);
 
-    hblforhead->addWidget(buttonettings,0,Qt::AlignRight);
 
-    QStringList list;
-    list <<"Предсказание по одному товару"<<"Рейтинг востребованности товаров";
 
-    chartsComboBox->addItems(list);
-    chartsComboBox->setMaximumWidth(250);
 
 
     vbstacked->addLayout(hblcharts);
@@ -221,11 +226,16 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     productStatisticPrediction->setLayout(vbstPred);
 
     stackedWidget->addWidget(productPrediction);
-    stackedWidget->addWidget(productStatisticPrediction);
     stackedWidget->addWidget(loadingWg);
 
+    stackedWidget2->addWidget(productStatisticPrediction);
+    stackedWidget2->addWidget(loadingWg2);
+
+    mainTabWidget->addTab(stackedWidget,"Предсказание по одному товару");
+    mainTabWidget->addTab(stackedWidget2,"Рейтинг востребованности товаров");
+
     vb->addLayout(hblforhead);
-    vb->addWidget(stackedWidget);
+   // vb->addWidget(stackedWidget);
 
 
 
@@ -263,28 +273,44 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
 
 
 
-    connect(chartsComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
-            this, [this](int index) {
+    // connect(chartsComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
+    //         this, [this](int index) {
 
 
-                if (index == 0) {
-                     if (isLoadingPred == 0) {
-                         stackedWidget->setCurrentIndex(index);
-                     } else {
-                         stackedWidget->setCurrentIndex(2);
-                     }
+    //             if (index == 0) {
+    //                  if (isLoadingPred == 0) {
 
-                } else if (index == 1) {
-                     if (isLoadingStat == 0) {
-                         stackedWidget->setCurrentIndex(index);
-                     } else {
-                         stackedWidget->setCurrentIndex(2);
-                     }
-                }
+    //                  } else {
+    //                      stackedWidget->setCurrentIndex(1);
+    //                  }
 
-            });
+    //             } else if (index == 1) {
+    //                  if (isLoadingStat == 0) {
+
+    //                  } else {
+    //                      stackedWidget->setCurrentIndex(1);
+    //                  }
+    //             }
+
+    //         });
 
 
+
+    connect(mainTabWidget, &QTabWidget::currentChanged, this, [this](int index) {
+        if (index == 0) {
+            if (isLoadingPred == 0) {
+
+            } else {
+                stackedWidget->setCurrentIndex(1);
+            }
+        } else if (index == 1) {
+            if (isLoadingStat == 0) {
+
+            } else {
+                stackedWidget2->setCurrentIndex(1);
+            }
+        }
+    });
     plotNNButton = new QPushButton("Prediction");
     connect(plotNNButton, &QPushButton::clicked, this, [=]() {
         QDate startDate = leFirstDate->date();
@@ -293,7 +319,7 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
         qDebug()<<"slot sendPredictionRequest";
         if (startDate >= QDate::currentDate() && startDate <= QDate::currentDate().addDays(14) && pickedProduct < 153
             && pickedProduct > 0) {
-            stackedWidget->setCurrentIndex(2);
+            stackedWidget->setCurrentIndex(1);
             isLoadingPred=1;
 
             currentPlugin->sendPredictionRequest(startDate, endDate, pickedProduct,1);
@@ -479,8 +505,8 @@ void QNnTabWidget::updateNN(QMap<QDateTime, float> predictionResults) {
     axisYnn->setRange(*std::min_element(values.begin(), values.end()), *(std::max_element(values.begin(), values.end())));
 
     isLoadingPred=0;
-    if (chartsComboBox->currentIndex()==0) {
-         chartsComboBox->activated(0);
+    if (mainTabWidget->currentIndex()==0) {
+         stackedWidget->setCurrentIndex(0);
     }
 
 

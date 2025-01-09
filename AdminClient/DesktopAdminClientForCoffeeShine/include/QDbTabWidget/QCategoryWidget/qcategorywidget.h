@@ -67,8 +67,8 @@ private:
          QGroupBox * gruopBoxPicked;
 
 
-        QHBoxLayout  *hblgruopBoxPick;
-        QHBoxLayout  *hblgruopBoxPicked;
+        QVBoxLayout  *hblgruopBoxPick;
+        QVBoxLayout  *hblgruopBoxPicked;
 
      QDialog *drinkPickDialog;
      QScrollArea *drinkPickScrolarea;
@@ -79,6 +79,16 @@ private:
      QScrollArea *drinkPickScrolareaPicked;
      QListWidget *drinPickkListWidgetPicked;
      QDrinkWidgetItem *drinkPickWidgetItemDioPicked;
+     QLineEdit *searchLine;
+     QLabel* labelForIcon;
+        QPixmap *searchIcon;
+     QHBoxLayout *hblforSearch;
+
+        QLineEdit *searchLine2;
+        QLabel* labelForIcon2;
+        QPixmap *searchIcon2;
+        QHBoxLayout *hblforSearch2;
+
 
 
 
@@ -93,12 +103,20 @@ private:
 
 
 
+
+
       bool checkChanges();
 signals:
 
 private slots:
-    void replaceDrinkItems()
-        ;    void updateDrinkItems();
+
+    void slotSearchInAllDrinks(QString searchText);
+
+
+
+    void slotSearchInCategoryDrinks(QString searchText);
+    void replaceDrinkItems();
+    void updateDrinkItems();
     void sendCategory();
     void createDrinkPickDialog();
     void updateDrinkPickDialog();

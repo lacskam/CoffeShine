@@ -304,7 +304,7 @@ void QDbTabWidget::slotSearchDrinksTextChanged(QString searchText)
     for(int i=0;i<drinkListWidget->count();i++)
     {
         drinkWidgetItem = dynamic_cast<QDrinkWidgetItem*>(drinkListWidget->itemWidget(drinkListWidget->item(i)));
-        if(drinkWidgetItem->getDrinkInfo().name.contains(searchText) ||
+        if(drinkWidgetItem->getDrinkInfo().name.contains(searchText, Qt::CaseInsensitive) ||
            searchText==nullptr || searchText=="")
         {
             drinkListWidget->setItemHidden(drinkListWidget->item(i), false);

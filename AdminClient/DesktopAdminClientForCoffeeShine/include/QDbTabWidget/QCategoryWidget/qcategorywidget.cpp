@@ -85,10 +85,13 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 
     drinkListWidget = new QListWidget();
 
+
+
+
     drinkListWidget->setFlow(QListView::LeftToRight);    //Lays out horizontally instead of vertically
     drinkListWidget->setResizeMode(QListView::Adjust);   //Dynamically adjust contents
-    drinkListWidget->setGridSize(QSize(165, 185));      //This is an arbitrary value, but it forces the layout into a grid
-    drinkListWidget->setSpacing(30);                     //As an alternative to using setGridSize(), set a fixed spacing in the layout:
+    drinkListWidget->setGridSize(QSize(129, 190));      //This is an arbitrary value, but it forces the layout into a grid
+    drinkListWidget->setSpacing(10);                     //As an alternative to using setGridSize(), set a fixed spacing in the layout:
     drinkListWidget->setViewMode(QListView::IconMode);   //And the most important part:
 
 
@@ -98,7 +101,7 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     mainLayout->addWidget(drinkScrol);
 
     mainLayout->addWidget(buttonAddNewDrinkToCategory);
-    drinkScrol->setMinimumHeight(500);
+    drinkScrol->setMinimumHeight(300);
 
     mainLayout->addSpacing(10);
     if (this->currentCategory->id>0)
@@ -130,6 +133,10 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
         buttonUnlink = new QPushButton("Отвязать");
 
         connect(buttonUnlink,&QPushButton::clicked,this,[=](){
+
+            QDialog *categotyUnlinkDialog = new QDialog(this);
+
+
             QVector<int> iDsDrinks = currentPlugin->getIdDrinkForCategory(currentCategory->id);
 
             for (int i =0;i< currentCategory->idPointSale.size();i++) {
@@ -182,11 +189,11 @@ void QCategoryWidget::createDrinkPickDialog() {
       gruopBoxPicked = new QGroupBox;
      gruopBoxPicked->setTitle("Напитки в категории");
 
-     hblgruopBoxPick = new QHBoxLayout(gruopBoxPick);
-     hblgruopBoxPicked = new QHBoxLayout(gruopBoxPicked);
+     hblgruopBoxPick = new QVBoxLayout(gruopBoxPick);
+     hblgruopBoxPicked = new QVBoxLayout(gruopBoxPicked);
 
 
-    lDrinkPick = new QLabel("Выберите напитки для добавления в категорию.");
+
     hblDPick = new QHBoxLayout;
 
     vblDPick = new QVBoxLayout;
@@ -195,10 +202,32 @@ void QCategoryWidget::createDrinkPickDialog() {
     btnD = new QPushButton("Отмена");
 
 
+
+    hblforSearch2 = new QHBoxLayout;
+    searchLine2 = new QLineEdit();
+    labelForIcon2 = new QLabel();
+    searchIcon2 = new QPixmap(":/icons/other/Search.png");
+
+    *searchIcon2 = searchIcon2->scaled(24,24,Qt::KeepAspectRatio);
+    labelForIcon2->setPixmap(*searchIcon2);
+
+    hblforSearch2->addWidget(searchLine2,1);
+
+    hblforSearch = new QHBoxLayout;
+    searchLine = new QLineEdit();
+    labelForIcon = new QLabel();
+    searchIcon = new QPixmap(":/icons/other/Search.png");
+
+    *searchIcon = searchIcon->scaled(24,24,Qt::KeepAspectRatio);
+    labelForIcon->setPixmap(*searchIcon);
+    hblforSearch->addWidget(labelForIcon);
+    hblforSearch->addWidget(searchLine,1);
+
     connect(bntA,SIGNAL(clicked()),this,SLOT(drinkPickDialogAccepted()));
     connect(btnD,SIGNAL(clicked()),drinkPickDialog,SLOT(close()));
 
     drinPickkListWidget = new QListWidget();
+    hblgruopBoxPick->addLayout(hblforSearch);
     hblgruopBoxPick->addWidget(drinPickkListWidget);
 
     drinPickkListWidget->setFlow(QListView::LeftToRight);    //Lays out horizontally instead of vertically
@@ -209,6 +238,7 @@ void QCategoryWidget::createDrinkPickDialog() {
 
 
     drinPickkListWidgetPicked = new QListWidget;
+     hblgruopBoxPicked->addLayout(hblforSearch2);
     hblgruopBoxPicked->addWidget(drinPickkListWidgetPicked);
 
     drinPickkListWidgetPicked->setFlow(QListView::LeftToRight);    //Lays out horizontally instead of vertically
@@ -217,20 +247,23 @@ void QCategoryWidget::createDrinkPickDialog() {
      drinkListWidget->setSpacing(10);                   //As an alternative to using setGridSize(), set a fixed spacing in the layout:
     drinPickkListWidgetPicked->setViewMode(QListView::IconMode);
 
-
+     connect(searchLine,&QLineEdit::textChanged,this,&QCategoryWidget::slotSearchInAllDrinks);
+     connect(searchLine2,&QLineEdit::textChanged,this,&QCategoryWidget::slotSearchInCategoryDrinks);
 
 
 
     hblDPickListW->addWidget(gruopBoxPick);
+
     hblDPickListW->addWidget(gruopBoxPicked);
 
     drinkPickDialog->setLayout(vblDPick);
-    vblDPick->addWidget(lDrinkPick);
+
     vblDPick->addSpacing(10);
 
 
 
     vblDPick->addLayout(hblDPickListW);
+
     vblDPick->addLayout(hblDPick);
     hblDPick->addWidget(bntA);
     hblDPick->addWidget(btnD);
@@ -538,4 +571,41 @@ void QCategoryWidget::slotDeleteCategory() {
 
 
 
+}
+
+
+void QCategoryWidget::slotSearchInAllDrinks(QString searchText)
+{
+    for(int i=0;i<drinPickkListWidget->count();i++)
+    {
+        drinkWidgetItem = dynamic_cast<QDrinkWidgetItem*>(drinPickkListWidget->itemWidget(drinPickkListWidget->item(i)));
+        if(drinkWidgetItem->getDrinkInfo().name.contains(searchText, Qt::CaseInsensitive) ||
+            searchText==nullptr || searchText=="")
+        {
+            drinPickkListWidget->setItemHidden(drinPickkListWidget->item(i), false);
+        }
+        else
+        {
+            drinPickkListWidget->setItemHidden(drinPickkListWidget->item(i), true);
+        }
+    }
+}
+
+
+
+void QCategoryWidget::slotSearchInCategoryDrinks(QString searchText)
+{
+    for(int i=0;i<drinPickkListWidgetPicked->count();i++)
+    {
+        drinkWidgetItem = dynamic_cast<QDrinkWidgetItem*>(drinPickkListWidgetPicked->itemWidget(drinPickkListWidgetPicked->item(i)));
+        if(drinkWidgetItem->getDrinkInfo().name.contains(searchText, Qt::CaseInsensitive) ||
+            searchText==nullptr || searchText=="")
+        {
+            drinPickkListWidgetPicked->setItemHidden(drinPickkListWidgetPicked->item(i), false);
+        }
+        else
+        {
+            drinPickkListWidgetPicked->setItemHidden(drinPickkListWidgetPicked->item(i), true);
+        }
+    }
 }
