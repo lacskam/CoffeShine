@@ -15,40 +15,64 @@ void QDrinkWidgetItem::paintEvent(QPaintEvent *)
     QRectF rectangle(5,70,width()-5,height()-70);
     painter.drawRoundedRect(rectangle, 10, 10);
 }
-
 void QDrinkWidgetItem::sizeScale(QSize sizeT) {
-     if (flagAnim==1 || flagAnim==3 || flagAnim==4) {
-    QPropertyAnimation *anim = new QPropertyAnimation(this,"size");
-    anim->setDuration(70);
-    anim->setStartValue(size());
-    anim->setEndValue(sizeT);
-    anim->start();
-     }
+    if (flagAnim == 1 || flagAnim == 3 || flagAnim == 4) {
 
+        if (size() != sizeT && !isAnimating) {
+            isAnimating = true;
+            QPropertyAnimation *anim = new QPropertyAnimation(this, "size");
+            anim->setDuration(70);
+            anim->setStartValue(size());
+            anim->setEndValue(sizeT);
+            connect(anim, &QPropertyAnimation::finished, this, [this]() {
+                isAnimating = false;
+            });
+            anim->start();
+        }
+    } else {
+
+        resize(sizeT);
+    }
 }
 
 void QDrinkWidgetItem::enterEvent(QEvent *e) {
-    if (flagAnim==1 || flagAnim==3 || flagAnim==4) {
-        tempS = size();
-        sizeScale(QSize(width()+8,height()+8));
+    if (flagAnim == 1 || flagAnim == 3 || flagAnim == 4) {
+        if (originalSize.isEmpty()) {
+            originalSize = size();
+        }
+
+
+        sizeScale(QSize(originalSize.width() + 8, originalSize.height() + 8));
+    } else {
+
+        resize(originalSize.width() + 8, originalSize.height() + 8);
     }
+
     QWidget::enterEvent(e);
-
-
-
-
 }
 
+void QDrinkWidgetItem::leaveEvent(QEvent *e) {
+    if (flagAnim == 1 || flagAnim == 3 || flagAnim == 4) {
 
-void QDrinkWidgetItem::leaveEvent(QEvent *e){
-     if (flagAnim==1 || flagAnim==3|| flagAnim==4) {
-      sizeScale(tempS);
-     }
-     QWidget::leaveEvent(e);
+        if (!isAnimating) {
+            sizeScale(originalSize);
+        } else {
+
+            QTimer::singleShot(70, this, [this]() {
+                sizeScale(originalSize);
+            });
+        }
+    } else {
+
+        resize(originalSize);
+    }
+
+    QWidget::leaveEvent(e);
 }
 
-QDrinkWidgetItem::QDrinkWidgetItem(QCoffeeDrinkInfo info,QCoffeeClientPlugin* plugin_,qint32 flagAnim,QWidget *parent) : QWidget(parent)
+QDrinkWidgetItem::QDrinkWidgetItem(QCoffeeDrinkInfo info, QCoffeeClientPlugin* plugin_, qint32 flagAnim, QListWidget *parentWidget, QWidget *parent) : QWidget(parent)
 {
+    this->parentWidget = parentWidget;
     this->flagAnim = flagAnim;
     isPickedForCategory=0;
     currentPlugin = plugin_;
@@ -62,14 +86,11 @@ QDrinkWidgetItem::QDrinkWidgetItem(QCoffeeDrinkInfo info,QCoffeeClientPlugin* pl
     drinkNamef->setAlignment(Qt::AlignCenter);
 
     drinkNamef->setMinimumHeight(60);
+     drinkNamef->setMaximumWidth(170);
     lay->addWidget(drinkNamef);
     drinkNamef->setText(drinkInfo.name);
     drinkNamef->setFont(QFont("Sans",11));
-    if (isPickedForCategory) {
-         drinkNamef->setFont(QFont("Sans",12));
-        drinkNamef->setStyleSheet("color: rgb(0, 204, 255)");
 
-    }
     drinkNamef->setWordWrap(true);
 
     drinkName = new QLabel();
@@ -90,6 +111,8 @@ QDrinkWidgetItem::QDrinkWidgetItem(QCoffeeDrinkInfo info,QCoffeeClientPlugin* pl
 
     connect(this,SIGNAL(customContextMenuRequested(QPoint)),
             this,SLOT(slotShowMenuContext(QPoint)));
+    setMinimumSize( QSize(152,208));
+
 
 }
 
@@ -131,18 +154,34 @@ void QDrinkWidgetItem::mouseDoubleClickEvent(QMouseEvent *)
 }
 
 void QDrinkWidgetItem::mousePressEvent(QMouseEvent*) {
-    if (flagAnim==3 ||flagAnim==4) {
-        if (isPickedForCategory) {
-            isPickedForCategory=0;
-            drinkNamef->setFont(QFont("Sans",11));
-            drinkNamef->setStyleSheet("color: rgb(255, 255, 255)");
 
-        } else {
-            isPickedForCategory=1;
-            drinkNamef->setFont(QFont("Sans",12));
-            drinkNamef->setStyleSheet("color: rgb(0, 204, 255)");
-        }
-    }
+    // if (flagAnim==3 ||flagAnim==4) {
+    //     if (isPickedForCategory) {
+    //         isPickedForCategory=0;
+    //         drinkNamef->setFont(QFont("Sans",11));
+    //         drinkNamef->setStyleSheet("color: rgb(255, 255, 255)");
+    //         isCliced=1;
+    //         if (flagAnim==4) {
+    //              isCliced=0;
+    //         }
+
+
+
+    //     } else {
+    //         isPickedForCategory=1;
+    //         drinkNamef->setFont(QFont("Sans",12));
+    //         drinkNamef->setStyleSheet("color: rgb(0, 204, 255)");
+    //         isCliced=1;
+    //         if (flagAnim==3) {
+    //             isCliced=0;
+    //         }
+
+
+
+    //     }
+    // }
+    emit signalClicked();
+
 }
 
 

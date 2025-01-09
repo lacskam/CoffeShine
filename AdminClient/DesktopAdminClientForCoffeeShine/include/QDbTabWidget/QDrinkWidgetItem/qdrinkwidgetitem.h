@@ -17,10 +17,19 @@ class QDrinkWidgetItem : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QDrinkWidgetItem(QCoffeeDrinkInfo,QCoffeeClientPlugin*,qint32 flagAnim,QWidget *parent = nullptr);
-
+    explicit QDrinkWidgetItem(QCoffeeDrinkInfo,QCoffeeClientPlugin*,qint32 flagAnim,QListWidget* parentWidget = nullptr,QWidget *parent = nullptr);
+      QListWidget* parentWidget;
     QCoffeeDrinkInfo getDrinkInfo();
     bool isPickedForCategory;
+
+
+    void setParentListWidget(QListWidget* widget) {
+        parentWidget = widget;
+    }
+    QSize originalSize;
+    QListWidget* getParentListWidget() const {
+        return parentWidget;
+    }
 
 protected:
     virtual void paintEvent(QPaintEvent*);
@@ -30,6 +39,7 @@ protected:
     virtual void mousePressEvent(QMouseEvent*);
 
 private:
+    bool isAnimating = false;
     QPropertyAnimation *animation;
     QDeleteDialog *deletedialogIt;
     QCoffeeClientPlugin * currentPlugin;
@@ -43,12 +53,13 @@ private:
     qint32 flagAnim;
     QCoffeeDrinkInfo drinkInfo;
     QLabel *drinkNamef ;
-
+    bool isCliced =0;
 
     void sizeScale(QSize sizeT);
 signals:
     void signalOpenEditDrinkWidget(QCoffeeDrinkInfo);
     void signalUpdateListWidget();
+    void signalClicked();
 
 
 public slots:

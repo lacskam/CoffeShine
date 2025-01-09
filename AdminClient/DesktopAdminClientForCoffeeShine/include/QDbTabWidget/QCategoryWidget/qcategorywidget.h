@@ -97,9 +97,11 @@ private:
 signals:
 
 private slots:
-    void updateDrinkItems();
+    void replaceDrinkItems()
+        ;    void updateDrinkItems();
     void sendCategory();
     void createDrinkPickDialog();
+    void updateDrinkPickDialog();
     void drinkPickDialogAccepted();
     void slotDeleteCategory();
 
