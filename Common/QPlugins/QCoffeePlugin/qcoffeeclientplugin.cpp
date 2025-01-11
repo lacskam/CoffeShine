@@ -2580,6 +2580,48 @@ QVector<QCoffeeSoldPositionInfo> QCoffeeClientPlugin::getListSoldPosition()
     return Output;
 }
 
+
+
+QVector<std::tuple<int, QString,int, double,QDate>> QCoffeeClientPlugin::getListSoldPositionForIdAndDates(qint32 &id,QDate &firstDate,QDate &lastDate) {
+    QVector<std::tuple<int, QString,int, double,QDate>> Output;
+
+    QString textQuery = "SELECT s.soldPosition_id_drink AS drink_id, d.name_drink AS drink_name, "
+        "SUM(s.count_soldPosition) AS total_quantity,SUM(s.count_soldPosition * p.value_price) AS total_sales, "
+        "DATE(s.date_soldPosition) AS sale_date FROM tbl_soldPosition s JOIN "
+        "tbl_price p ON s.soldPosition_id_price = p.id_price JOIN "
+        "tbl_drink d ON s.soldPosition_id_drink = d.id_drink WHERE "
+        "s.soldPosition_id_drink = "+QString::number(id)+" AND DATE(s.date_soldPosition) >= \'"+firstDate.toString("yyyy-MM-dd")+"\' AND DATE(s.date_soldPosition) <= \'"+lastDate.toString("yyyy-MM-dd")+"\' "
+        "GROUP BY s.soldPosition_id_drink, DATE(s.date_soldPosition) ORDER BY sale_date ASC;";
+    qDebug()<<"textQuery = "<<textQuery;
+
+    bool ok = false;
+    QSqlQuery *queryListSoldPosition = execQuery(textQuery,&ok);
+
+    if (ok) {
+
+        while (queryListSoldPosition->next()) {
+
+
+            Output.push_back(std::make_tuple(queryListSoldPosition->value(0).toInt(),queryListSoldPosition->value(1).toString(),
+               queryListSoldPosition->value(2).toInt(),queryListSoldPosition->value(3).toDouble(),queryListSoldPosition->value(4).toDate()));
+             qDebug()<<"asd "<<queryListSoldPosition->value(1).toString();
+        }
+
+    } else {
+        qDebug()<<"Error load list sold position:"<<queryListSoldPosition->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete queryListSoldPosition;
+
+    return Output;
+
+}
+
+
+
+
+
 QVector<QCoffeeSoldPositionInfo> QCoffeeClientPlugin::getListSoldPositionForReceipt(int idReceipt)
 {
     QVector<QCoffeeSoldPositionInfo> Output;
@@ -3227,11 +3269,11 @@ void QCoffeeClientPlugin::doStep ()
              break;
          case 7: loadAllShifts();
             break;
-        // // case 8: loadAllReceipt();
-        // //     break;
-        // // case 9: loadAllSoldPositions();
-        // //     break;
-        case 8: updateDrinkPicture(); //10 эт временно
+         case 8: loadAllReceipt();
+             break;
+         case 9: loadAllSoldPositions();
+            break;
+        case 10: updateDrinkPicture(); //10 эт временно
            break;
         default: endSynchronization();
             break;

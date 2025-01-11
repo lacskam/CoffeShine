@@ -48,6 +48,7 @@ SOURCES += \
     ../../Common/QPlugins/QCoffeePlugin/QColorConsole/qcolorconsole.cpp \
     ../../Common/QPlugins/QCoffeePlugin/QCoffeePictureInfo/qcoffeepictureinfo.cpp \
     ../../Common/QUnNetProtokol/qundbpacketmanager.cpp \
+    include/QCustomScrollArea/QCustomScrollArea.cpp \
     include/QDbTabWidget/QCategoryWidget/QCategoryItem/qcategoryitem.cpp \
     include/QDbTabWidget/QCategoryWidget/qcategorywidget.cpp \
     include/QDbTabWidget/QColorWidget/qcolorwidget.cpp \
@@ -103,6 +104,7 @@ HEADERS += \
     ../../Common/QPlugins/QCoffeePlugin/QColorConsole/qcolorconsole.h \
     ../../Common/QPlugins/QCoffeePlugin/QCoffeePictureInfo/qcoffeepictureinfo.h \
     ../../Common/QUnNetProtokol/qundbpacketmanager.h \
+    include/QCustomScrollArea/QCustomScrollArea.h \
     include/QDbTabWidget/QCategoryWidget/QCategoryItem/qcategoryitem.h \
     include/QDbTabWidget/QCategoryWidget/qcategorywidget.h \
     include/QDbTabWidget/QColorWidget/qcolorwidget.h \

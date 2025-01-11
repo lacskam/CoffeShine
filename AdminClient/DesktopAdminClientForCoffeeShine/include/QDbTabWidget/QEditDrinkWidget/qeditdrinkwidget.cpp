@@ -135,7 +135,7 @@ void QEditDrinkWidget::createForm()
     QPushButton *openDeleteDialog = new QPushButton(tr("Удалить напиток"));
     mainLayout->addWidget(openDeleteDialog);
     mainLayout->addSpacing(20);
-    deleteDialog = new QDeleteDialog();
+    deleteDialog = new QDeleteDialog("Удалить напиток?",this);
 
 
 

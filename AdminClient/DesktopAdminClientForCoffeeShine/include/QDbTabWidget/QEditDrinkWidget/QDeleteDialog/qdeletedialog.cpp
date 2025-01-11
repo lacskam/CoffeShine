@@ -1,6 +1,6 @@
 #include "qdeletedialog.h"
 
-QDeleteDialog::QDeleteDialog() {
+QDeleteDialog::QDeleteDialog(QString labelText,QWidget *parent)  {
 
     btnBox = new QDialogButtonBox;
 
@@ -8,14 +8,17 @@ QDeleteDialog::QDeleteDialog() {
 
 
 
-    ac = new QPushButton("Удалить");
+    ac = new QPushButton("Да");
     de = new QPushButton("Отмена");
 
      btnBox->addButton(ac,QDialogButtonBox::ButtonRole::AcceptRole);
     btnBox->addButton(de,QDialogButtonBox::ButtonRole::RejectRole);
      connect(ac, &QPushButton::clicked, this, &QDialog::accept);
      connect(de, &QPushButton::clicked, this, &QDialog::reject);
-    vd->addWidget(new QLabel("Удалить напиток?"));
+       vd->addSpacing(10);
+    vd->addWidget(new QLabel(labelText));
+    vd->addSpacing(30);
+
     vd->addWidget(btnBox);
 
 

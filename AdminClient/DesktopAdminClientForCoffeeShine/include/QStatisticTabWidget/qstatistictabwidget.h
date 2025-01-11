@@ -23,6 +23,8 @@
 
 #include <../../Common/QPlugins/QCoffeePlugin/qcoffeeclientplugin.h>
 
+ #include "../QCustomScrollArea/QCustomScrollArea.h"
+
 class QStatisticTabWidget : public QWidget
 {
     Q_OBJECT
@@ -54,6 +56,18 @@ private:
 
 
 
+
+
+    //drinkStatWidget
+    QComboBox *comboBoxForDrinkStat;
+    QVBoxLayout *vbstPred;
+    QHorizontalBarSeries *series;
+    QBarSet *temp;
+    QChart *chartProdStat;
+    QBarCategoryAxis *axisX;
+    QValueAxis *axisY;
+    QChartView *chartViewProdStat;
+    CustomScrollArea *scrollArea;
     QVBoxLayout *vb;
     QHBoxLayout *hb;
     QLabel *leFirstDateLabel;
@@ -62,15 +76,54 @@ private:
     QDateEdit *leSecondDate;
     QComboBox *drinksComboBox;
     QSpinBox *lePickedProd;
-    QValueAxis *axisY;
-    QDateTimeAxis *axisX;
-    QMap<QDateTime, qint32> *mapSaless;
     QPushButton *btn;
-    QChart *chart;
-    QChartView *chartView2;
-    QSplineSeries *series;
+
+
+    //categoryStatWidget
+    QComboBox *comboBoxForStatCategory;
+    QVBoxLayout *vbstPredCategory;
+    QHorizontalBarSeries *seriesCategory;
+    QBarSet *tempCategory;
+    QChart *chartProdStatCategory;
+    QBarCategoryAxis *axisXCategory;
+    QValueAxis *axisYCategory;
+    QChartView *chartViewProdStatCategory;
+    CustomScrollArea *scrollAreaCategory;
+    QVBoxLayout *vbCategory;
+    QHBoxLayout *hbCategory;
+    QLabel *leFirstDateLabelCategory;
+    QDateEdit *leFirstDateCategory;
+    QLabel *leFSecondDateLabelCategory;
+    QDateEdit *leSecondDateCategory;
+    QComboBox *drinksComboBoxCategory;
+    QSpinBox *lePickedProdCategory;
+    QPushButton *btnCategory;
+
+
+    // QVBoxLayout *vbforCategory;
+    // QHBoxLayout *hbforCategory;
+    // QLabel *leFirstDateLabelforCategory;
+    // QDateEdit *leFirstDateforCategory;
+    // QLabel *leFSecondDateLabelforCategory;
+    // QDateEdit *leSecondDateforCategory;
+    // QComboBox *drinksComboBoxforCategory;
+    // QSpinBox *lePickedProdforCategory;
+    // QValueAxis *axisYforCategory;
+    // QDateTimeAxis *axisXforCategory;
+    // QMap<QDateTime, qint32> *mapSalessforCategory;
+    // QPushButton *btnforCategory;
+    // QChart *chartforCategory;
+    // QChartView *chartViewforCategory;
+    // QSplineSeries *seriesforCategory;
+
+
+
 private slots:
     void createMoneyStatictic();
+    void createDrinkStatistic();
+    void createCategoryStatistic();
 };
+
+
 
 #endif // QSTATISTICTABWIDGET_H

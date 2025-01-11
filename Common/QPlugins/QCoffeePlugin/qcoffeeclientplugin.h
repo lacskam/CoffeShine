@@ -136,6 +136,7 @@ public:
 
     //QCoffeeSoldPositionInfo
     QVector<QCoffeeSoldPositionInfo> getListSoldPosition();
+    QVector<std::tuple<int, QString,int, double,QDate>> getListSoldPositionForIdAndDates(qint32 &id,QDate &firstDate,QDate &lastDate);
     QVector<QCoffeeSoldPositionInfo> getListSoldPositionForReceipt(int idReceipt);
     QCoffeeSoldPositionInfo getSoldPosition(int idSoldPosition);
     int getIdSoldPosition (QCoffeeSoldPositionInfo &soldPosition);

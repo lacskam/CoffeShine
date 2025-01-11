@@ -15,6 +15,7 @@
 #include "../QDrinkWidgetItem//qdrinkwidgetitem.h"
 #include <QDialog>
 #include "../../QDesktopClientLoader/QPointSalePickWidget/qpointsalepickwidget.h"
+#include "../QEditDrinkWidget/QDeleteDialog/qdeletedialog.h"
 
 class QCategoryWidget : public QWidget
 {
@@ -89,7 +90,8 @@ private:
         QPixmap *searchIcon2;
         QHBoxLayout *hblforSearch2;
 
-
+        QDeleteDialog *deleteDialog;
+        QDeleteDialog *unlinkDialog;
 
 
 

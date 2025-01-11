@@ -23,7 +23,7 @@ class QDeleteDialog : public QDialog
 
 
 public:
-    explicit QDeleteDialog();
+    explicit QDeleteDialog(QString labelText,QWidget *parent=nullptr);
     void setIdDrink(qint32 id);
     qint32 getIdDrink();
 

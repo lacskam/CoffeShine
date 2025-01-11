@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <QWidget>
 #include "QNnSettingsWidget/qnnsettingswidget.h"
+ #include "../QCustomScrollArea/QCustomScrollArea.h"
 QT_CHARTS_USE_NAMESPACE
 
 class QNnTabWidget : public QWidget {
@@ -120,7 +121,7 @@ private:
     QBarCategoryAxis *axisX;
     QValueAxis *axisY;
     QChartView *chartViewProdStat;
-    QScrollArea *scrollArea;
+    CustomScrollArea *scrollArea;
     QPushButton *btnLoadStat;
 
     void createForm(QWidget *parent = 0, qint32 *pickedprod = nullptr, QList<QDate> *endDAte= nullptr);

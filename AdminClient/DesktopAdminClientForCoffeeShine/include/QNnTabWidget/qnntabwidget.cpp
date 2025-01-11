@@ -22,19 +22,40 @@ void QNnTabWidget::GetStatPrediction(QMap<qint32, float> predictionResults) {
 
 
     qint32 idt;
+    QVector<QPair<float, QString>> indexedValues;
+    QStringList drinksForBar;
 
     for (QMap<qint32, float>::const_iterator i = predictionResults.begin(); i != predictionResults.end(); i++) {
         idt = i.key();
-        *categories <<dbase->getProductName(&idt);
-        *temp << i.value();
+        float roundedValue = QString::number(i.value(), 'f', 2).toFloat();
+         indexedValues.append(qMakePair(roundedValue, dbase->getProductName(&idt)));
     }
-  //  qSort(temp->begin(),temp->end());
 
+
+    std::sort(indexedValues.begin(), indexedValues.end(), [](const QPair<float, QString>& a, const QPair<float, QString>& b) {
+        return a.first < b.first;
+    });
+
+
+    float maxValue =0;
+    for (int i=0;i<indexedValues.size();i++) {
+        drinksForBar.push_back(indexedValues.at(i).second);
+        *temp << indexedValues.at(i).first;
+
+        if (maxValue<indexedValues.at(i).first) maxValue =indexedValues.at(i).first;
+    }
+
+
+    axisX->append(drinksForBar);
+     axisY->setRange(0, maxValue+10);
 
     temp->setColor(QColor::fromRgb(qrand() % 256, qrand() % 256, qrand() % 256));
 
     series->append(temp);
 
+     series->setLabelsVisible(true);
+
+    chartViewProdStat->setMinimumHeight(37*drinksForBar.size());
         updateStatWg();
 
          isLoadingStat=0;
@@ -74,11 +95,11 @@ void QNnTabWidget::updateStatWg() {
     chartProdStat->setTitle("Самые востребованные товары на "+leFirstDate->date().toString()+" - "+leSecondDate->date().toString());
 
 
-    axisX->append(*categories);
+
     chartProdStat->addAxis(axisX, Qt::AlignLeft);
     series->attachAxis(axisX);
 
-    axisY->setRange(0, 100);
+
     chartProdStat->addAxis(axisY, Qt::AlignBottom);
     series->attachAxis(axisY);
 
@@ -118,14 +139,11 @@ void QNnTabWidget::createStatForm() {
         chartProdStat->addAxis(axisY, Qt::AlignBottom);
         series->attachAxis(axisY);
 
-        chartProdStat->legend()->setVisible(true);
-        chartProdStat->legend()->setAlignment(Qt::AlignRight);
-
         chartViewProdStat = new QChartView(chartProdStat);
         chartViewProdStat->setRenderHint(QPainter::Antialiasing);
-        chartViewProdStat->setMinimumHeight(5000);
-
-        scrollArea = new QScrollArea();
+        chartViewProdStat->setMinimumHeight(200);
+        chartViewProdStat->setRubberBand(QChartView::HorizontalRubberBand);
+        scrollArea = new CustomScrollArea(chartViewProdStat);
         scrollArea->setWidget(chartViewProdStat);
         scrollArea->setWidgetResizable(true);
         scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -191,8 +209,8 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
 
     vbstacked = new QVBoxLayout;
     groupBox = new QGroupBox();
-    mainLayout->addWidget(groupBox);
-    vb = new QVBoxLayout(groupBox);
+
+    vb = new QVBoxLayout();
     hb = new QHBoxLayout;
     hblcharts = new QHBoxLayout;
     vbs = new QHBoxLayout;
@@ -200,7 +218,7 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     stackedWidget = new QStackedWidget();
      stackedWidget2 = new QStackedWidget;
     hblforhead = new QHBoxLayout;
-
+      mainLayout->addLayout(hblforhead);
     buttonettings = new QPushButton();
     buttonettings->setIcon(QIcon(":/icons/other/settingsNn.png"));
     buttonettings->setMaximumSize(30,30);

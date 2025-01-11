@@ -115,13 +115,60 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     connect(btnSave,SIGNAL(clicked()),this,SLOT(sendCategory()));
 
 
+
+    deleteDialog = new QDeleteDialog("Удалить категорию?");
+
+
+
+    connect(deleteDialog,&QDeleteDialog::accepted,this,[=](){
+        slotDeleteCategory();
+        deleteDialog->hide();
+        emit btnCancel->clicked();
+    });
+
+
+    connect(deleteDialog,&QDeleteDialog::rejected,this,[=](){
+
+        emit btnCancel->clicked();
+    });
+
+
+
+
+    unlinkDialog = new QDeleteDialog("Отвязать категорию от точки продаж?");
+
+
+    connect(unlinkDialog,&QDeleteDialog::accepted,this,[=](){
+        QVector<int> iDsDrinks = currentPlugin->getIdDrinkForCategory(currentCategory->id);
+        for (int i =0;i< currentCategory->idPointSale.size();i++) {
+            if (currentCategory->idPointSale.at(i)==currentPointSaleId) {
+                currentCategory->idPointSale.removeAt(i);
+            }
+        }
+        currentPlugin->crudCategoryInfo(*currentCategory,iDsDrinks,0x02);
+        unlinkDialog->hide();
+        emit btnCancel->clicked();
+    });
+
+
+    connect(unlinkDialog,&QDeleteDialog::rejected,this,[=](){
+
+        emit btnCancel->clicked();
+    });
+
+
+
     hblButton->addWidget(btnSave);
     hblButton->addWidget(btnCancel);
 
     if (currentPointSaleId==0) {
         labelDelete = new QLabel("Удаление категории");
         QPushButton *buttonDelete = new QPushButton("Удалить");
-         connect(buttonDelete,SIGNAL(clicked()),this,SLOT(slotDeleteCategory()));
+
+
+         connect(buttonDelete,&QPushButton::clicked,deleteDialog,&QDeleteDialog::show);
+
+
         if (currentCategory->id>0) {
             mainLayout->addSpacing(10);
             mainLayout->addWidget(labelDelete);
@@ -132,22 +179,8 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
         labelUnlink = new QLabel("Отвязать категорию от точки продажи "+currentPlugin->getPointSaleInfo(currentPointSaleId).name);
         buttonUnlink = new QPushButton("Отвязать");
 
-        connect(buttonUnlink,&QPushButton::clicked,this,[=](){
+        connect(buttonUnlink,&QPushButton::clicked,unlinkDialog,&QDeleteDialog::show);
 
-            QDialog *categotyUnlinkDialog = new QDialog(this);
-
-
-            QVector<int> iDsDrinks = currentPlugin->getIdDrinkForCategory(currentCategory->id);
-
-            for (int i =0;i< currentCategory->idPointSale.size();i++) {
-                if (currentCategory->idPointSale.at(i)==currentPointSaleId) {
-                    currentCategory->idPointSale.removeAt(i);
-                }
-            }
-
-            currentPlugin->crudCategoryInfo(*currentCategory,iDsDrinks,0x02);
-              emit btnCancel->clicked();
-        });
 
         if (currentCategory->id>0) {
             mainLayout->addSpacing(10);
@@ -551,6 +584,8 @@ void QCategoryWidget::sendCategory() {
             currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x02);
              emit btnCancel->clicked();
         }
+    } else {
+         emit btnCancel->clicked();
     }
 
 
