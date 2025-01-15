@@ -14,38 +14,53 @@ void QPointSalePickWidgetItem::paintEvent(QPaintEvent *)
 
 void QPointSalePickWidgetItem::sizeScale(QSize sizeT) {
 
-        QPropertyAnimation *anim = new QPropertyAnimation(this,"size");
-        anim->setDuration(70);
-        anim->setStartValue(size());
-        anim->setEndValue(sizeT);
-        anim->start();
 
+        if (size() != sizeT && !isAnimating) {
+            isAnimating = true;
+            QPropertyAnimation *anim = new QPropertyAnimation(this, "size");
+            anim->setDuration(70);
+            anim->setStartValue(size());
+            anim->setEndValue(sizeT);
+            connect(anim, &QPropertyAnimation::finished, this, [this]() {
+                isAnimating = false;
+            });
+            anim->start();
+        }
 
 }
 
 void QPointSalePickWidgetItem::enterEvent(QEvent *e) {
 
-        tempS = size();
-        sizeScale(QSize(width()+8,height()+8));
+        if (originalSize.isEmpty()) {
+            originalSize = size();
+        }
+
+
+        sizeScale(QSize(originalSize.width() + 8, originalSize.height() + 8));
+
 
     QWidget::enterEvent(e);
-
-
-
-
 }
 
+void QPointSalePickWidgetItem::leaveEvent(QEvent *e) {
 
-void QPointSalePickWidgetItem::leaveEvent(QEvent *e){
 
-        sizeScale(tempS);
+        if (!isAnimating) {
+            sizeScale(originalSize);
+        } else {
+
+            QTimer::singleShot(70, this, [this]() {
+                sizeScale(originalSize);
+            });
+        }
+
 
     QWidget::leaveEvent(e);
 }
 
 QPointSalePickWidgetItem::QPointSalePickWidgetItem(QCoffeeClientPlugin *currentPlugin_, QCoffeePointSale pointSaleInfo_,QWidget *parent) : QWidget(parent)
 {
-
+    isTabWidget=0;
     parent_ = parent;
     pointSaleInfo = pointSaleInfo_;
     currentPlugin = currentPlugin_;
@@ -83,6 +98,52 @@ QPointSalePickWidgetItem::QPointSalePickWidgetItem(QCoffeeClientPlugin *currentP
 
 }
 
+
+
+
+
+QPointSalePickWidgetItem::QPointSalePickWidgetItem(QCoffeeClientPlugin *currentPlugin_, QCoffeePointSale pointSaleInfo_,bool isTabWidget,QWidget *parent) : QWidget(parent) {
+    this->isTabWidget=1;
+    parent_ = parent;
+    pointSaleInfo = pointSaleInfo_;
+    currentPlugin = currentPlugin_;
+
+
+    parent_ = parent;
+    pointSaleInfo = pointSaleInfo_;
+    currentPlugin = currentPlugin_;
+
+    QVBoxLayout *lay = new QVBoxLayout(this);
+
+    pointSaleNamef = new QLabel();
+    pointSaleNamef->setAlignment(Qt::AlignCenter);
+
+    pointSaleNamef->setMinimumHeight(60);
+    lay->addWidget(pointSaleNamef);
+    pointSaleNamef->setText(pointSaleInfo_.name);
+    pointSaleNamef->setFont(QFont("Sans",11));
+
+    pointSaleNamef->setWordWrap(true);
+
+    pointSaleName = new QLabel();
+    pointSaleName->setAlignment(Qt::AlignCenter);
+    pointSaleName->setText(pointSaleInfo.name);
+    lay->addWidget(pointSaleName);
+    pointSaleName->setWordWrap(true);
+    pointSaleName->setMinimumSize(130,120);
+
+    QPixmap  picture(":/icons/other/pointSale.png");
+
+    picture = picture.scaled(120,120,Qt::KeepAspectRatio);
+    pointSaleName->setPixmap(picture);
+
+
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+
+
+
+}
 void QPointSalePickWidgetItem::slotShowMenuContext(QPoint pos)
 {
     //   QMenu contextMenu(tr("Menu hosts"),this);
@@ -121,21 +182,38 @@ void QPointSalePickWidgetItem::slotShowMenuContext(QPoint pos)
 // }
 
 void QPointSalePickWidgetItem::mousePressEvent(QMouseEvent*) {
-    qDebug() << "Mouse press event triggered";  // Отладка
+    slotmousePressEvent();
 
-    if (isPicked) {
-         qDebug() << isPicked;
-        isPicked = false;
-        pointSaleNamef->setFont(QFont("Sans", 11));
-        pointSaleNamef->setStyleSheet("color: rgb(255, 255, 255)");
-    } else {
-         qDebug() << isPicked;
-        isPicked = true;
-        pointSaleNamef->setFont(QFont("Sans", 12));
-        pointSaleNamef->setStyleSheet("color: rgb(0, 204, 255)");
+}
+
+
+
+
+void QPointSalePickWidgetItem::slotmousePressEvent() {
+    if (!isTabWidget) {
+        if (isPicked) {
+            qDebug() << isPicked;
+            isPicked = false;
+            pointSaleNamef->setFont(QFont("Sans", 11));
+            pointSaleNamef->setStyleSheet("color: rgb(255, 255, 255)");
+        } else {
+            qDebug() << isPicked;
+            isPicked = true;
+            pointSaleNamef->setFont(QFont("Sans", 12));
+            pointSaleNamef->setStyleSheet("color: rgb(0, 204, 255)");
+        }
+
+        update();
     }
+}
 
-    update();  // Обновляем виджет
+
+
+void QPointSalePickWidgetItem::mouseDoubleClickEvent(QMouseEvent*) {
+    if (isTabWidget) {
+        emit signalOpenEditPickWidget(pointSaleInfo);
+
+    }
 }
 
 

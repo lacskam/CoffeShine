@@ -63,6 +63,7 @@ SOURCES += \
     include/QDbTabWidget/QPictureWidget/QPrictureDialog/qpicturewidgetitem.cpp \
     include/QDbTabWidget/QPictureWidget/qpicturewidget.cpp \
     include/QDbTabWidget/qdbtabwidget.cpp \
+    include/QDesktopClientLoader/QPointSalePickWidget/qpointsaleeditwidget.cpp \
     include/QDesktopClientLoader/qdesktopclientloader.cpp \
     include/QHostsDialog/qhostsdialog.cpp \
     include/QHTabWidget/qhtabbar.cpp \
@@ -120,6 +121,7 @@ HEADERS += \
     include/QDbTabWidget/QPictureWidget/qpicturewidget.h \
     include/QDbTabWidget/commondbtabtypes.h \
     include/QDbTabWidget/qdbtabwidget.h \
+    include/QDesktopClientLoader/QPointSalePickWidget/qpointsaleeditwidget.h \
     include/QDesktopClientLoader/qdesktopclientloader.h \
     include/QHostsDialog/qhostsdialog.h \
     include/QHTabWidget/qhtabbar.h \

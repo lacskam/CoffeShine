@@ -3269,11 +3269,11 @@ void QCoffeeClientPlugin::doStep ()
              break;
          case 7: loadAllShifts();
             break;
-         case 8: loadAllReceipt();
-             break;
-         case 9: loadAllSoldPositions();
-            break;
-        case 10: updateDrinkPicture(); //10 эт временно
+         // case 8: loadAllReceipt();
+         //     break;
+         // case 9: loadAllSoldPositions();
+         //    break;
+        case 8: updateDrinkPicture(); //10 эт временно
            break;
         default: endSynchronization();
             break;

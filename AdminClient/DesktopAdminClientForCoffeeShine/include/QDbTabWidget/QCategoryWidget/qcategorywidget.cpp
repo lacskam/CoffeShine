@@ -101,7 +101,7 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
     mainLayout->addWidget(drinkScrol);
 
     mainLayout->addWidget(buttonAddNewDrinkToCategory);
-    drinkScrol->setMinimumHeight(300);
+    drinkScrol->setMinimumHeight(450);
 
     mainLayout->addSpacing(10);
     if (this->currentCategory->id>0)
@@ -564,21 +564,34 @@ void QCategoryWidget::sendCategory() {
             currentCategory->color.setRed(1);
             currentCategory->color.setGreen(1);
 
+            dioForPsPick = new QDialog();
+            vblForPsPick = new QVBoxLayout(dioForPsPick);
+            dioForPsPick->setModal(true);
+
             PsPw = new QPointSalePickWidget(currentPlugin);
+            vblForPsPick->addWidget(PsPw);
+
+            connect(PsPw,&QPointSalePickWidget::signelBtnCancel,this,[=](){
+                delete PsPw;
+                PsPw = nullptr;
+                delete dioForPsPick;
+                dioForPsPick = nullptr;
+
+            });
 
             connect(PsPw, &QPointSalePickWidget::signalPointSalePicked, this, [=](const QVector<int> &pointSales) {
 
                 currentCategory->idPointSale = pointSales;
 
-
-
+                 delete dioForPsPick;
                 delete PsPw;
                 PsPw = nullptr;
+                dioForPsPick = nullptr;
                  currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x01);
                  emit btnCancel->clicked();
             });
 
-            PsPw->show();
+            dioForPsPick->show();
 
         } else {
             currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x02);

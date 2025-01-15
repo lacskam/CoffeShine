@@ -19,11 +19,15 @@ class QPointSalePickWidget: public QWidget
     Q_OBJECT
 public:
     explicit QPointSalePickWidget(QCoffeeClientPlugin *currentPlugin_, QWidget* parent = nullptr);
+    explicit QPointSalePickWidget(QCoffeeClientPlugin *currentPlugin_,bool isTabWidget, QWidget* parent = nullptr);
     void createForm();
+    void createFormTab();
     void fillForm();
+    void fillFormTab();
 
 private:
-
+    bool isAllPointSalesPicked=0;
+    bool isTabWidget=0;
     QCoffeeClientPlugin *currentPlugin;
     QVBoxLayout *mainLayout;
     QHBoxLayout *lFoButtons;
@@ -41,6 +45,7 @@ protected:
 
 signals:
     void signalPointSalePicked(const QVector<int> &pointSales);
+    void signelBtnCancel();
 public slots:
 
 

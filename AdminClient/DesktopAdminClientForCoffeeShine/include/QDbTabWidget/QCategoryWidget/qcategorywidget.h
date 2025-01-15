@@ -47,6 +47,9 @@ private:
      QLabel *labelUnlink;
     QPushButton *buttonUnlink;
 
+     QDialog *dioForPsPick;
+    QVBoxLayout *vblForPsPick;
+
 
 
      QString nameFirst;

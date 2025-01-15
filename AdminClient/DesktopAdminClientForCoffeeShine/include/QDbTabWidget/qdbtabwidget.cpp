@@ -148,8 +148,8 @@ void QDbTabWidget::createForm()
     categoryWidgetLayout->addWidget(btnAddExistenCategory);
     btnAddExistenCategory->hide();
 
-
-    tabWidget->addTab(new QWidget(),"Точки продаж");
+    pointSaleWidget = new QPointSalePickWidget(currentPlugin,1,this);
+    tabWidget->addTab(pointSaleWidget,"Точки продаж");
     tabWidget->addTab(new QWidget(),"Другое");
 
     mainLayout->addWidget(tabWidget,3);

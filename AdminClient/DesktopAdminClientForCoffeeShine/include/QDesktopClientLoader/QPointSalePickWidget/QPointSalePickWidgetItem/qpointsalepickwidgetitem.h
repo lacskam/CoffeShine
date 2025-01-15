@@ -19,19 +19,24 @@ class QPointSalePickWidgetItem : public QWidget
     Q_OBJECT
 public:
     explicit QPointSalePickWidgetItem(QCoffeeClientPlugin *currentPlugin_, QCoffeePointSale pointSaleInfo_, QWidget *parent = nullptr);
+    explicit QPointSalePickWidgetItem(QCoffeeClientPlugin *currentPlugin_, QCoffeePointSale pointSaleInfo_,bool isTabWidget, QWidget *parent = nullptr);
     bool isPicked=false;
         QCoffeePointSale  pointSaleInfo;
 
 protected:
     virtual void paintEvent(QPaintEvent*);
    // virtual void mouseDoubleClickEvent(QMouseEvent*);
+    virtual void mouseDoubleClickEvent(QMouseEvent*);
     virtual void enterEvent(QEvent *e);
     virtual void leaveEvent(QEvent *e);
     virtual void mousePressEvent(QMouseEvent*);
 
 private:
-    QPropertyAnimation *animation;
+    bool isAnimating = false;
+     QSize originalSize;
 
+    QPropertyAnimation *animation;
+    bool isTabWidget =0;
     QWidget *parent_;
     QLabel * pointSaleName;
     QSize tempS;
@@ -52,11 +57,14 @@ private:
 signals:
 
      void signalPointSalePicked(const QCoffeePointSale &pointSale);
+    void signalOpenEditPickWidget(QCoffeePointSale &pointSale);
 
 public slots:
+     void slotmousePressEvent();
 
 private slots:
     void slotShowMenuContext(QPoint pos);
+
 
 
 };

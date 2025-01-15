@@ -54,7 +54,7 @@ void QStatisticTabWidget::createForm()
     layForGroupBox->addWidget(openStat);
     connect(openStat,SIGNAL(clicked()),this,SLOT(createMoneyStatictic()));
 
-    QChartView *chartView = new QChartView();
+    chartView = new QChartView();
     chartView->setRenderHint(QPainter::Antialiasing);
     layForGroupBox->addWidget(chartView,1);
 

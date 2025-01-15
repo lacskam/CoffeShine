@@ -15,6 +15,8 @@
 #include "QCategoryWidget/qcategorywidget.h"
 #include "QEditDrinkWidget/QDeleteDialog//qdeletedialog.h"
 #include <QStackedWidget>
+#include "../QDesktopClientLoader/QPointSalePickWidget/qpointsalepickwidget.h"
+
 class QDbTabWidget : public QWidget
 {
     Q_OBJECT
@@ -60,7 +62,7 @@ private:
     QStackedWidget *stackedWidget;
     QComboBox *pickPointSaleForCategory;
     QPushButton *btnAddExistenCategory;
-
+    QPointSalePickWidget *pointSaleWidget;
 
     QWidget *wgExCategory;
     QVBoxLayout *vblExCategory;
