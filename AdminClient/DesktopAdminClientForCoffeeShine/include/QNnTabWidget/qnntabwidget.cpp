@@ -157,7 +157,7 @@ void QNnTabWidget::createStatForm() {
             QDate endDate = leSecondDate->date();
 
             *idForGetStatStart =1;
-            *idForGetStatEnd =9;
+            *idForGetStatEnd =10;
             chartProdStat->removeAllSeries();
             chartProdStat->series().clear();
             series = new QHorizontalBarSeries();
@@ -183,6 +183,7 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
 
     productPrediction = new QWidget;
      productStatisticPrediction = new QWidget;
+    allDrinks = currentPlugin->getListDrink();
 
     createStatForm();
 
@@ -269,8 +270,11 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
     leSecondDate->setDate(QDate::currentDate().addDays(13));
     hb->addWidget(leSecondDate);
 
-    lePickedProd = new QSpinBox;
-    lePickedProd->setRange(1, 153);
+    lePickedProd = new QComboBox;
+
+    for (int i=0;i<allDrinks.size();i++) {
+        lePickedProd->addItem(allDrinks.at(i).name);
+    }
 
     hb->addWidget(lePickedProd);
 
@@ -329,11 +333,12 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
             }
         }
     });
-    plotNNButton = new QPushButton("Prediction");
+    plotNNButton = new QPushButton("Прогноз");
     connect(plotNNButton, &QPushButton::clicked, this, [=]() {
         QDate startDate = leFirstDate->date();
         QDate endDate = leSecondDate->date();
-        quint32 pickedProduct = lePickedProd->value();
+
+        quint32 pickedProduct = allDrinks.at(lePickedProd->currentIndex()).id;
         qDebug()<<"slot sendPredictionRequest";
         if (startDate >= QDate::currentDate() && startDate <= QDate::currentDate().addDays(14) && pickedProduct < 153
             && pickedProduct > 0) {
@@ -350,12 +355,12 @@ void QNnTabWidget::createForm(QWidget *parent, qint32 *pickedprod, QList<QDate> 
    // hb->addWidget(btn);
     hb->addWidget(plotNNButton);
 
-    btnGetFile = new QPushButton("Get");
+    btnGetFile = new QPushButton("Получить");
     connect(btnGetFile, &QPushButton::clicked, this, [=]() {
      //  getfilePlot(lePickedProd,mapSaless);
     });
 
-   btnOpenFile = new QPushButton("Open");
+   btnOpenFile = new QPushButton("Открыть");
     /* connect(btnOpenFile, &QPushButton::clicked, this, [=]() {
        openfile(axisY, axisX);
     });
@@ -490,6 +495,10 @@ void QNnTabWidget::updateNN(QMap<QDateTime, float> predictionResults) {
 
     if (predictionResults.size()<1) {
         qDebug()<<"Ошибка получения предсказания";
+        isLoadingPred=0;
+        if (mainTabWidget->currentIndex()==0) {
+            stackedWidget->setCurrentIndex(0);
+        }
         return;
     }
 
@@ -516,8 +525,8 @@ void QNnTabWidget::updateNN(QMap<QDateTime, float> predictionResults) {
 
     chartnn->addSeries(serNN);
     sliderNN->setRange(0, *slider_rangeNN-1);
-    qint32 a = lePickedProd->value();
-    axisYnn->setTitleText("продажи \"" + dbase->getProductName(&a) + "\"");
+    QString a = lePickedProd->currentText();
+    axisYnn->setTitleText("продажи \"" + a + "\"");
     axisXnn->setRange(dates.first(), dates.last());
 
     axisYnn->setRange(*std::min_element(values.begin(), values.end()), *(std::max_element(values.begin(), values.end())));

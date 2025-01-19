@@ -132,13 +132,16 @@ void QPointSalePickWidget::fillForm() {
 void QPointSalePickWidget::fillFormTab() {
 
     QVector<QCoffeePointSale> pointsSaleInfo =  currentPlugin->getListPointSale();
-
+    listWidgetPickPointSale->clear();
     for (int i = 0; i < pointsSaleInfo.count(); ++i)
     {
         listWidgetItem = new QListWidgetItem(listWidgetPickPointSale);
         listWidgetPickPointSale->addItem (listWidgetItem);
         pointSaleWgItem = new QPointSalePickWidgetItem(currentPlugin,pointsSaleInfo.at(i),1,this);
-
+        connect(pointSaleWgItem,&QPointSalePickWidgetItem::signalOpenEditPickWidget,this,[=](QCoffeePointSale &pointSale){
+            qDebug()<<"isSlot";
+            emit signalOpenEditPickWidget(pointSale);
+        });
         // connect(pointSaleWgItem, &QPointSalePickWidgetItem::signalPointSalePicked, this, [=](const QCoffeePointSale &pS) {
         //     emit signalPointSalePicked(pS);
         // });

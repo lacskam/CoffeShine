@@ -45,6 +45,7 @@ protected:
 
 signals:
     void signalPointSalePicked(const QVector<int> &pointSales);
+    void signalOpenEditPickWidget(QCoffeePointSale &pointSale);
     void signelBtnCancel();
 public slots:
 

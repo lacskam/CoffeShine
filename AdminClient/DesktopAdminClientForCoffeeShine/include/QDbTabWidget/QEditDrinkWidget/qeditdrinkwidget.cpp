@@ -129,30 +129,34 @@ void QEditDrinkWidget::createForm()
 
 
     //удаление
-    QLabel * deleteLabel = new QLabel(tr("Удаление"));
-    mainLayout->addWidget(deleteLabel);
-    mainLayout->addSpacing(5);
-    QPushButton *openDeleteDialog = new QPushButton(tr("Удалить напиток"));
-    mainLayout->addWidget(openDeleteDialog);
-    mainLayout->addSpacing(20);
-    deleteDialog = new QDeleteDialog("Удалить напиток?",this);
+
+    if (currentEditedDrink.id!=-1) {
+
+        QLabel * deleteLabel = new QLabel(tr("Удаление"));
+        mainLayout->addWidget(deleteLabel);
+        mainLayout->addSpacing(5);
+        QPushButton *openDeleteDialog = new QPushButton(tr("Удалить напиток"));
+        mainLayout->addWidget(openDeleteDialog);
+        mainLayout->addSpacing(20);
+        deleteDialog = new QDeleteDialog("Удалить напиток?",this);
 
 
 
-    connect(openDeleteDialog,&QPushButton::clicked,this,[=]() {
-        deleteDialog->setIdDrink(currentEditedDrink.id);
-        deleteDialog->setModal(true);
-        deleteDialog->show();
-    });
-    connect(deleteDialog,&QDeleteDialog::accepted,this,[=]() {
-        deleteDialog->hide();
-        slotDeleteDrink(deleteDialog->getIdDrink());
+        connect(openDeleteDialog,&QPushButton::clicked,this,[=]() {
+            deleteDialog->setIdDrink(currentEditedDrink.id);
+            deleteDialog->setModal(true);
+            deleteDialog->show();
+        });
+        connect(deleteDialog,&QDeleteDialog::accepted,this,[=]() {
+            deleteDialog->hide();
+            slotDeleteDrink(deleteDialog->getIdDrink());
 
-    });
-    connect(deleteDialog,&QDeleteDialog::rejected,this,[=]() {
-        deleteDialog->hide();
+        });
+        connect(deleteDialog,&QDeleteDialog::rejected,this,[=]() {
+            deleteDialog->hide();
 
-    });
+        });
+    }
 
 
 
@@ -354,6 +358,13 @@ bool QEditDrinkWidget::checkChanges()
 {
     qDebug()<<"Проверка изменений";
 
+
+    QVector<int> categoryes;
+    QVector<CategoryForComboBoxInfo> categoryesComboBoxInfo = getCategoryInfoForCurrentDrink();
+    for (int i =0;i<categoryesComboBoxInfo.size();i++) {
+        categoryes.push_back(categoryesComboBoxInfo.at(i).idCategory);
+    }
+
     if (drinkName->text() != currentEditedDrink.name)
         return true;
 
@@ -365,6 +376,10 @@ bool QEditDrinkWidget::checkChanges()
 
     if (pictureWidget->getPictureInfo().id != pictureWidget->getInfoAboutNewPicture().id)
         return true;
+
+    if (categoryes!=currentEditedDrink.idCategories) {
+        return true;
+    }
 
 
 
@@ -435,8 +450,14 @@ void QEditDrinkWidget::slotSaveChanges() {
 
 
 
-        Output.idCategories=currentPlugin->getIdCategoriesForDrink(currentEditedDrink.id);
+        //Output.idCategories=currentPlugin->getIdCategoriesForDrink(currentEditedDrink.id);
+        QVector<int> categoryes;
+        QVector<CategoryForComboBoxInfo> categoryesComboBoxInfo = getCategoryInfoForCurrentDrink();
+        for (int i =0;i<categoryesComboBoxInfo.size();i++) {
+            categoryes.push_back(categoryesComboBoxInfo.at(i).idCategory);
+        }
 
+        Output.idCategories = categoryes;
 
 
         if ((int)Output.id > 0) {

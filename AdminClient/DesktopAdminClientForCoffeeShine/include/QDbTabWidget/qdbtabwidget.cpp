@@ -9,6 +9,7 @@ QDbTabWidget::QDbTabWidget(QCoffeeClientPlugin *plugin_, QWidget *parent) : QWid
     updateCategoryItems();
     connect(currentPlugin,SIGNAL(signalNewDrink()),this,SLOT(updateDrinkItems()));
     connect(currentPlugin,SIGNAL(signalNewCategory()),this,SLOT(updateCategoryItems()));
+    connect(currentPlugin,&QCoffeeClientPlugin::signalNewPoint,this,&QDbTabWidget::updatePointsaleItems);
 }
 
 void QDbTabWidget::createForm()
@@ -148,7 +149,16 @@ void QDbTabWidget::createForm()
     categoryWidgetLayout->addWidget(btnAddExistenCategory);
     btnAddExistenCategory->hide();
 
-    pointSaleWidget = new QPointSalePickWidget(currentPlugin,1,this);
+
+    pointSaleWidget = new QWidget;
+    vblforPointSale = new QVBoxLayout(pointSaleWidget);
+     pointSalePickWidget = new QPointSalePickWidget(currentPlugin,1,this);
+    btnForAddPointSale = new QPushButton("Создать новую");
+     connect(btnForAddPointSale,&QPushButton::clicked,this,&QDbTabWidget::slotAddNewPointSale);
+     connect(pointSalePickWidget,&QPointSalePickWidget::signalOpenEditPickWidget,this,&QDbTabWidget::slotOpenPointSaleEditWidget);
+     vblforPointSale->addWidget(btnForAddPointSale);
+    vblforPointSale->addWidget(pointSalePickWidget);
+
     tabWidget->addTab(pointSaleWidget,"Точки продаж");
     tabWidget->addTab(new QWidget(),"Другое");
 
@@ -186,6 +196,27 @@ void QDbTabWidget::updateDrinkItems()
         listWidgetItem->setSizeHint (drinkWidgetItem->sizeHint ());
         drinkListWidget->setItemWidget(listWidgetItem, drinkWidgetItem);
     }
+}
+
+
+void QDbTabWidget::updatePointsaleItems()
+{
+
+
+    QVector<QCoffeePointSale> pointSales = currentPlugin->getListPointSale();
+
+    pickPointSaleForCategory->clear();
+
+    pickPointSaleForCategory->addItem("Все катеогрии");
+
+    for (int i =0;i<pointSales.count();i++) {
+        pickPointSaleForCategory->addItem("Категории для точки продаж "+pointSales.at(i).name);
+
+    }
+    pointSalePickWidget->fillFormTab();
+
+
+
 }
 
 
@@ -281,6 +312,40 @@ void QDbTabWidget::slotOpenCategoryEditWidget(QCoffeeCategoryInfo info)
 
 
 }
+
+
+void QDbTabWidget::slotOpenPointSaleEditWidget(QCoffeePointSale &info) {
+    delete scrollAreaForEdit->widget();
+
+    editOrAddItemGroupBox->setTitle(tr("Редактировние точки продаж"));
+    pointSaleEditWidget = new QPointSaleEditWidget(info,currentPlugin,this);
+    connect(pointSaleEditWidget,&QPointSaleEditWidget::signaleClose,this,&QDbTabWidget::slotClosePointSaleEditWidget);
+   // connect(pointSaleEditWidget,&QPointSaleEditWidget::signalSave,this,&QDbTabWidget::slotClosePointSaleEditWidget);
+     scrollAreaForEdit->setWidget(pointSaleEditWidget);
+}
+void QDbTabWidget::slotAddNewPointSale() {
+    delete scrollAreaForEdit->widget();
+
+    editOrAddItemGroupBox->setTitle(tr("Создание точки продаж"));
+    pointSaleEditWidget = new QPointSaleEditWidget(currentPlugin,this);
+
+    connect(pointSaleEditWidget,&QPointSaleEditWidget::signaleClose,this,&QDbTabWidget::slotClosePointSaleEditWidget);
+    // connect(pointSaleEditWidget,&QPointSaleEditWidget::signalSave,this,&QDbTabWidget::slotClosePointSaleEditWidget);
+    scrollAreaForEdit->setWidget(pointSaleEditWidget);
+}
+
+void QDbTabWidget::slotClosePointSaleEditWidget() {
+    QWidget *widgetToDelete = scrollAreaForEdit->widget();
+    scrollAreaForEdit->setWidget(nullptr);
+
+
+    delete widgetToDelete;
+
+
+    editOrAddItemGroupBox->setTitle("");
+}
+
+
 void QDbTabWidget::slotCloseDrinkEditWidget()
 {
     delete scrollAreaForEdit->widget();

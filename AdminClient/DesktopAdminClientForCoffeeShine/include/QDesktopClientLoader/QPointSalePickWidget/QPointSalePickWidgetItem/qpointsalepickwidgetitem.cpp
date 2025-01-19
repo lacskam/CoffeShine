@@ -211,6 +211,7 @@ void QPointSalePickWidgetItem::slotmousePressEvent() {
 
 void QPointSalePickWidgetItem::mouseDoubleClickEvent(QMouseEvent*) {
     if (isTabWidget) {
+        qDebug()<<"isDCliced";
         emit signalOpenEditPickWidget(pointSaleInfo);
 
     }

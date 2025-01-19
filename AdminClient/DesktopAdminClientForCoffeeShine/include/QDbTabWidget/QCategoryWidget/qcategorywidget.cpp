@@ -117,7 +117,7 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 
 
     deleteDialog = new QDeleteDialog("Удалить категорию?");
-
+    deleteDialog->setModal(1);
 
 
     connect(deleteDialog,&QDeleteDialog::accepted,this,[=](){
@@ -128,14 +128,15 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 
 
     connect(deleteDialog,&QDeleteDialog::rejected,this,[=](){
+        deleteDialog->hide();
 
-        emit btnCancel->clicked();
     });
 
 
 
 
     unlinkDialog = new QDeleteDialog("Отвязать категорию от точки продаж?");
+    unlinkDialog->setModal(1);
 
 
     connect(unlinkDialog,&QDeleteDialog::accepted,this,[=](){
@@ -153,7 +154,7 @@ QCategoryWidget::QCategoryWidget(QCoffeeClientPlugin *plugin_,QCoffeeCategoryInf
 
     connect(unlinkDialog,&QDeleteDialog::rejected,this,[=](){
 
-        emit btnCancel->clicked();
+        deleteDialog->hide();
     });
 
 

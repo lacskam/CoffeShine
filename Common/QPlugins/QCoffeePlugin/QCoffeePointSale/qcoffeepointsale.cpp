@@ -23,6 +23,10 @@ void QCoffeePointSale::operator =(QCoffeePointSale input)
 }
 */
 
+
+
+
+
 QByteArray QCoffeePointSale::toByteArray()
 {
     QByteArray Output;

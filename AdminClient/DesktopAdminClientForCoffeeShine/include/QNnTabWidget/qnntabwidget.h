@@ -54,6 +54,7 @@ private:
     QVBoxLayout *mainLayout;
     QGroupBox *groupBox;
     QCoffeeClientPlugin *currentPlugin;
+    QVector<QCoffeeDrinkInfo> allDrinks;
     DB *dbase;
 
     QMap<QDateTime,qint32> *mapSaless;
@@ -92,7 +93,7 @@ private:
 
     QDateEdit *leFirstDate;
     QDateEdit *leSecondDate;
-    QSpinBox *lePickedProd;
+    QComboBox *lePickedProd;
     QPushButton *btn;
 
     QPushButton *btnGetFile;

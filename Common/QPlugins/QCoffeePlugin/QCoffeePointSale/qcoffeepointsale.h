@@ -20,6 +20,9 @@ public:
     void fromByteArray(QByteArray data);
 
     QString toString();
+
+    void operator <<(QDataStream &stream);
+    void operator >>(QDataStream &stream);
 };
 
 #endif // QCOFFEEPOINTSALE_H

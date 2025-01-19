@@ -143,6 +143,8 @@ void QCoffeeClientPlugin::processCommand(quint8 command,QByteArray data)
         break;
     case 0x23: command23(data);
         break;
+    case 0x25: command25(data);
+        break;
     }
 }
 
@@ -4375,7 +4377,6 @@ void QCoffeeClientPlugin::crudCategoryInfo(QCoffeeCategoryInfo &categoryInfo,QVe
     sendExtData(0x19,Output);
 }
 
-
 void QCoffeeClientPlugin::command19(QByteArray &data) {
     signalMessageSplashScreen(tr("Получен информация о категории"));
     debugMessage("Received drink information");
@@ -4397,22 +4398,88 @@ void QCoffeeClientPlugin::command19(QByteArray &data) {
     if (code!=0x03) unlinkCategoryAndDrink(currentCategory.id);
 
     switch (code) {
-        case 0x01: addCategory(currentCategory);
-            break;
-        case 0x02: editCategory(currentCategory);
-            break;
-        case 0x03: deleteCategoryInfo(currentCategory);
-            break;
+    case 0x01: addCategory(currentCategory);
+        break;
+    case 0x02: editCategory(currentCategory);
+        break;
+    case 0x03: deleteCategoryInfo(currentCategory);
+        break;
     }
 
-        if (code!=0x03) {
-            for (int i=0;i<newDrinks.size();i++) {
-                linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
-            }
+    if (code!=0x03) {
+        for (int i=0;i<newDrinks.size();i++) {
+            linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
+        }
+    }
+
+
+    emit signalNewCategory();
+}
+
+
+void QCoffeeClientPlugin::crudPointSaleInfo(QCoffeePointSale &pointSaleInfo,quint32 idOperation) {
+    signalMessageSplashScreen(tr("Отправка категории"));
+    debugMessage("Sand sale");
+
+    QByteArray Output;
+    QDataStream stream(&Output,QIODevice::WriteOnly);
+
+    stream << idOperation;
+    stream << pointSaleInfo.id;
+    stream <<pointSaleInfo.name;
+    stream << pointSaleInfo.idCategories;
+    stream << pointSaleInfo.idDrinks;
+
+
+
+    sendExtData(0x25,Output);
+}
+
+
+void QCoffeeClientPlugin::command25(QByteArray &data) {
+    signalMessageSplashScreen(tr("Получен информация о точке продаж"));
+
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);
+    qDebug()<<"Получен информация о точке продаж";
+    bool result;
+    streamIn >> result;
+
+    quint32 code;
+    streamIn >> code;
+
+
+    QCoffeePointSale currentPointSale;
+
+
+
+    streamIn >> currentPointSale.id;
+    streamIn >> currentPointSale.name;
+    streamIn >> currentPointSale.idCategories;
+    streamIn >> currentPointSale.idDrinks;
+
+
+
+
+    //if (code!=0x03) unlinkCategoryAndDrink(currentCategory.id);
+
+    switch (code) {
+        case 0x01: addPointSale(currentPointSale);
+            break;
+        // case 0x02: editCategory(currentCategory);
+        //     break;
+        // case 0x03: deleteCategoryInfo(currentCategory);
+        //     break;
         }
 
+    // if (code!=0x03) {
+    //     for (int i=0;i<newDrinks.size();i++) {
+    //         linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
+    //     }
+    // }
 
-        emit signalNewCategory();
+
+   emit signalNewPoint();
 }
 
 

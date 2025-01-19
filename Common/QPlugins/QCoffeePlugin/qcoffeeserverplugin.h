@@ -188,6 +188,7 @@ public:
 
     void command23(QByteArray data,QUnClientHandler *client); //получение списка версий модели
     void command24(QByteArray data,QUnClientHandler *client); //получение обновлений конфига
+    void command25(QByteArray data,QUnClientHandler *client); //получение инфы о точке продаж
 
 private:
 

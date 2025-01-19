@@ -84,6 +84,8 @@ void QCoffeeServerPlugin::processCommand(quint8 command,QByteArray data, QUnClie
         break;
     case 0x24: command24(data,client);
         break;
+    case 0x25: command25(data,client);
+        break;
     }
 
 }
@@ -3437,6 +3439,49 @@ void QCoffeeServerPlugin::command21(QByteArray data,QUnClientHandler *client) {
     currentPrice >> streamOut;
 
     sendExtData(0x21,Output,client);
+
+
+}
+
+void QCoffeeServerPlugin::command25(QByteArray data,QUnClientHandler *client) {
+
+
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);;
+
+
+    quint32 code;
+    streamIn >> code;
+
+    QCoffeePointSale currentPointSale;
+    streamIn >> currentPointSale.id;
+    streamIn >> currentPointSale.name;
+    streamIn >> currentPointSale.idCategories;
+    streamIn >> currentPointSale.idDrinks;
+
+    switch (code) {
+    case 0x01: currentPointSale.id = addPointSale(currentPointSale);
+        break;
+    case 0x02: //editCategory(currentCategory);
+        break;
+    case 0x03: //deleteCategoryInfo(currentCategory);
+        break;
+    }
+
+    QByteArray Output;
+
+    bool result = true;
+    QDataStream streamOut (&Output,QIODevice::ReadWrite);
+
+    streamOut <<result;
+    streamOut << code;
+    streamOut << currentPointSale.id;
+    streamOut <<currentPointSale.name;
+    streamOut << currentPointSale.idCategories;
+    streamOut << currentPointSale.idDrinks;
+
+
+    sendExtData(0x25,Output,client);
 
 
 }

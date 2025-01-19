@@ -224,8 +224,12 @@ void QServerPlugin::dataBaseIsInit()
 int QServerPlugin::getNextId(QString table, QString idName)
 {
     int Output = -1;
+     QString textQuery = "select max(" + idName +") from " + table + ";";
 
-    QString textQuery = "select max(" + idName +") from " + table + ";";
+    if (table=="tbl_pointSale") {
+          textQuery = "select max(" + idName +") from " + table + " where id_pointSale!=255;";
+    }
+
     bool result;
 
     QSqlQuery *queryNexId = execQuery(textQuery,&result);

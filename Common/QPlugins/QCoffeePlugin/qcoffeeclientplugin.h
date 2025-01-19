@@ -173,6 +173,8 @@ public:
 
     void crudPriceInfo(QCoffeePriceInfo &priceInfo,quint32 idOperation);
 
+    void crudPointSaleInfo(QCoffeePointSale &pointsaleInfo,quint32 idOperation);
+
 
 
     void setIdCurrentPointSale(int id);
@@ -274,6 +276,7 @@ private:
      void command21(QByteArray &data);  //получение цены
     void command22(QByteArray &data); // получение статуса
     void command23(QByteArray &data); //получение версий нейронки
+    void command25(QByteArray &data);
 
 
 
@@ -299,6 +302,8 @@ signals:
     void signalVolumeGetted();
     void signalNnVersiomsGetted(QList<QString> &versions,QMap<QString,QString> &config,qint32 &progressLearn);
     void signalSendStatus(qint32 &status);
+    void signalNewPoint();
+
 
 };
 

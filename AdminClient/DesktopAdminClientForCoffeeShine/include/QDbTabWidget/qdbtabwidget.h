@@ -16,6 +16,7 @@
 #include "QEditDrinkWidget/QDeleteDialog//qdeletedialog.h"
 #include <QStackedWidget>
 #include "../QDesktopClientLoader/QPointSalePickWidget/qpointsalepickwidget.h"
+#include "QPointSaleEditWidget/qpointsaleeditwidget.h"
 
 class QDbTabWidget : public QWidget
 {
@@ -42,6 +43,9 @@ private:
 
 
     QWidget *categoryWidget;
+    QWidget *pointSaleWidget;
+    QVBoxLayout *vblforPointSale;
+    QPushButton *btnForAddPointSale;
 
 
     QGroupBox *editOrAddItemGroupBox;
@@ -62,7 +66,9 @@ private:
     QStackedWidget *stackedWidget;
     QComboBox *pickPointSaleForCategory;
     QPushButton *btnAddExistenCategory;
-    QPointSalePickWidget *pointSaleWidget;
+
+    QPointSalePickWidget *pointSalePickWidget;
+    QPointSaleEditWidget *pointSaleEditWidget;
 
     QWidget *wgExCategory;
     QVBoxLayout *vblExCategory;
@@ -74,6 +80,7 @@ signals:
 public slots:
     void updateDrinkItems();
     void updateCategoryItems();
+    void updatePointsaleItems();
 
      void updateCategoryItemsForEx();
 
@@ -84,6 +91,9 @@ private slots:
     void slotAddNewDrink();
     void slotOpenCategoryEditWidget(QCoffeeCategoryInfo);
     void slotCloseCategoryEditWidget();
+    void slotOpenPointSaleEditWidget(QCoffeePointSale &);
+    void slotAddNewPointSale();
+    void slotClosePointSaleEditWidget();
     void slotAddNewCategory();
 };
 
