@@ -60,7 +60,7 @@ QNnSettingsWidget::QNnSettingsWidget(QCoffeeClientPlugin *plugin, QWidget *paren
             statusNn->setText("Статус: Обучение не требуется");
             btnLearn->setEnabled(true);
         } else if (status==-2) {
-            statusNn->setText("Статус: Начало обучения...");
+            statusNn->setText("Статус: Идет обучение...");
               progressBarLearn->show();
         } else if (status==-3) {
             statusNn->setText("Статус: Обученно");

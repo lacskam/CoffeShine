@@ -1,5 +1,38 @@
 #include "qcoffeeserverplugin.h"
 
+
+void QCoffeeServerPlugin::initTimerForNn() {
+    dailyTimer = new QTimer(this);
+
+
+
+    QMap<QString,QString> config;
+
+
+    config = loadNnConfig();
+    QTime timeFromConfig = QTime::fromString(config.value("timeRegBegin"), "hh:mm");
+
+
+    scheduledTime = timeFromConfig;
+    qDebug()<<"timer is init";
+
+    connect(dailyTimer, &QTimer::timeout, this, &QCoffeeServerPlugin::checkAndRunCommandlearn);
+
+    dailyTimer->start(60000);
+}
+
+void QCoffeeServerPlugin::checkAndRunCommandlearn() {
+    QTime currentTime = QTime::currentTime();
+    if (currentTime.hour() == scheduledTime.hour() && currentTime.minute() == scheduledTime.minute()) {
+        qDebug() << "запуск command22 " << currentTime.toString();
+        QByteArray data;
+        QUnClientHandler *nullClient = nullptr;
+        command22(data, nullClient);
+    }
+}
+
+
+
 QCoffeeServerPlugin::QCoffeeServerPlugin(QUnNetProtokolServer *server,quint16 business, QObject *parent)
     : QServerPlugin (server, business, parent)
 {
@@ -8,6 +41,7 @@ QCoffeeServerPlugin::QCoffeeServerPlugin(QUnNetProtokolServer *server,quint16 bu
     currentPluginCode = 0x04;
     currentPluginName = "QCoffeeServerPlugin";
     currentIdBusiness = business;
+    initTimerForNn();
 }
 
 QCoffeeServerPlugin::~QCoffeeServerPlugin()
@@ -3261,7 +3295,9 @@ void QCoffeeServerPlugin::command22(QByteArray data, QUnClientHandler *client) {
 
         streamOut<<-2;
         progresLearn=0;
-        sendExtData(0x22, status, client);
+         for (int i=0;i<clientsLists.size();i++) {
+            sendExtData(0x22, status, client);
+         }
 
         updateDataForNN(&dataDb,&dbase);
 
@@ -3275,17 +3311,21 @@ void QCoffeeServerPlugin::command22(QByteArray data, QUnClientHandler *client) {
             progresLearn=step;
             QByteArray currentStep;
             QDataStream streamOut (&currentStep,QIODevice::ReadWrite);
-
             streamOut<<step;
-            sendExtData(0x22, currentStep, client);
+            for (int i=0;i<clientsLists.size();i++) {
+                 sendExtData(0x22, currentStep, clientsLists.at(i));
+            }
+
+
         });
         connect(worker, &Command22Worker::finished, this, [this, client, thread, worker]() {
             QByteArray result;
             QDataStream streamOut (&result,QIODevice::ReadWrite);
             streamOut<<-3;
             progresLearn=-1;
-            sendExtData(0x22, result, client);
-
+            for (int i=0;i<clientsLists.size();i++) {
+                sendExtData(0x22, result, client);
+            }
             thread->quit();
             thread->wait();
             worker->deleteLater();
@@ -3299,11 +3339,12 @@ void QCoffeeServerPlugin::command22(QByteArray data, QUnClientHandler *client) {
     } else {
         qDebug()<<"обновление не требуется";
         QByteArray result;
-         progresLearn=-1;
+        progresLearn=-1;
         QDataStream streamOut (&result,QIODevice::ReadWrite);
         streamOut<<-1;
-
-        sendExtData(0x22, result, client);
+        for (int i=0;i<clientsLists.size();i++) {
+            sendExtData(0x22, result, client);
+        }
 
     }
 
@@ -3544,6 +3585,8 @@ void QCoffeeServerPlugin::command24(QByteArray data, QUnClientHandler *client)
 
     bool result = saveNnConfig(config);
 
+    QTime timeFromConfig = QTime::fromString(config.value("timeRegBegin"), "hh:mm");
+    scheduledTime = timeFromConfig;
 
     QByteArray Output;
 

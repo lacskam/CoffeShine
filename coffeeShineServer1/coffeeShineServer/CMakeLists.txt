@@ -82,6 +82,7 @@ add_executable(coffeeShineServerNN
     include/QNn/nn.h
     ../../Common/QPlugins/QCoffeePlugin/QNnPredictionInfo/qnnpredictioninfo.cpp ../../Common/QPlugins/QCoffeePlugin/QNnPredictionInfo/qnnpredictioninfo.h
     include/QNnFileProcessing/files/allprod1.sex include/QNnFileProcessing/files/weather.sex
+    include/timerthread.h include/timerthread.cpp
 )
 
 

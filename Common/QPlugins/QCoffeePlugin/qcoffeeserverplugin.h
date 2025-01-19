@@ -25,12 +25,19 @@
 #include "../../../coffeeShineServer1/coffeeShineServer/include/QNn/nn.h"
 #include "../../../coffeeShineServer1/coffeeShineServer/include/QNnFileProcessing/QNnDbProcessing.h"
 #include "QNnPredictionInfo/qnnpredictioninfo.h"
-
-
+#include <QTimer>
+#include <QDateTime>
 
 class QCoffeeServerPlugin : public QServerPlugin
 {
+
 public:
+
+    QTimer *dailyTimer;
+    QTime scheduledTime;
+    void initTimerForNn();
+    void checkAndRunCommandlearn();
+
     QCoffeeServerPlugin(QUnNetProtokolServer *server, quint16 business, QObject *parent = nullptr);
     ~QCoffeeServerPlugin();
 
@@ -196,6 +203,9 @@ private:
     void processCommand(quint8 command,QByteArray data, QUnClientHandler *client);
 
     void dataBaseIsInit();
+
+
+
 };
 
 #endif // QCOFFEESERVERPLUGIN_H

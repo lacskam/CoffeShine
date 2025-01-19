@@ -1,0 +1,6 @@
+#ifndef TIMERTHREAD_H
+#define TIMERTHREAD_H
+
+
+
+#endif // TIMERTHREAD_H
