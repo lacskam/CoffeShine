@@ -3985,13 +3985,15 @@ void QCoffeeClientPlugin::command0F(QByteArray &data)
     QVector<int> idPointSales;
     streamIn >> idPointSales;
 
+    countPointSales = idPointSales.count();
+
     for(int i=0;i<idPointSales.count();i++)
     {
         loadPointSale(idPointSales.at(i));
     }
 
 
-    nextStep();
+
 }
 
 void QCoffeeClientPlugin::loadPointSale(int idPointSale)
@@ -4023,6 +4025,11 @@ void QCoffeeClientPlugin::command10(QByteArray &data)
     }
 
     emit signalNewPointInfo(pointSaleInfo);
+
+    counterPointSales++;
+    if (counterPointSales==countPointSales) {
+        nextStep();
+    }
 }
 
 void QCoffeeClientPlugin::loadAllCategoryes()

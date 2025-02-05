@@ -286,6 +286,7 @@ void InterlayerForQML::connectToHost_Slot()
     qDebug()<< qmlProperty->value("lastLogin") << qmlProperty->value("password");
 
     client->setAccount(qmlProperty->value("lastLogin").toString(),qmlProperty->value("password").toString());
+
     qDebug()<<"connect:"<<client->connectToHost();
 
 }
@@ -405,8 +406,9 @@ void InterlayerForQML::slotDisconnected()
 
 void InterlayerForQML::slotUserInfoReceived()
 {
-    currentPlugin = new QCoffeeClientPlugin(settings->value("idPointSaleInOptions").toInt(),client,0x06,this);
 
+    currentPlugin = new QCoffeeClientPlugin(settings->value("idPointSaleInOptions").toInt(),client,0x06,this);
+    currentPlugin->setIdCurrentPointSale(settings->value("idPointSaleInOptions").toInt());
     connect(currentPlugin,SIGNAL(signalBeginSynchronization()),
             this,SLOT(slotBeginSynchronization()));
     connect(currentPlugin,SIGNAL(signalMessageSplashScreen(QString)),

@@ -263,7 +263,7 @@ Rectangle {
                     id: optionArea
                     anchors.fill: parent
 
-                    onPressAndHold: {
+                    onClicked: {
                         if (formConectingToDB.state != "Visible")
                         {
                             loaderSelectionForOrder.setSource("OptionView.qml")

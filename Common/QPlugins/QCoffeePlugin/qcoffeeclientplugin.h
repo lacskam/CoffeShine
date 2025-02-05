@@ -41,6 +41,8 @@ public:
 
 
     bool tesst = false;
+    int countPointSales;
+    int counterPointSales=0;
 
 
 
