@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QDataStream>
-
+#include <QIODevice>
 class QCoffeeReceiptInfo
 {
 public:

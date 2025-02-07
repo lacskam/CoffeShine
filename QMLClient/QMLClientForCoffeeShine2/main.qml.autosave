@@ -1,0 +1,243 @@
+import QtQuick 2.9
+import QtQuick.Controls 2.2
+import QtQuick.Window 2.2
+
+Window {
+    id: window
+    x: 0
+    y: 0
+    title: qsTr("Title text")
+    minimumWidth: 300
+    minimumHeight: 480
+    visible: true
+
+    Rectangle {
+        id: formItems
+        height: window.width > window.height ? window.height : window.height / 2
+        width: window.width > window.height ? window.width / 2 : window.width
+        color: "#5D4037"
+
+        Rectangle {
+            visible: true
+            id: rowForButtonWhichChangeMenuItems
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: window.height / 15
+            color: "blue"
+
+            Button {
+                id: control
+                text: qsTr("Button")
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                contentItem: styleTextForButtonInTopMenu
+                background: styleForBackgroundForButtonInTopMenu
+                onClicked: {
+                                listModel.append({idshnik: "Button " + (++number)})}
+
+            }
+
+            Text {
+                    id: textIndex
+                    anchors.left:  control.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    text: "sfd"
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+
+
+            }
+
+        Rectangle {
+            anchors.top: rowForButtonWhichChangeMenuItems.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            color: "#5D4037"
+
+            GridView {
+                clip: true
+                visible: true
+                id: gridViewForItemFromMenu
+                anchors.fill: parent
+                flow: GridView.LeftToRight
+                cellWidth: width/3
+                cellHeight: 100
+
+                delegate: Item {
+                    x: 5
+                    height: gridViewForItemFromMenu.cellHeight
+
+                    Column {
+                        Rectangle {
+                            id: buttonCoffie
+                            width: gridViewForItemFromMenu.cellWidth - 2
+                            height: gridViewForItemFromMenu.cellHeight - 2
+                            color: !buttonCoffieArea.pressed ? colorCode : "lightblue"
+                            radius: 26
+                            border.width: 3
+                            border.color: Qt.lighter(color)
+                            Image {
+                                width: gridViewForItemFromMenu.cellWidth - 8
+                                height: gridViewForItemFromMenu.cellHeight - 8
+                                fillMode: Image.PreserveAspectFit
+                                smooth: true
+                                visible: true
+                                opacity: 1
+                                clip: false
+                                source: sourceFile
+                                anchors.centerIn: parent
+                            }
+                            MouseArea {
+                                id: buttonCoffieArea
+                                anchors.fill: buttonCoffie
+                                onClicked: {
+
+                                }
+                            }
+
+                            Text {
+                                id: topNameItem
+                                text: name
+                                font.bold: true
+                                style: Text.Outline
+                                styleColor: "white"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                    }
+                    spacing: 5
+                }
+            }
+
+                model: modelItems
+            }
+        }
+    }
+
+    ListModel {
+        id: modelItems
+
+        ListElement {
+                        name: "Молочный коктейль"
+                        colorCode: "red"
+                        sourceFile:"image/Молочный.png"
+                        singleCost: 20000
+                        doubleCost: 0
+                    }
+
+        ListElement {
+                        name: "Американо"
+                        colorCode: "grey"
+                        sourceFile: "image/Американо.png"
+                        singleCost: 18000
+                        doubleCost: 34000
+                    }
+
+        ListElement {
+                        name: "Капучино"
+                        colorCode: "pink"
+                        sourceFile: "image/Капучино.png"
+                        singleCost: 20000
+                        doubleCost: 38000
+                    }
+
+        ListElement {
+                        name: "Кон Панна"
+                        colorCode: "blue"
+                        sourceFile: "image/Кон Панна.png"
+                        singleCost: 18000
+                        doubleCost: 34000
+                    }
+
+        ListElement {
+                        name: "Латте"
+                        colorCode: "green"
+                        sourceFile: "image/Латте.png"
+                        singleCost: 20000
+                        doubleCost: 38000
+                    }
+
+        ListElement {
+                        name: "Мокка"
+                        colorCode: "grey"
+                        sourceFile: "image/Мокка.png"
+                        singleCost: 25000
+                        doubleCost: 48000
+                    }
+
+        ListElement {
+                        name: "Расбери"
+                        colorCode: "yellow"
+                        sourceFile: "image/Расбери.png"
+                        singleCost: 25000
+                        doubleCost: 48000
+                    }
+
+        ListElement {
+                        name: "Раф"
+                        colorCode: "blue"
+                        sourceFile: "image/Раф.png"
+                        singleCost: 25000
+                        doubleCost: 48000
+                    }
+
+        ListElement {
+                        name: "Фидель"
+                        colorCode: "green"
+                        sourceFile: "image/Фидель.png"
+                        singleCost: 25000
+                        doubleCost: 48000
+                    }
+
+        ListElement {
+                        name: "Чай"
+                        colorCode: "grey"
+                        sourceFile: "image/Чай.png"
+                        singleCost: 10000
+                        doubleCost: 0
+                    }
+
+        ListElement {
+                        name: "Шоколад"
+                        colorCode: "pink"
+                        sourceFile: "image/Шоколад.png"
+                        singleCost: 15000
+                        doubleCost: 0
+                    }
+
+        ListElement {
+                        name: "Эспрессо"
+                        colorCode: "blue"
+                        sourceFile: "image/Эспрессо.png"
+                        singleCost: 15000
+                        doubleCost: 28000
+                    }
+    }
+
+
+    Text {
+        id: styleTextForButtonInTopMenu
+        text: control.text
+        font: control.font
+        opacity: enabled ? 1.0 : 0.3
+        color: control.down ? "#17a81a" : "#21be2b"
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        elide: Text.ElideRight
+    }
+
+    Rectangle {
+        id: styleForBackgroundForButtonInTopMenu
+        implicitWidth: 100
+        implicitHeight: 40
+        opacity: enabled ? 1 : 0.3
+        border.color: control.down ? "#17a81a" : "#21be2b"
+        border.width: 1
+        radius: 2
+     }
+}

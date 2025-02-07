@@ -5,7 +5,7 @@
 #include <QDialog>
 #include <QtWidgets>
 #include <QMessageBox>
-
+#include <QRegularExpression>
 #include "../qunnetprotokolclient.h"
 
 class QUnHostsDialog : public QDialog

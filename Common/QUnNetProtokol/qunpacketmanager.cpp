@@ -30,7 +30,7 @@ void QUnPacketManager::run()
 {
     while(flagWork)
     {
-        uint currentTime = QDateTime::currentDateTime().toTime_t();
+        uint currentTime = QDateTime::currentDateTime().toSecsSinceEpoch();
 
         mutexPacketLine->lock();
         PacketInfo A;
@@ -45,7 +45,7 @@ void QUnPacketManager::run()
             A = packetLine.at(i);
             if ((currentTime - A.time > 60) && authorized) {
                 emit signalReSendData(A.plugin,A.command,A.idBusiness,A.data);
-                A.time = QDateTime::currentDateTime().toTime_t();
+                A.time = QDateTime::currentDateTime().toSecsSinceEpoch();
                 packetLine.replace(i,A);
             }
 
@@ -134,7 +134,7 @@ void QUnPacketManager::addPacket(PacketInfo packet,bool save)
 
     if (!checkDoubleCommand(packet))
     {
-        packet.time = QDateTime::currentDateTime().toTime_t();
+        packet.time = QDateTime::currentDateTime().toSecsSinceEpoch();
         packetLine.push_back(packet);
 
         if ((save) && (!noDataBase_))

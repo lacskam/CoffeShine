@@ -20,7 +20,7 @@ void QUnNetProtokolCLient::initClient()
     //Инициализация таймера пинга
     timerPing = new QTimer(this);
     connect(timerPing,SIGNAL(timeout()),this,SLOT(slotTimerPing()));
-    timePing = new QTime();
+    timePing = new QElapsedTimer();
 
     //Инициализация таймеров подключения и авторизации
     timerConnection = new QTimer(this);
@@ -617,9 +617,9 @@ void QUnNetProtokolCLient::sendPing()
     if (timePing != NULL)
             delete timePing;
 
-    timePing = new QTime;
+    timePing = new QElapsedTimer;
 
-    currentPingCode = (quint16)qrand();
+    currentPingCode = (quint16)rand();
     //qDebug()<<"currentPingCode="<<QString::number(currentPingCode);
     sendCommand01(0,currentPingCode);
     flagPing = true;

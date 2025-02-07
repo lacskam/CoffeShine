@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QDataStream>
 #include <QDateTime>
+#include <QIODevice>
+
 
 
 class QCoffeePriceInfo

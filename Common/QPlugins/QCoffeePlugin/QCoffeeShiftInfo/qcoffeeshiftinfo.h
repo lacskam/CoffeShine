@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QDataStream>
 #include <QDateTime>
-
+#include <QIODevice>
 class QCoffeeShiftInfo
 {
 public:

@@ -5,7 +5,7 @@ QUnAccountManager::QUnAccountManager(QSqlDatabase *dataBase_ ,QObject *parent) :
     dataBase = dataBase_;
 
     QTime midnight(0,0,0);
-    qsrand(midnight.secsTo(QTime::currentTime()));
+    srand(midnight.secsTo(QTime::currentTime()));
 
     initDB();
 }
@@ -845,7 +845,7 @@ int QUnAccountManager::getCountAccounts ()
 
 int QUnAccountManager::generateEmailCode (int id)
 {
-    int Output = qrand() % 99999;
+    int Output = rand() % 99999;
 
     setEmailCode(id,Output);
     setActivateEmail(id,false);
@@ -855,7 +855,7 @@ int QUnAccountManager::generateEmailCode (int id)
 
 int QUnAccountManager::generateNumberCode (int id)
 {
-    int Output = qrand() % 99999;
+    int Output = rand() % 99999;
 
     setnNumberCode(id,Output);
     setActivateNumber(id,false);

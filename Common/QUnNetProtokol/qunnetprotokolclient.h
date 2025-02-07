@@ -19,9 +19,9 @@
 #include "qunaccountmanager.h"
 
 #include "qunpacketmanager.h"
-
+#include <QTime>
 #include <QDebug>
-
+#include <QElapsedTimer>
 #define UNheaderData 0xA0
 #define headerAudio 0xB0
 
@@ -82,7 +82,7 @@ private:
     QThread *thrSocket;
     QTimer *timerPing;
     quint8 pingInterval = 60; //Интервал пинга в сек.
-    QTime *timePing = NULL;
+    QElapsedTimer *timePing = NULL;
     quint16 currentPingCode;
     bool flagPing = false;
     void sendPing();

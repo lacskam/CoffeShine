@@ -179,7 +179,7 @@ QVector<PacketInfo> QUnDBPacketManager::getPackets (int idUser)
             A.idBusiness = queryPackets->value(2).toInt();
             A.idUser = queryPackets->value(3).toInt();
             A.data = queryPackets->value(4).toByteArray();
-            A.time = QDateTime::fromString(queryPackets->value(5).toString(),"yyyy-MM-dd hh:mm;ss").toTime_t();
+            A.time = QDateTime::fromString(queryPackets->value(5).toString(),"yyyy-MM-dd hh:mm;ss").toSecsSinceEpoch();
             A.CRC = queryPackets->value(6).toInt();
 
             Output.push_back(A);
@@ -227,7 +227,7 @@ QVector<PacketInfo> QUnDBPacketManager::getPackets ()
             A.idBusiness = queryPackets->value(2).toInt();
             A.idUser = queryPackets->value(3).toInt();
             A.data = queryPackets->value(4).toByteArray();
-            A.time = QDateTime::fromString(queryPackets->value(5).toString(),"yyyy-MM-dd hh:mm;ss").toTime_t();
+            A.time = QDateTime::fromString(queryPackets->value(5).toString(),"yyyy-MM-dd hh:mm;ss").toSecsSinceEpoch();
             A.CRC = queryPackets->value(6).toInt();
 
             Output.push_back(A);

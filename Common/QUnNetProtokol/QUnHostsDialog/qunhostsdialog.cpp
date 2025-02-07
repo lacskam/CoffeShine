@@ -188,7 +188,7 @@ bool QUnHostsDialog::isIpV4Address()
     QString buf = edtHosts->text();
     QString regular = "\\d.\\d.\\d.\\d";
 
-    if (buf.indexOf(QRegExp(regular),0)>=0)
+    if (buf.indexOf(QRegularExpression(regular),0)>=0)
         Output = true;
 
     return Output;

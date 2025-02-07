@@ -1102,7 +1102,7 @@ QVector<QCoffeeUserInfo> QCoffeeClientPlugin::getListUser()
         QCoffeeUserInfo currentUser;
         while (queryListUserInfo->next()) {
             currentUser.id = queryListUserInfo->value(0).toInt();
-            currentUser.login = queryListUserInfo->value(1).toInt();
+            currentUser.login = queryListUserInfo->value(1).toString();
             currentUser.password = queryListUserInfo->value(2).toString();
             currentUser.name = queryListUserInfo->value(3).toString();
             currentUser.patronymic = queryListUserInfo->value(4).toString();

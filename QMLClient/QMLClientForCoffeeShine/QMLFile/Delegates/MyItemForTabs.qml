@@ -3,20 +3,18 @@ import "qrc:/QMLFile/Styles"
 
 Component {
     Rectangle {
-        id : layoutForOneTabs
-        anchors{
-            top: parent.top
-            bottom: parent.bottom
-        }
+        id: layoutForOneTabs
+        width: viewForTabs.width / 3 < mainView.dp(160) ? viewForTabs.width / 2 : viewForTabs.width / 3
+        height: mainView.dp(100)
 
-        width: viewForTabs.width/3 < mainView.dp(160) ? viewForTabs.width/2 : viewForTabs.width/3
+        color: "lightblue"
         border.width: mainView.dp(4)
         border.color: "white"
         radius: mainView.dp(20)
 
         Text {
             id: nameCategory
-            anchors{
+            anchors {
                 top: parent.top
                 bottom: parent.bottom
                 right: parent.right
@@ -26,11 +24,9 @@ Component {
             text: name
             scale: oneTabArea.pressed ? 0.8 : 1
             width: parent.width - colorCategoryDrink.width - mainView.dp(10)
-
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-
-            color: "white"
+            color: "black"
             style: Text.Outline
             fontSizeMode: Text.HorizontalFit
             minimumPointSize: 8
@@ -39,57 +35,52 @@ Component {
 
         Rectangle {
             id: colorCategoryDrink
-            anchors{
+            anchors {
                 verticalCenter: nameCategory.verticalCenter
                 left: parent.left
-                leftMargin: (nameCategory.width - nameCategory.contentWidth)/2 + mainView.dp(5)
+                leftMargin: (nameCategory.width - nameCategory.contentWidth) / 2 + mainView.dp(5)
             }
-            height: parent.height/4
+            height: parent.height / 4
             width: height
-
-            radius: height/2
-
+            radius: height / 2
             color: colorCategory
             border.width: mainView.dp(1)
             border.color: Qt.lighter(color)
         }
 
         MouseArea {
-             id: oneTabArea
-             anchors.fill: parent
+            id: oneTabArea
+            anchors.fill: parent
+            hoverEnabled: true
 
-             hoverEnabled: true
-
-             onClicked: {                
-                 mainView.setCurrentTab(index)
-             }
+            onClicked: {
+                console.log("MouseArea clicked!");
+                mainView.setCurrentTab(index);  // Используйте ваш index для переключения вкладок
+            }
         }
 
         gradient: Gradient {
-                      GradientStop {
-                            position: 0.0
-                            color: "black"
-                      }
-                      GradientStop {
-                            position: 0.4
-                            color: "#5D4037"
-                      }
-                  }
+
+            GradientStop {
+                position: 0.0
+                color: "#5D4037"
+            }
+        }
 
         state: "State1"
         states: [
             State {
-                  //Обычное состояние меню
                 name: "State1"
             },
             State {
-                  //Выбрана вкладка
                 name: "State2"
                 PropertyChanges {
-                     target: layoutForOneTabs
-                     border.color: "#5D4037"
+                    target: layoutForOneTabs
+                    border.color: "#5D4037"
                 }
             }
         ]
     }
+
+
 }

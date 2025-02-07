@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QDataStream>
-
+#include <QIODevice>
 class QCoffeeVolumeDrinkInfo
 {
 public:
