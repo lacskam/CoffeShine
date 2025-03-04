@@ -112,7 +112,22 @@ void QNnTabWidget::createStatForm() {
 
         idForGetStatStart = new quint32;
         idForGetStatEnd  = new quint32;
-        btnLoadStat = new QPushButton("Загрузить статистику");
+        btnLoadStat = new QPushButton("Загрузить прогноз");
+        hblForSpinBoxes = new QHBoxLayout;
+        idForGetStatStartSb = new QSpinBox();
+
+          int countDrink = currentPlugin->getListIdDrink().size();
+
+        idForGetStatStartSb->setMinimum(1);
+        idForGetStatStartSb->setMaximum(countDrink);
+        idForGetStatStartSb->setValue(1);
+
+        idForGetStatEndSb = new QSpinBox;
+        idForGetStatEndSb->setMinimum(1);
+
+        idForGetStatEndSb->setMaximum(countDrink);
+        idForGetStatEndSb->setValue(countDrink);
+
 
         vbstPred = new QVBoxLayout();
         series = new QHorizontalBarSeries();
@@ -149,15 +164,20 @@ void QNnTabWidget::createStatForm() {
         scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
         vbstPred->addWidget(scrollArea);
-        vbstPred->addWidget(btnLoadStat);
+
+        hblForSpinBoxes->addWidget(idForGetStatStartSb);
+        hblForSpinBoxes->addWidget(idForGetStatEndSb);
+        hblForSpinBoxes->addWidget(btnLoadStat);
+        vbstPred->addLayout(hblForSpinBoxes);
+
 
 
         connect(btnLoadStat, &QPushButton::clicked, this, [=]() {
             QDate startDate = leFirstDate->date();
             QDate endDate = leSecondDate->date();
 
-            *idForGetStatStart =1;
-            *idForGetStatEnd =10;
+            *idForGetStatStart =idForGetStatStartSb->value();
+            *idForGetStatEnd =idForGetStatEndSb->value();
             chartProdStat->removeAllSeries();
             chartProdStat->series().clear();
             series = new QHorizontalBarSeries();

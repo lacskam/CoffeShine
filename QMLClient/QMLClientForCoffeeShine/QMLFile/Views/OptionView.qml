@@ -26,12 +26,7 @@ Rectangle {
     }
 
 
-    Image {
-        anchors.fill: parent
-        source: "qrc:/Image/backgroundForLogin.jpg"
-        fillMode: Image.PreserveAspectCrop
-        smooth: true
-    }
+     color: "white";
 
     Rectangle {
         id: mainLayForOptions
@@ -55,8 +50,8 @@ Rectangle {
             horizontalAlignment: Text.AlignHCenter
 
             text:qsTr("Настройки программы")
-            color: "white"
-            style: Text.Outline
+            color: Qt.darker(Qt.darker("white"))
+
             font.bold: true
             styleColor: Qt.lighter("black")
             fontSizeMode: Text.HorizontalFit
@@ -113,8 +108,8 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
 
                 text:qsTr("Id точки продаж: ")
-                color: "white"
-                style: Text.Outline
+                color: "black"
+
                 font.bold: true
                 styleColor: Qt.lighter("black")
                 fontSizeMode: Text.HorizontalFit
@@ -127,7 +122,7 @@ Rectangle {
                 width: pointSale.width
                 wrapMode: Text.WrapAnywhere
                 horizontalAlignment: Text.AlignLeft
-                color: "white"
+                color: "black"
                 font.bold: true
                 font.pointSize: 15
 

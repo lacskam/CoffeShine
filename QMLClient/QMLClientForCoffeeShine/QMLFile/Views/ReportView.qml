@@ -68,7 +68,7 @@ Rectangle {
 
             text:qsTr("Отчет по текущей смене")
             color: "white"
-            style: Text.Outline
+
             font.bold: true
             styleColor: Qt.lighter("black")
             fontSizeMode: Text.HorizontalFit
@@ -90,7 +90,7 @@ Rectangle {
             horizontalAlignment: Text.AlignHCenter
 
             color: "white"
-            style: Text.Outline
+
             font.bold: true
             styleColor: Qt.lighter("black")
             fontSizeMode: Text.HorizontalFit

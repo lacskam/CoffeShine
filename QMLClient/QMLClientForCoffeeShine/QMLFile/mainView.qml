@@ -7,7 +7,17 @@ import "qrc:/QMLFile/Delegates/Highlighters"
 import "qrc:/QMLFile/Styles"
 
 
+
+
 ApplicationWindow {
+
+
+
+
+
+
+
+
     id: mainView
     x: 0
     y: 0
@@ -63,37 +73,37 @@ ApplicationWindow {
                 ((mainView.width / 3 > mainView.dp(500)) ? mainView.dp(500) : mainView.width / 3)
                 : mainView.width
 
-        color: "#795548"
+        color: "white"
 
         border.width: mainView.dp(1)
-        border.color: "white"
+        border.color: Qt.darker(color)
         radius: mainView.dp(15)
 
-        Image {
-            id: backgroundForOrderView
-            anchors.fill: parent
-            anchors.margins: mainView.dp(1)
+        // Image {
+        //     id: backgroundForOrderView
+        //     anchors.fill: parent
+        //     anchors.margins: mainView.dp(1)
 
-            source: "qrc:/Image/backgroundForOrderView.jpg"
+        //     source: "qrc:/Image/backgroundForOrderView.jpg"
 
-            fillMode: Image.PreserveAspectCrop
-            smooth: true
+        //     fillMode: Image.PreserveAspectCrop
+        //     smooth: true
 
-            layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Item {
-                        width: backgroundForOrderView.width
-                        height: backgroundForOrderView.height
+        //     layer.enabled: true
+        //         layer.effect: OpacityMask {
+        //             maskSource: Item {
+        //                 width: backgroundForOrderView.width
+        //                 height: backgroundForOrderView.height
 
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width:  backgroundForOrderView.width
-                            height:  backgroundForOrderView.height
-                            radius: formOrder.radius
-                        }
-                    }
-                }
-        }
+        //                 Rectangle {
+        //                     anchors.centerIn: parent
+        //                     width:  backgroundForOrderView.width
+        //                     height:  backgroundForOrderView.height
+        //                     radius: formOrder.radius
+        //                 }
+        //             }
+        //         }
+        // }
 
         Rectangle {
             id: lcdSum
@@ -104,9 +114,9 @@ ApplicationWindow {
             height: mainView.dp(35)
             width: parent.width/1.7
 
-            color: "lightgreen"
+            color: "#1E90FF"
             visible: totalCost.text !== "0 руб. 0 коп." ? true : false
-            border.width: mainView.dp(2)
+            border.width: mainView.dp(1)
             border.color: "white"
             radius: mainView.dp(10)
 
@@ -132,8 +142,10 @@ ApplicationWindow {
                 leftMargin: mainView.dp(10)
                 topMargin: mainView.dp(2)
             }
+            border.width:  mainView.dp(1)
+            border.color: "#1E90FF"
+            color: Qt.rgba(0,0,0,0.0)
 
-            color: Qt.rgba(0,0,0,0.7)
             radius: mainView.dp(10)
             visible: lcdSum.visible
 
@@ -143,7 +155,7 @@ ApplicationWindow {
                 horizontalAlignment: Text.AlignHCenter
 
                 text: "Наличные"
-                color: "white"
+                color: "black"
                 fontSizeMode: Text.HorizontalFit
                 minimumPointSize: 8
                 font.pointSize: 13
@@ -156,13 +168,13 @@ ApplicationWindow {
             anchors.top: lcdSum.visible ? lcdSum.bottom : parent.top
             anchors.topMargin: lcdSum.visible ? 0 : upperMenu.height+mainView.dp(5)
 
-            height: lcdSum.height
+            height: lcdSum.height-1
             width: lcdSum.width
 
             color: lcdSum.color
             visible: totalCost2.text !== "0 руб. 0 коп." ? true : false
 
-            border.width: mainView.dp(2)
+            border.width: mainView.dp(1)
             border.color: "white"
             radius: mainView.dp(10)
 
@@ -189,8 +201,9 @@ ApplicationWindow {
                 leftMargin: mainView.dp(10)
                 topMargin: mainView.dp(2)
             }
-
-            color: Qt.rgba(0,0,0,0.7)
+            border.width:  mainView.dp(1)
+            border.color: "#1E90FF"
+            color: Qt.rgba(0,0,0,0.0)
             radius: mainView.dp(10)
             visible: lcdSum2.visible
 
@@ -200,7 +213,7 @@ ApplicationWindow {
                 horizontalAlignment: Text.AlignHCenter
 
                 text: "Безналичные"
-                color: "white"
+                color: "black"
                 fontSizeMode: Text.HorizontalFit
                 minimumPointSize: 8
                 font.pointSize: 13
@@ -258,17 +271,18 @@ ApplicationWindow {
             height: mainView.dp(70)
             width: formOrder.width*0.95
 
-            border.color: "#B6B6B6"
+            border.color: "white"
             border.width: mainView.dp(3)
-            radius: mainView.dp(20)
+            radius: mainView.dp(10)
 
             visible: orderListModel.count>0
             // Сглаживание включено
             smooth: true
-
+            color: "#1E90FF";
             TextForButton{
                 text: qsTr("Подтверждение заказа")
                 height: parent.height
+                color: "white"
             }
 
             MouseArea {
@@ -284,7 +298,7 @@ ApplicationWindow {
 
             scale: btnOrderArea.pressed ? 0.8 : 1.0
 
-            gradient: GradientForButton{}
+
         }
     }
 
@@ -304,10 +318,10 @@ ApplicationWindow {
                 top: mainLayoutForMenu.top
                 left: parent.left
                 right: parent.right
-                topMargin: mainView.dp(1)
-                rightMargin: mainView.dp(1)
+                topMargin: mainView.dp(2)
+                rightMargin: mainView.dp(5)
             }
-            height:  mainView.dp(65)
+            height:  mainView.dp(85)
 
             ListView {
                 id: viewForTabs
@@ -334,10 +348,10 @@ ApplicationWindow {
                 right: parent.right
                 bottom: parent.bottom
                 bottomMargin: mainView.dp(1)
-                rightMargin: mainView.dp(1)
+                rightMargin: mainView.dp(10)
             }
 
-            color: "#5D4037"
+            color: "white"
             radius: mainView.dp(15)
 
                  Rectangle{
@@ -348,35 +362,35 @@ ApplicationWindow {
                       }
 
                       height: parent.radius
-                      color: "#5D4037"
+                      color: "white"
                   }
 
-            Image {
-                id: backgroundForMenu
-                anchors.fill: parent
-                anchors.topMargin:  mainView.dp(2)
+            // Image {
+            //     id: backgroundForMenu
+            //     anchors.fill: parent
+            //     anchors.topMargin:  mainView.dp(2)
 
-                source: "qrc:/Image/backgroundForMenu.jpg"
+            //     source: "qrc:/Image/backgroundForMenu.jpg"
 
-                fillMode: Image.PreserveAspectCrop
-                smooth: true
+            //     fillMode: Image.PreserveAspectCrop
+            //     smooth: true
 
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Item {
-                                    width: backgroundForMenu.width
-                                    height: backgroundForMenu.height
+            //     layer.enabled: true
+            //     layer.effect: OpacityMask {
+            //         maskSource: Item {
+            //                         width: backgroundForMenu.width
+            //                         height: backgroundForMenu.height
 
-                                    Rectangle {
-                                        anchors.centerIn: parent
-                                        width:  backgroundForMenu.width
-                                        height:  layoutForMenu.height
-                                        radius: layoutForMenu.radius
-                                        color: "#5D4037"
-                                    }
-                                }
-                }
-            }
+            //                         Rectangle {
+            //                             anchors.centerIn: parent
+            //                             width:  backgroundForMenu.width
+            //                             height:  layoutForMenu.height
+            //                             radius: layoutForMenu.radius
+            //                             color: "#5D4037"
+            //                         }
+            //                     }
+            //     }
+            // }
 
             GridView {
                 id: gridViewForItemFromMenu

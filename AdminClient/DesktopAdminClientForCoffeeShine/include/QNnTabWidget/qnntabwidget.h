@@ -72,6 +72,9 @@ private:
 
     quint32 *idForGetStatStart;
      quint32 *idForGetStatEnd;
+    QSpinBox *idForGetStatStartSb;
+    QSpinBox *idForGetStatEndSb;
+    QHBoxLayout *hblForSpinBoxes;
     QStringList *categories;
 
     QWidget *main;

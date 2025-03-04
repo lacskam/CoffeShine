@@ -3,6 +3,11 @@ import QtQuick.Dialogs 1.3
 import "qrc:/QMLFile/Styles"
 
 Rectangle {
+
+    FontLoader {
+        id: appFont
+        source: "qrc:/fonst/Nunito,Roboto/Nunito/static/Nunito-Regular.ttf"
+    }
     id: mainFormLogin
     anchors.fill: parent
 
@@ -28,12 +33,12 @@ Rectangle {
            }
     }
 
-    Image {
-        anchors.fill: parent
-        source: "qrc:/Image/backgroundForLogin.jpg"
-        fillMode: Image.PreserveAspectCrop
-        smooth: true
-    }
+    // Image {
+    //     anchors.fill: parent
+    //     source: "qrc:/Image/backgroundForLogin.jpg"
+    //     fillMode: Image.PreserveAspectCrop
+    //     smooth: true
+    // }
 
     MouseArea {
         anchors.fill: parent
@@ -46,11 +51,11 @@ Rectangle {
         width: grdLogin.width + mainView.dp(35)
         height: grdLogin.height + lblLoginHead.height + mainView.dp(35) + formLoginBtn.height
 
-        color: "#795548"
+        color: "white"
         opacity: 0.96
 
         radius: mainView.dp(7)
-        border.color: Qt.lighter(color)
+        border.color: Qt.darker(color)
         border.width: mainView.dp(2)
 
         Image {
@@ -73,12 +78,12 @@ Rectangle {
             }
 
             text: qsTr("Авторизация")
-            font.bold: true
-            font.italic: true
+
+            font.family: appFont.name
             font.pixelSize: mainView.dp(48)
             style: Text.Outline
             color: "black"
-            styleColor: Qt.lighter("#795548")
+
         }
 
         Grid {
@@ -94,6 +99,7 @@ Rectangle {
             Text {
                 id: userText
                 text: qsTr("Пользователь")
+                font.family: appFont.name
                 color: "black"
                 font.pixelSize: mainView.dp(30)
             }
@@ -149,6 +155,7 @@ Rectangle {
             Text {
                 text: qsTr("Пароль")
                 color: "black"
+                font.family: appFont.name
                 font.pixelSize: mainView.dp(30)
             }
 
@@ -168,7 +175,7 @@ Rectangle {
                     verticalAlignment:TextInput.AlignVCenter
                     horizontalAlignment: TextInput.AlignHCenter
 
-                    text: qsTr("Pas")
+                    text: qsTr("1756")
                     color: "#151515"
                     font.pixelSize: mainView.dp(26)
 
@@ -227,13 +234,13 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
 
                     text: qsTr("Закрыть")
-
+                    font.family: appFont.name
                     color: "white"
                     font.bold: true
 
                     fontSizeMode: Text.HorizontalFit
                     minimumPixelSize: mainView.dp(8)
-                    font.pixelSize: mainView.dp(32)
+                    font.pixelSize: mainView.dp(28)
                 }
 
                 MouseArea {
@@ -291,12 +298,12 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
 
                     text: qsTr("Войти")
-
+                    font.family: appFont.name
                     color: "white"
                     font.bold: true
                     fontSizeMode: Text.HorizontalFit
                     minimumPixelSize: mainView.dp(8)
-                    font.pixelSize: mainView.dp(32)                  
+                    font.pixelSize: mainView.dp(28)
                 }
 
                 MouseArea {

@@ -22,12 +22,12 @@ Component {
                 margins: mainView.dp(2)
             }
 
-            color: colorCode
-            opacity: 0.95
+            color: "white"
+            opacity: 1
 
-            border.width: mainView.dp(1)
-            border.color: Qt.lighter(color)
-            radius: mainView.dp(30)
+            border.width: mainView.dp(0.5)
+            border.color: Qt.lighter("gray")
+            radius: mainView.dp(8)
 
             Rectangle {
                 id: colorCategoryLay
@@ -51,11 +51,11 @@ Component {
                anchors{
                    verticalCenter: parent.verticalCenter
                    right:parent.right
-                   rightMargin: mainView.dp(2)
+                   rightMargin: mainView.dp(8)
                }
 
-               width: parent.height/1.3
-               height: parent.height/1.3
+               width: parent.height/1.8
+               height: parent.height/1.8
 
                source: "qrc:/Image/Del_Icon.ico"
                fillMode: Image.PreserveAspectFit
@@ -87,6 +87,7 @@ Component {
                 color: "transparent"
 
                 TextForButton {
+                    color: "black"
                     anchors.top: parent.top
                     anchors.topMargin: mainView.dp(2)
                     height: mainView.dp(25)
@@ -95,6 +96,7 @@ Component {
                 }
 
                 TextForButton {
+                      color: "black"
                     anchors.top: nameCoffe.bottom
                     anchors.topMargin: mainView.dp(6)
                     height: mainView.dp(25)
@@ -106,8 +108,9 @@ Component {
                 }
 
                 TextForButton {
+                      color: "black"
                     anchors.top: textVolume.bottom
-                    id: textPrice       
+                    id: textPrice
 
                     text: stringCost
                     size: 15

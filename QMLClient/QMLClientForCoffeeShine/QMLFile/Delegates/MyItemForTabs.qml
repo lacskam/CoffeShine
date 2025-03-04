@@ -2,17 +2,27 @@ import QtQuick 2.12
 import "qrc:/QMLFile/Styles"
 
 Component {
+
     Rectangle {
+        FontLoader {
+            id: appFont
+            source: "qrc:/fonst/Roboto/static/Roboto-Regular.ttf"
+        }
         id: layoutForOneTabs
         width: viewForTabs.width / 3 < mainView.dp(160) ? viewForTabs.width / 2 : viewForTabs.width / 3
-        height: mainView.dp(100)
+        height: mainView.dp(80)
 
-        color: "lightblue"
-        border.width: mainView.dp(4)
+        color: "#1E90FF";
+        border.width: mainView.dp(3)
         border.color: "white"
-        radius: mainView.dp(20)
+        radius: mainView.dp(8)
+
+
+
 
         Text {
+
+
             id: nameCategory
             anchors {
                 top: parent.top
@@ -26,11 +36,13 @@ Component {
             width: parent.width - colorCategoryDrink.width - mainView.dp(10)
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            color: "black"
-            style: Text.Outline
+            color: "white"
+            font.family: appFont.name
+
+
             fontSizeMode: Text.HorizontalFit
             minimumPointSize: 8
-            font.pointSize: 25
+            font.pointSize: 20
         }
 
         Rectangle {
@@ -54,18 +66,13 @@ Component {
             hoverEnabled: true
 
             onClicked: {
+
                 console.log("MouseArea clicked!");
                 mainView.setCurrentTab(index);  // Используйте ваш index для переключения вкладок
             }
         }
 
-        gradient: Gradient {
 
-            GradientStop {
-                position: 0.0
-                color: "#5D4037"
-            }
-        }
 
         state: "State1"
         states: [
@@ -76,7 +83,10 @@ Component {
                 name: "State2"
                 PropertyChanges {
                     target: layoutForOneTabs
-                    border.color: "#5D4037"
+                    border.color: "orange"
+                    color: "orange"
+
+
                 }
             }
         ]

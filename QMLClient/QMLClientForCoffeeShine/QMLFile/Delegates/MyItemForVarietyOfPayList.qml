@@ -15,7 +15,7 @@ Component {
             color: "transparent"
             border.width: mainView.dp(2)
             border.color: "#B6B6B6"
-            radius: mainView.dp(10)
+            radius: mainView.dp(2)
 
             TextForButton {
                 anchors.fill: parent

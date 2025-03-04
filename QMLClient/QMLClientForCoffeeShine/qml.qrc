@@ -22,5 +22,10 @@
         <file>QMLFile/Views/ReportView.qml</file>
         <file>QMLFile/Delegates/MyItemForReceiptList.qml</file>
         <file>QMLFile/Delegates/MyItemForSoldPositionList.qml</file>
+        <file>fonst/Nunito,Roboto/Nunito/static/Nunito-Regular.ttf</file>
+        <file>fonst/Roboto/static/Roboto_Condensed-Light.ttf</file>
+        <file>fonst/Roboto/static/Roboto_SemiCondensed-Regular.ttf</file>
+         <file>fonst/Roboto/static/Roboto-Regular.ttf</file>
+
     </qresource>
 </RCC>

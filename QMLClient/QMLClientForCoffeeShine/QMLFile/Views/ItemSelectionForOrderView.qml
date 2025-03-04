@@ -102,7 +102,7 @@ Rectangle {
         width: mainView.width > mainView.height ? mainView.width/4 : 0
         height: mainView.width > mainView.height ? 0 : mainView.height/4
 
-        color: Qt.rgba(0.0, 0.0, 0.0, 0.9)
+        color: Qt.rgba(0.0, 0.0, 0.0, 0.7)
         radius: mainView.dp(20)
 
         ListView {
@@ -135,10 +135,11 @@ Rectangle {
 
         color:"transparent"
 
+
         Image {
             anchors.centerIn: parent
-            width: parent.width
-            height: parent.height
+            width: parent.width/2.2
+            height: parent.height/2.2
             source: qmlProperty.imageForCurrentItem !== undefined ? "image://drinks/" + qmlProperty.imageForCurrentItem : "qrc:/Image/coffeeBASE.png"
             fillMode: Image.PreserveAspectFit
             visible: true
@@ -162,6 +163,7 @@ Rectangle {
                 z: 0
                 color: Qt.rgba(0.0, 0.0, 0.0, 0.4)
                 radius: mainView.dp(20)
+
             }
 
         }
@@ -183,7 +185,7 @@ Rectangle {
         width: mainView.width > mainView.height ? mainView.width/4 : mainView.width
         height: mainView.width > mainView.height ? mainView.height : mainView.height/4
 
-        color: Qt.rgba(0.0, 0.0, 0.0, 0.9)
+        color: Qt.rgba(0.0, 0.0, 0.0, 0.7)
         radius: mainView.dp(20)
 
         ListView {

@@ -8,7 +8,7 @@ Item {
         height: viewForTabs.height/2
         width: viewForTabs.currentItem.width*2
 
-        color: "#5D4037"
+        color: "#ffffff"
     }
 
     Rectangle {

@@ -3,37 +3,38 @@ import "qrc:/QMLFile/Styles"
 
 Component {
       Rectangle {
+
+
           id: oneButtomFromMenu
-          width: gridViewForItemFromMenu.cellWidth - mainView.dp(1)
-          height: gridViewForItemFromMenu.cellHeight - mainView.dp(1)
+          width: gridViewForItemFromMenu.cellWidth - mainView.dp(7)
+          height: gridViewForItemFromMenu.cellHeight - mainView.dp(7)
 
-          color: !buttonCoffieArea.pressed ? colorCode : "lightblue"
+          color: !buttonCoffieArea.pressed ? "white" : "lightblue"
 
-          border.width: mainView.dp(2)
-          border.color: Qt.lighter(color)
-          radius: mainView.dp(25)
+          border.width: mainView.dp(1.1)
+          border.color: Qt.lighter("gray")
+          radius: mainView.dp(10)
 
           opacity: 0.96
 
           Image {
               anchors.centerIn: parent
 
-              width: gridViewForItemFromMenu.cellWidth - mainView.dp(5)
-              height: gridViewForItemFromMenu.cellHeight - mainView.dp(5)
+              width: gridViewForItemFromMenu.cellWidth - mainView.dp(70)
+              height: gridViewForItemFromMenu.cellHeight - mainView.dp(70)
               source: "image://drinks/" + idDrink
 
               fillMode: Image.PreserveAspectFit
 
-              TextForImage{
-                  text: name
-                  styleColor: "white"
-              }
 
-              TextForImage{
-                  text: name
-                  verticalAlignment: Text.AlignBottom
-                  color: "white"
-              }
+
+
+          }
+          TextForImage{
+              text: name
+              verticalAlignment: Text.AlignBottom
+              color: "black"
+
           }
 
           MouseArea {
