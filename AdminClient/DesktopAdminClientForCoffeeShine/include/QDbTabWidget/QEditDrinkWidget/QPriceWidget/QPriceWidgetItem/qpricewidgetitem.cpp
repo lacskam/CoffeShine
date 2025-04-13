@@ -191,7 +191,7 @@ void QPriceWidgetItem::fillingForm()
 
 
 
-        QRegExp validRegForVolumeAndPricce("^[0-9]*$");
+        QRegExp validRegForVolumeAndPricce("^[0-9.]*$");
 
 
 

@@ -145,6 +145,8 @@ void QCoffeeClientPlugin::processCommand(quint8 command,QByteArray data)
         break;
     case 0x25: command25(data);
         break;
+    case 0x26: command26(data);
+        break;
     }
 }
 
@@ -1545,7 +1547,7 @@ bool QCoffeeClientPlugin::unlinkVolumeAndDrink(int idVolume)
 bool QCoffeeClientPlugin::unlinkVolumeAndDrink2(int idVolume,int idDrink)
 {
     bool Output = false;
-
+    qDebug()<<idVolume<<idDrink;
     QString textQuery = "delete from tbl_drink_volumeDrink "
                         "where tbl_volumeDrink_id_volumeDrink = '" + QString::number(idVolume) + "' and tbl_drink_id_drink = '"+QString::number(idDrink)+ "';";
 
@@ -2212,6 +2214,26 @@ bool QCoffeeClientPlugin::unlinkPriceInfoAndPointSale(int idPriceInfo)
 
     return Output;
 }
+
+
+bool QCoffeeClientPlugin::deletePriceInfo(int idPriceInfo)
+{
+    bool Output = false;
+    unlinkPriceInfoAndPointSale(idPriceInfo);
+    QString textQuery = "delete from tbl_price where id_price="+QString::number(idPriceInfo)+";";
+    QSqlQuery *query = execQuery(textQuery,&Output);
+
+    if (!Output) {
+        qDebug()<<"Error unlink point sale and price info:"<<query->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete query;
+
+    return Output;
+}
+
+
 
 bool QCoffeeClientPlugin::linkPriceInfoAndPointSale(int idPriceInfo, int idPointSale)
 {
@@ -4277,7 +4299,40 @@ void QCoffeeClientPlugin::crudOpDrinkInfo(QCoffeeDrinkInfo &drinkInfo, quint32 i
     sendExtData(0xA0,Output);
 }
 
+void QCoffeeClientPlugin::sendUnlinkVolumeAndDrink(quint32 idVolume, quint32 IdDrink)
+{
+    signalMessageSplashScreen(tr("Отправка напитка"));
+    debugMessage("Sand sale");
 
+    QByteArray Output;
+    QDataStream stream(&Output,QIODevice::WriteOnly);
+
+    stream << IdDrink;
+
+    stream << idVolume;
+    sendExtData(0x26,Output);
+}
+
+void QCoffeeClientPlugin::command26(QByteArray &data)
+{
+    signalMessageSplashScreen(tr("Получен информация о напитке"));
+    debugMessage("Received drink information");
+    QDataStream streamIn (&data,QIODevice::ReadOnly);
+    streamIn.device()->seek(0);
+
+
+
+    bool result;
+    quint32 idDrink;
+    quint32 IdVolume;
+    streamIn >> result;
+    streamIn >> idDrink;
+    streamIn >> IdVolume;
+
+    if (result) {
+    unlinkVolumeAndDrink2(IdVolume,idDrink);
+    } else qDebug()<<"ошибка анлинка";
+}
 
 
 void QCoffeeClientPlugin::commandA0(QByteArray &data)
@@ -4591,7 +4646,7 @@ void QCoffeeClientPlugin::command21(QByteArray &data) {
         break;
     case 0x02: //editCategory(currentCategory);
         break;
-    case 0x03: //deleteCategoryInfo(currentCategory);
+    case 0x03: deletePriceInfo(currentPrice.id);
         break;
     }
 

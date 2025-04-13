@@ -94,6 +94,7 @@ public:
     QVector<int> getIdDrinkForVolume(int idVolume); //Получить id напитков для заданного объема
     bool linkVolumeAndDrink(int idVolume, int idDrink); //Свзять объем и напиткоу
     bool unlinkVolumeAndDrink(int idVolume); //Удалить все связи объема с напитками
+    bool unlinkVolumeAndDrink2(int idVolume,int idDrink); //Удалить связь объема с напитком
     int addVolumeDrink(QCoffeeVolumeDrinkInfo &volume); //Добавить объем напитка
     bool editVolume(QCoffeeVolumeDrinkInfo &volume); //Редактировать объем напитка
 
@@ -118,6 +119,7 @@ public:
     QCoffeePriceInfo getPriceInfo(int idPriceInfo); //Получить информацию по позиции прайса
     int getIdPriceInfo(QCoffeePriceInfo &priceInfo); //Получить id позиции прайса
     QVector<int> getIdPointSaleForPriceInfo(int idPriceinfo); //Получить список id точек продаж для позиции прайса
+    bool deletePriceInfo(int idPriceInfo); //удаление цены
     bool unlinkPriceInfoAndPointSale(int idPriceInfo); //Удалить все связи между позицией прайса и точками продаж
     bool linkPriceInfoAndPointSale(int idPriceInfo, int idPointSale); //Связать позицию прайса и точку продаж
     int addPriceInfo(QCoffeePriceInfo &priceInfo); //Добавить позицию прайса
@@ -196,6 +198,8 @@ public:
     void command23(QByteArray data,QUnClientHandler *client); //получение списка версий модели
     void command24(QByteArray data,QUnClientHandler *client); //получение обновлений конфига
     void command25(QByteArray data,QUnClientHandler *client); //получение инфы о точке продаж
+    void command26(QByteArray data,QUnClientHandler *client); //запрос на анлинк напитка и обьема
+
 
 private:
 

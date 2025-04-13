@@ -95,6 +95,7 @@ void QEditDrinkWidget::createForm()
         QVector<CategoryForComboBoxInfo> categoryForCb = getCategoryInfoForCurrentDrink();
 
         QDialog *dio1 = new QDialog(this);
+
         QPriceWidget *priceWg = new QPriceWidget(currentPlugin,categoryForCb, priceAndVolume,volumesForCb,dio1);
         connect(priceWg,&QPriceWidget::signalAcceptedPrices,this,[=](const QVector<PriceAndVolumeInfo> &priceAndVol,const QVector<PriceAndVolumeInfo> &priceAndVolForDelete) {
             tempReturnedPriceAndVolumeInfo = priceAndVol;
@@ -112,6 +113,9 @@ void QEditDrinkWidget::createForm()
             qDebug()<<checkChangesForPrices();
 
         });
+
+        connect(priceWg,&QPriceWidget::signalDeclinePrices,this,[=]() {delete dio1;});
+
         vblPrice->addWidget(priceWg);
         dio1->setLayout(vblPrice);
         dio1->setModal(true);
@@ -474,12 +478,12 @@ void QEditDrinkWidget::slotSaveChanges() {
     }
         if (checkChangesForPrices()) {
             for (int i=0;i<tempReturnedPriceAndVolumeInfo.count();i++) {
-                //проверит что с темпой творится
+                //тут чет не так
                 slotSendVolumeInfo(tempReturnedPriceAndVolumeInfo.at(i));
             }
 
             for (int i=0;i<PriceAndVolumeInfoForDelete.count();i++) {
-                currentPlugin->unlinkVolumeAndDrink2(PriceAndVolumeInfoForDelete.at(i).volumeId,currentEditedDrink.id);
+                currentPlugin->sendUnlinkVolumeAndDrink(PriceAndVolumeInfoForDelete.at(i).volumeId,currentEditedDrink.id);
             }
         }
 

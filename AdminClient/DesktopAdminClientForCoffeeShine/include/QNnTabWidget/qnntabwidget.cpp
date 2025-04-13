@@ -685,7 +685,7 @@ void QNnTabWidget::lineMove(QMap<QDateTime,qint32> *mapSaless) {
 
 void QNnTabWidget::lineMoveNN(QMap<QDateTime,float> *mapSaless) {
 
-
+    if (!mapSaless->empty()) {
     sliderNN->resize(width()-150,15);
     sliderNN->move(72,65);
 
@@ -700,7 +700,7 @@ void QNnTabWidget::lineMoveNN(QMap<QDateTime,float> *mapSaless) {
     qfloat16 g = std::abs((mapSaless->begin()+sliderNN->value()).value());
 
     labelValueNN->setText("<p style=\"color: rgb(0, 0, 0)\">"+QString::number(g,'f',2)+"</p>");
-
+    }
 }
 
 

@@ -27,7 +27,7 @@ QPriceWidget::QPriceWidget(QCoffeeClientPlugin *plugin_, const QVector<CategoryF
 
 
 
-    QPushButton *declineChangesBtn = new QPushButton("Удалить", this);
+    QPushButton *declineChangesBtn = new QPushButton("Отмена", this);
 
     layForBtns->addWidget(saveChangesBtn);
     layForBtns->addWidget(declineChangesBtn);
@@ -39,6 +39,7 @@ QPriceWidget::QPriceWidget(QCoffeeClientPlugin *plugin_, const QVector<CategoryF
 
     createNewItems(categories,prices);
      connect(saveChangesBtn, &QPushButton::clicked, this, &QPriceWidget::btnSaveClicked);
+     connect(declineChangesBtn, &QPushButton::clicked, this, &QPriceWidget::signalDeclinePrices);
 }
 
 void QPriceWidget::createNewItems(const QVector<CategoryForComboBoxInfo> &currentCategory, const QVector<PriceAndVolumeInfo> &currentItems)

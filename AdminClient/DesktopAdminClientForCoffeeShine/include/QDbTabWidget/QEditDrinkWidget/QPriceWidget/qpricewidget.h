@@ -42,6 +42,7 @@ private:
     void refreshTitleForAllItems();
 signals:
     void signalAcceptedPrices(const QVector<PriceAndVolumeInfo> &,const QVector<PriceAndVolumeInfo> &);
+    void signalDeclinePrices();
 
 public slots:
     void slotDeleteItem(QPriceWidgetItem*);

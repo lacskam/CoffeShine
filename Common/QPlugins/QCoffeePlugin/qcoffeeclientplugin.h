@@ -123,6 +123,7 @@ public:
     int getIdPriceInfo(QCoffeePriceInfo &priceInfo);
     QVector<int> getIdPointSaleForPriceInfo(int idPriceinfo);
     bool unlinkPriceInfoAndPointSale(int idPriceInfo);
+    bool deletePriceInfo(int idPriceInfo);
     bool linkPriceInfoAndPointSale(int idPriceInfo, int idPointSale);
     int addPriceInfo(QCoffeePriceInfo &priceInfo);
     bool editPriceInfo(QCoffeePriceInfo &priceInfo);
@@ -176,7 +177,7 @@ public:
     void crudPriceInfo(QCoffeePriceInfo &priceInfo,quint32 idOperation);
 
     void crudPointSaleInfo(QCoffeePointSale &pointsaleInfo,quint32 idOperation);
-
+    void sendUnlinkVolumeAndDrink(quint32 idVolume, quint32 IdDrink);
 
 
     void setIdCurrentPointSale(int id);
@@ -279,6 +280,7 @@ private:
     void command22(QByteArray &data); // получение статуса
     void command23(QByteArray &data); //получение версий нейронки
     void command25(QByteArray &data);
+    void command26(QByteArray &data); //подтверждение запроса на анлинк напитка и обьема
 
 
 

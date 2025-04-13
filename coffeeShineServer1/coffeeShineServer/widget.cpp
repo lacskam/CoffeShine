@@ -49,7 +49,7 @@ void Widget::createForm()
     layoutGroupSettings->addWidget(labelMainDB,2,0,1,1);
     editMainDB = new QLineEdit(groupSettings);
     editMainDB->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    editMainDB->setText("bd");
+    editMainDB->setText("db_coffeeShine");
     layoutGroupSettings->addWidget(editMainDB,2,1,1,1);
 
     labelUnDB = new QLabel(tr("Users DB"),groupSettings);
