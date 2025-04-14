@@ -1625,6 +1625,22 @@ bool QCoffeeClientPlugin::editVolume(QCoffeeVolumeDrinkInfo &volume)
     return Output;
 }
 
+bool QCoffeeClientPlugin::deleteVolumeInfo(int idVolumeInfo)
+{
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_volumeDrink where id_volumeDrink="+QString::number(idVolumeInfo)+";";
+    QSqlQuery *query = execQuery(textQuery,&Output);
+
+    if (!Output) {
+        qDebug()<<"Error "<<query->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete query;
+
+    return Output;
+}
 //QCoffeeDrinkInfo
 
 QVector<QCoffeeDrinkInfo> QCoffeeClientPlugin::getListDrink()
@@ -2202,6 +2218,25 @@ bool QCoffeeClientPlugin::unlinkPriceInfoAndPointSale(int idPriceInfo)
 
     QString textQuery = "delete from tbl_pointSale_price "
                         "where tbl_price_id_price = '" + QString::number(idPriceInfo) + "';";
+
+    QSqlQuery *queryUnlinkPointSaleAndPrice = execQuery(textQuery,&Output);
+
+    if (!Output) {
+        qDebug()<<"Error unlink point sale and price info:"<<queryUnlinkPointSaleAndPrice->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete queryUnlinkPointSaleAndPrice;
+
+    return Output;
+}
+
+bool QCoffeeClientPlugin::unlinkPriceInfoAndPointSale2(int idPriceInfo,int idPointSale)
+{
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_pointSale_price "
+                        "where tbl_price_id_price = '" + QString::number(idPriceInfo) + "and tbl_pointSale_id_pointSale="+QString::number(idPointSale)+"';";
 
     QSqlQuery *queryUnlinkPointSaleAndPrice = execQuery(textQuery,&Output);
 
@@ -4299,7 +4334,7 @@ void QCoffeeClientPlugin::crudOpDrinkInfo(QCoffeeDrinkInfo &drinkInfo, quint32 i
     sendExtData(0xA0,Output);
 }
 
-void QCoffeeClientPlugin::sendUnlinkVolumeAndDrink(quint32 idVolume, quint32 IdDrink)
+void QCoffeeClientPlugin::sendUnlinkVolumeAndDrink(quint32 idVolume, quint32 IdDrink,quint32 idPrice)
 {
     signalMessageSplashScreen(tr("Отправка напитка"));
     debugMessage("Sand sale");
@@ -4310,6 +4345,7 @@ void QCoffeeClientPlugin::sendUnlinkVolumeAndDrink(quint32 idVolume, quint32 IdD
     stream << IdDrink;
 
     stream << idVolume;
+    stream <<idPrice;
     sendExtData(0x26,Output);
 }
 
@@ -4324,13 +4360,17 @@ void QCoffeeClientPlugin::command26(QByteArray &data)
 
     bool result;
     quint32 idDrink;
-    quint32 IdVolume;
+    quint32 idVolume;
+    quint32 idPrice;
     streamIn >> result;
     streamIn >> idDrink;
-    streamIn >> IdVolume;
+    streamIn >> idVolume;
+    streamIn >> idPrice;
 
     if (result) {
-    unlinkVolumeAndDrink2(IdVolume,idDrink);
+        unlinkVolumeAndDrink2(idVolume,idDrink);
+        deletePriceInfo(idPrice);
+        deleteVolumeInfo(idVolume);
     } else qDebug()<<"ошибка анлинка";
 }
 

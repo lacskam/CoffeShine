@@ -1200,6 +1200,25 @@ bool QCoffeeServerPlugin::editVolume(QCoffeeVolumeDrinkInfo &volume)
     return Output;
 }
 
+
+
+bool QCoffeeServerPlugin::deleteVolumeInfo(int idVolumeInfo)
+{
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_volumeDrink where id_volumeDrink="+QString::number(idVolumeInfo)+";";
+    QSqlQuery *query = execQuery(textQuery,&Output);
+
+    if (!Output) {
+        qDebug()<<"Error "<<query->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete query;
+
+    return Output;
+}
+
 //QCoffeeDrinkInfo
 
 QVector<QCoffeeDrinkInfo> QCoffeeServerPlugin::getListDrink()
@@ -1704,6 +1723,26 @@ bool QCoffeeServerPlugin::unlinkPriceInfoAndPointSale(int idPriceInfo)
 
     QString textQuery = "delete from tbl_pointSale_price "
                         "where tbl_price_id_price = '" + QString::number(idPriceInfo) + "';";
+
+    QSqlQuery *queryUnlinkPointSaleAndPrice = execQuery(textQuery,&Output);
+
+    if (!Output) {
+        qDebug()<<"Error unlink point sale and price info:"<<queryUnlinkPointSaleAndPrice->lastError().text();
+        qDebug()<<"textQuery = "<<textQuery;
+    }
+
+    delete queryUnlinkPointSaleAndPrice;
+
+    return Output;
+}
+
+
+bool QCoffeeServerPlugin::unlinkPriceInfoAndPointSale2(int idPriceInfo,int idPointSale)
+{
+    bool Output = false;
+
+    QString textQuery = "delete from tbl_pointSale_price "
+                        "where tbl_price_id_price = '" + QString::number(idPriceInfo) + "and tbl_pointSale_id_pointSale="+QString::number(idPointSale)+"';";
 
     QSqlQuery *queryUnlinkPointSaleAndPrice = execQuery(textQuery,&Output);
 
@@ -3581,11 +3620,14 @@ void QCoffeeServerPlugin::command26(QByteArray data,QUnClientHandler *client) {
 
     quint32 idDrink;
     quint32 idVolume;
-
+    quint32 idPrice;
     streamIn >>idDrink;
     streamIn >> idVolume;
+    streamIn >> idPrice;
 
     unlinkVolumeAndDrink2(idVolume,idDrink);
+    deletePriceInfo(idPrice);
+    deleteVolumeInfo(idVolume);
 
     QByteArray Output;
 
@@ -3595,6 +3637,7 @@ void QCoffeeServerPlugin::command26(QByteArray data,QUnClientHandler *client) {
     streamOut <<result;
     streamOut <<idDrink;
     streamOut <<idVolume;
+    streamOut <<idPrice;
 
     sendExtData(0x26,Output,client);
 

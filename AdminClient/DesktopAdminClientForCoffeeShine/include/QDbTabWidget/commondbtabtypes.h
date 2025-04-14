@@ -40,6 +40,12 @@ struct PriceAndVolumeInfo
     bool itemWasChanged;  // определение был ли включён или исключён элемет
     bool valid = true;
     bool forDelite = false;
+
+    bool operator==(const PriceAndVolumeInfo& other) const {
+        return this->volumeId == other.volumeId;
+    }
+
+
 };
 
 #endif // COMMONDBTABTYPES_H

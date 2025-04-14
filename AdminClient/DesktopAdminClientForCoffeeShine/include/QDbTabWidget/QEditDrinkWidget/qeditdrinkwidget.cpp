@@ -86,6 +86,7 @@ void QEditDrinkWidget::createForm()
 
     mainLayout->addLayout(hblForPickPriceData);
     QPushButton *openPriceDialog = new QPushButton(tr("Изменить"));
+    PriceAndVolumeInfoForDelete.clear();
     connect(openPriceDialog,&QPushButton::clicked,this,[=]() {
         QVBoxLayout *vblPrice = new QVBoxLayout;
 
@@ -103,11 +104,16 @@ void QEditDrinkWidget::createForm()
             delete priceWg;
             delete dio1;
             for (int i =0;i<tempReturnedPriceAndVolumeInfo.count();i++) {
-                qDebug()<<i<<" "<<tempReturnedPriceAndVolumeInfo.at(i).volumeId<<" "<<tempReturnedPriceAndVolumeInfo.at(i).volume<<" "<<tempReturnedPriceAndVolumeInfo.at(i).priceId<<" "<<tempReturnedPriceAndVolumeInfo.at(i).price;
+                qDebug()<<i<<" "<<tempReturnedPriceAndVolumeInfo.at(i).volumeId<<" "<<tempReturnedPriceAndVolumeInfo.at(i).volume
+                         <<" "<<tempReturnedPriceAndVolumeInfo.at(i).priceId<<" "<<tempReturnedPriceAndVolumeInfo.at(i).price;
             }
 
             for (int i =0;i<PriceAndVolumeInfoForDelete.count();i++) {
-                qDebug()<<i<<" for delete "<<PriceAndVolumeInfoForDelete.at(i).volumeId<<" "<<PriceAndVolumeInfoForDelete.at(i).volume<<" "<<PriceAndVolumeInfoForDelete.at(i).priceId<<" "<<PriceAndVolumeInfoForDelete.at(i).price;
+
+                qDebug()<<i<<" for delete "<<PriceAndVolumeInfoForDelete.at(i).volumeId
+                         <<" "<<PriceAndVolumeInfoForDelete.at(i).volume<<" "<<PriceAndVolumeInfoForDelete.at(i).priceId<<" "<<PriceAndVolumeInfoForDelete.at(i).price;
+
+
             }
 
             qDebug()<<checkChangesForPrices();
@@ -253,7 +259,7 @@ QVector<PriceAndVolumeInfo> QEditDrinkWidget::getPriceAndVolumeInfoForCurrentDri
 
         tempPrice = currentPlugin->getPricceInfo(currentCategory.at(drinkCategoryComboBox->currentIndex()).idCategory, currentEditedDrink.id, listVolume.at(i).id);
 
-        if (currentPlugin->getIdPointSaleForPriceInfo(tempPrice.id).contains(currentPoinstSales.at(drinkPointSaleComboBox->currentIndex()).id)) {
+        if (currentPlugin->getIdPointSaleForPriceInfo(tempPrice.id).contains(currentPoinstSales.at(drinkPointSaleComboBox->currentIndex()).id )) {
             PriceAndVolumeInfo info;
             info.itemWasChanged = false;
             info.volumeId = listVolume.at(i).id;
@@ -266,8 +272,8 @@ QVector<PriceAndVolumeInfo> QEditDrinkWidget::getPriceAndVolumeInfoForCurrentDri
 
 
 
-            if (info.price>0.1) {
-                Output.push_back(info);
+            if (info.price>0.1 && !PriceAndVolumeInfoForDelete.contains(info)) {
+                Output.push_back(info );
             }
         }
 
@@ -483,7 +489,7 @@ void QEditDrinkWidget::slotSaveChanges() {
             }
 
             for (int i=0;i<PriceAndVolumeInfoForDelete.count();i++) {
-                currentPlugin->sendUnlinkVolumeAndDrink(PriceAndVolumeInfoForDelete.at(i).volumeId,currentEditedDrink.id);
+                currentPlugin->sendUnlinkVolumeAndDrink(PriceAndVolumeInfoForDelete.at(i).volumeId,currentEditedDrink.id,PriceAndVolumeInfoForDelete.at(i).priceId);
             }
         }
 

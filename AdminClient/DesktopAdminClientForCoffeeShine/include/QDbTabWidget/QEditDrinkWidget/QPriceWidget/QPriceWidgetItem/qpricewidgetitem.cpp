@@ -1,5 +1,10 @@
 #include "qpricewidgetitem.h"
 
+
+
+
+
+
 QPriceWidgetItem::QPriceWidgetItem(QWidget *parent) : QWidget(parent)
 {
 

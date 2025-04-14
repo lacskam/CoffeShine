@@ -97,6 +97,7 @@ public:
     bool unlinkVolumeAndDrink2(int idVolume,int idDrink); //Удалить связь объема с напитком
     int addVolumeDrink(QCoffeeVolumeDrinkInfo &volume); //Добавить объем напитка
     bool editVolume(QCoffeeVolumeDrinkInfo &volume); //Редактировать объем напитка
+     bool deleteVolumeInfo(int idVolumeInfo); //удаление обьема
 
 
     //QCoffeeDrinkInfo
@@ -121,6 +122,7 @@ public:
     QVector<int> getIdPointSaleForPriceInfo(int idPriceinfo); //Получить список id точек продаж для позиции прайса
     bool deletePriceInfo(int idPriceInfo); //удаление цены
     bool unlinkPriceInfoAndPointSale(int idPriceInfo); //Удалить все связи между позицией прайса и точками продаж
+    bool unlinkPriceInfoAndPointSale2(int idPriceInfo,int idPointSale); //удалить связь между точкой продаж и прайсомы
     bool linkPriceInfoAndPointSale(int idPriceInfo, int idPointSale); //Связать позицию прайса и точку продаж
     int addPriceInfo(QCoffeePriceInfo &priceInfo); //Добавить позицию прайса
     bool editPriceInfo(QCoffeePriceInfo &priceInfo); //Редактировать позицию прайса

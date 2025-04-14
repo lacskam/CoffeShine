@@ -98,7 +98,7 @@ public:
     bool unlinkVolumeAndDrink2(int idVolume,int idDrink);
     int addVolumeDrink(QCoffeeVolumeDrinkInfo &volume);
     bool editVolume(QCoffeeVolumeDrinkInfo &volume);
-
+    bool deleteVolumeInfo(int idVolumeInfo); //удаление обьема
     //QCoffeeDrinkInfo
     QVector<QCoffeeDrinkInfo> getListDrink();
     QVector<QCoffeeDrinkInfo> getListDrink(int idCategory);
@@ -123,6 +123,7 @@ public:
     int getIdPriceInfo(QCoffeePriceInfo &priceInfo);
     QVector<int> getIdPointSaleForPriceInfo(int idPriceinfo);
     bool unlinkPriceInfoAndPointSale(int idPriceInfo);
+    bool unlinkPriceInfoAndPointSale2(int idPriceInfo,int idPointSale);
     bool deletePriceInfo(int idPriceInfo);
     bool linkPriceInfoAndPointSale(int idPriceInfo, int idPointSale);
     int addPriceInfo(QCoffeePriceInfo &priceInfo);
@@ -165,7 +166,9 @@ public:
     void editPicture(QCoffeePictureInfo &picture);
 
     void sendRelearnRequest();
+
     void sendPredictionRequest(QDate startDate, QDate endDate, quint32 id, qint32 idWg); // Отправление информации о дате и айди для прогноза
+
     void sendPredictionRequestFotStat(QDate startDate, QDate endDate, qint32 idstart, qint32 idend);
 
     void crudDrinkInfo(QCoffeeDrinkInfo &drinkInfo,quint32 idOperation);
@@ -177,14 +180,16 @@ public:
     void crudPriceInfo(QCoffeePriceInfo &priceInfo,quint32 idOperation);
 
     void crudPointSaleInfo(QCoffeePointSale &pointsaleInfo,quint32 idOperation);
-    void sendUnlinkVolumeAndDrink(quint32 idVolume, quint32 IdDrink);
 
+    void sendUnlinkVolumeAndDrink(quint32 idVolume, quint32 IdDrink, quint32 idPrice);
 
     void setIdCurrentPointSale(int id);
-     int getIdCurrentPointSale();
+
+    int getIdCurrentPointSale();
 
     void getListNnVersions();
-     void sendNnConfig(QMap<QString, QString> &config);
+
+    void sendNnConfig(QMap<QString, QString> &config);
 
 
 private:
@@ -268,15 +273,13 @@ private:
     void command16(QByteArray &data);   // Получение проданных позиций
 
     void crudOpDrinkInfo(QCoffeeDrinkInfo &categoryInfo,quint32 idOperation); // Отправление информации о напитке
+
     void commandA0(QByteArray &data);   // Возвращение информации о напитке
-
-
     void command19(QByteArray &data);     //получение категории
-
     void command17(QByteArray &data);    //получение прогноза нейронки
     void command18(QByteArray &data);    //получение прогноза для диапазона товаров
     void command20(QByteArray &data);   //получение обьема
-     void command21(QByteArray &data);  //получение цены
+    void command21(QByteArray &data);  //получение цены
     void command22(QByteArray &data); // получение статуса
     void command23(QByteArray &data); //получение версий нейронки
     void command25(QByteArray &data);
