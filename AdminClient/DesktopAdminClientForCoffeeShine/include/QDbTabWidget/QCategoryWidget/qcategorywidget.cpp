@@ -583,9 +583,9 @@ void QCategoryWidget::sendCategory() {
             connect(PsPw, &QPointSalePickWidget::signalPointSalePicked, this, [=](const QVector<int> &pointSales) {
 
                 currentCategory->idPointSale = pointSales;
-
+                    delete PsPw;
                  delete dioForPsPick;
-                delete PsPw;
+
                 PsPw = nullptr;
                 dioForPsPick = nullptr;
                  currentPlugin->crudCategoryInfo(*currentCategory,cDrinksId,0x01);

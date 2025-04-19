@@ -836,6 +836,33 @@ int QCoffeeClientPlugin::addPointSale(QCoffeePointSale pointSale)
     return Output;
 }
 
+
+
+bool QCoffeeClientPlugin::deletePointSale(int idPointSale) {
+
+
+    QString textQuery = "delete from tbl_pointSale  "
+                        "where id_pointSale = " + QString::number(idPointSale) + ";";
+
+    bool ok = false;
+    unlinkPointSaleAndCategory(idPointSale);
+    unlinkPointSaleAndDrink(idPointSale);
+    QSqlQuery *queryAddPointSale = execQuery(textQuery,&ok);
+
+    if (ok) {
+
+
+
+    } else {
+        qDebug()<<"Error add point sale:"<<queryAddPointSale->lastError().text();
+        qDebug()<<"textQuery ="<<textQuery;
+    }
+
+    delete queryAddPointSale;
+
+    return ok;
+}
+
 //QCoffeeCategoryInfo
 
 QVector<QCoffeeCategoryInfo> QCoffeeClientPlugin::getListCategories()
@@ -4564,21 +4591,22 @@ void QCoffeeClientPlugin::command25(QByteArray &data) {
 
 
     //if (code!=0x03) unlinkCategoryAndDrink(currentCategory.id);
+    if (result) {
+        switch (code) {
+            case 0x01: addPointSale(currentPointSale);
+                break;
+            // case 0x02: editCategory(currentCategory);
+            //     break;
+             case 0x03: deletePointSale(currentPointSale.id);
+                 break;
+            }
 
-    switch (code) {
-        case 0x01: addPointSale(currentPointSale);
-            break;
-        // case 0x02: editCategory(currentCategory);
-        //     break;
-        // case 0x03: deleteCategoryInfo(currentCategory);
-        //     break;
-        }
-
-    // if (code!=0x03) {
-    //     for (int i=0;i<newDrinks.size();i++) {
-    //         linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
-    //     }
-    // }
+        // if (code!=0x03) {
+        //     for (int i=0;i<newDrinks.size();i++) {
+        //         linkDrinkAndCategory(newDrinks.at(i),currentCategory.id);
+        //     }
+        // }
+    }
 
 
    emit signalNewPoint();

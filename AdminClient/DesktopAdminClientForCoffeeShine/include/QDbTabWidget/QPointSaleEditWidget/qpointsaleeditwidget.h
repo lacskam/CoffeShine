@@ -13,6 +13,7 @@
 #include <QTabWidget>
 #include <QLineEdit>
 #include "../../Common/QPlugins/QCoffeePlugin/qcoffeeclientplugin.h"
+#include <QMessageBox>
 
 class QPointSaleEditWidget : public QWidget
 {
@@ -45,11 +46,14 @@ private:
     QHBoxLayout *hblForButtons;
     QPushButton * saveButton;
     QPushButton * cancelButton;
+    QPushButton * deleteButton;
+
 
     void createForm();
 
 private slots:
     void slotSendpointSale(QCoffeePointSale &newPointSale);
+    void slotDeletePointSale();
 
 
 signals:

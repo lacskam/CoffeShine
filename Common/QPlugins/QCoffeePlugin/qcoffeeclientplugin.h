@@ -60,6 +60,7 @@ public:
     bool linkPointSaleAndCategory(int idPointSale,int idCategory);
     int getPointSaleId(QCoffeePointSale pointSale);
     int addPointSale(QCoffeePointSale pointSale);
+    bool deletePointSale(int idPointSale);
 
     //QCoffeeCategoryInfo
     QVector<QCoffeeCategoryInfo> getListCategories();

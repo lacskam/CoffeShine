@@ -41,12 +41,15 @@ void QPointSaleEditWidget::createForm() {
 
 
     hblForButtons = new QHBoxLayout;
+
     cancelButton = new QPushButton("Отмена");
     connect(cancelButton,&QPushButton::clicked,this,[=](){
         emit signaleClose();
     });
     saveButton = new QPushButton("Сохранить");
     connect(saveButton,&QPushButton::clicked,this,[=](){
+
+
 
 
         if (currentPointSale.id==-1) {
@@ -61,7 +64,13 @@ void QPointSaleEditWidget::createForm() {
     hblForButtons->addWidget(saveButton);
     hblForButtons->addWidget(cancelButton);
 
+    if (currentPointSale.id!=-1) {
+        deleteButton = new QPushButton("Удалить");
+        connect(deleteButton,&QPushButton::clicked,this,&QPointSaleEditWidget::slotDeletePointSale);
+        mainLayout->addWidget(deleteButton);
+    }
 
+    mainLayout->addStretch(1);
     mainLayout->addLayout(hblForButtons);
 
 
@@ -73,4 +82,20 @@ void QPointSaleEditWidget::createForm() {
 
 void QPointSaleEditWidget::slotSendpointSale(QCoffeePointSale &newPointSale) {
     currentPlugin->crudPointSaleInfo(newPointSale,0x01);
+}
+
+
+void QPointSaleEditWidget::slotDeletePointSale() {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Подтверждение удаления",
+                                  "Вы уверены, что хотите удалить эту точку продаж?",
+                                  QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        currentPlugin->crudPointSaleInfo(currentPointSale,0x03);
+
+    } else {
+
+    }
+
 }

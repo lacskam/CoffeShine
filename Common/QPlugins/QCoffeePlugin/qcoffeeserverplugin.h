@@ -54,6 +54,7 @@ public:
     bool linkPointSaleAndCategory(int idPointSale,int idCategory); //Связать точку продаж и категорию
     int getPointSaleId(QCoffeePointSale pointSale); //Получить id точки продаж
     int addPointSale(QCoffeePointSale pointSale); //Добавление новой точки продаж
+     bool deletePointSale(int idPointSale); //удаление точки продаж
 
 
     //QCoffeeCategoryInfo

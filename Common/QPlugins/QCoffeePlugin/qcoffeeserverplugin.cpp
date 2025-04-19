@@ -413,6 +413,32 @@ int QCoffeeServerPlugin::addPointSale(QCoffeePointSale pointSale)
     return Output;
 }
 
+
+bool QCoffeeServerPlugin::deletePointSale(int idPointSale) {
+
+
+    QString textQuery = "delete from tbl_pointSale  "
+                        "where id_pointSale = " + QString::number(idPointSale) + ";";
+
+    bool ok = false;
+    unlinkPointSaleAndCategory(idPointSale);
+    unlinkPointSaleAndDrink(idPointSale);
+    QSqlQuery *queryAddPointSale = execQuery(textQuery,&ok);
+
+    if (ok) {
+
+
+
+    } else {
+        qDebug()<<"Error add point sale:"<<queryAddPointSale->lastError().text();
+        qDebug()<<"textQuery ="<<textQuery;
+    }
+
+    delete queryAddPointSale;
+
+    return ok;
+}
+
 //QCoffeeCategoryInfo
 
 QVector<QCoffeeCategoryInfo> QCoffeeServerPlugin::getListCategories()
@@ -3553,7 +3579,7 @@ void QCoffeeServerPlugin::command25(QByteArray data,QUnClientHandler *client) {
     QDataStream streamIn (&data,QIODevice::ReadOnly);
     streamIn.device()->seek(0);;
 
-
+     bool result = false;
     quint32 code;
     streamIn >> code;
 
@@ -3568,13 +3594,13 @@ void QCoffeeServerPlugin::command25(QByteArray data,QUnClientHandler *client) {
         break;
     case 0x02: //editCategory(currentCategory);
         break;
-    case 0x03: //deleteCategoryInfo(currentCategory);
+    case 0x03: result = deletePointSale(currentPointSale.id);
         break;
     }
 
     QByteArray Output;
 
-    bool result = true;
+
     QDataStream streamOut (&Output,QIODevice::ReadWrite);
 
     streamOut <<result;
